@@ -10,7 +10,7 @@ git clone https://github.com/KanjiVG/kanjivg.git
 yarn install
 ```
 
-Also, download `Unihan.zip` (latest)[https://www.unicode.org/Public/UCD/latest/ucd/]
+Also, download `Unihan.zip` ([latest](https://www.unicode.org/Public/UCD/latest/ucd/)) and extract it to `Unihan/` in the root folder.
 
 ## Running
 To run script:

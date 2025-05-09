@@ -1,11 +1,13 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import { k_CHARACTER_LIST_PATH } from './consts'
+import { charToUnicode, Unihan } from './unihan';
 
 //------------------------------------------------------------------------------
 // Consts
 //------------------------------------------------------------------------------
 
-const k_CHARACTER_LIST_PATH: string = 'lists';
+
 
 //------------------------------------------------------------------------------
 // Types
@@ -71,11 +73,14 @@ const get_default_kanji_card = (): KanjiCard => ({
 // Script
 //------------------------------------------------------------------------------
 
+// Initialize Unihan DB
+const unihan = new Unihan();
+
 // Iterate through files and build up list of tags
 
-let tags: Set< String > = new Set(); // list of all tags
+let tags: Set<String> = new Set(); // list of all tags
 // 'master list' that we will build up through this script
-let kanji: { [ k: string ]: KanjiCard } = {};
+let kanji: { [k: string]: KanjiCard } = {};
 
 try {
     const files: string[] = fs.readdirSync(k_CHARACTER_LIST_PATH);
@@ -84,17 +89,16 @@ try {
         const stripped = file.split('.').slice(0, -1).join('.');
         const tag = stripped.replace("__", "::");
         tags.add(tag);
-       
+
         // read content
         const file_path = k_CHARACTER_LIST_PATH + "/" + file;
-        let content = fs.readFileSync(file_path, 'utf-8');
+        const content = fs.readFileSync(file_path, 'utf-8');
         // trim whitespace
-        content = content.replace(/\s+/g, "");
-        let characters: string[] = content.split('');
+        const stripped_content = content.replace(/\s+/g, "");
+        let characters: string[] = stripped_content.split('');
         // iterate through characters and emplace tags
         characters.forEach((char: string): void => {
-            if (kanji[char] == undefined)
-                { kanji[char] = get_default_kanji_card(); }
+            if (kanji[char] == undefined) { kanji[char] = get_default_kanji_card(); }
             if (!kanji[char].tags.includes(char)) {
                 kanji[char].tags.push(tag);
             }
@@ -103,8 +107,9 @@ try {
         // console.log(characters);
     });
 } catch (err: unknown) {
-    console.error('Error reading directory:', err);
+    console.error(err);
 }
 
 // Iterate through all kanji, determine simplified/trad/jap forms, merge duplicates
-console.log(kanji['中']);
+// console.log(kanji['中']);
+// console.log(charToUnicode('中'));
