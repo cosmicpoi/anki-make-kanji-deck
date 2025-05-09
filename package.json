@@ -1,0 +1,20 @@
+{
+  "name": "anki-make-kanji-deck",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:cosmicpoi/anki-make-kanji-deck.git",
+  "author": "cosmicpoi <cosmicpoi@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "node-js": "^1.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "execute": "yarn ts-node main.ts",
+    "clean": "rm -rf node_modules"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.17"
+  }
+}
