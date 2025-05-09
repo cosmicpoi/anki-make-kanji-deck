@@ -6,6 +6,7 @@
   "author": "cosmicpoi <cosmicpoi@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "hanzi-writer": "^3.7.2",
     "node-js": "^1.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
