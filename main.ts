@@ -97,7 +97,7 @@ function populateReadings(card: KanjiCard) {
     card.kunyomi = apply_multi_getter(unihan.getJapaneseKun, sources);
 }
 
-function populateSimpTradFromJp(card: KanjiCard) {
+function populateSimpTradFromJpVariants(card: KanjiCard) {
     // If trad character is empty, guess it from japanese
     if (fuzzy_empty(card.tradChineseChar) && !fuzzy_empty(card.japaneseChar)) {
         card.tradChineseChar = apply_getter_to_arr(unihan.getTradChineseVariants, card.japaneseChar);
@@ -121,7 +121,7 @@ function populateTradFromSimp(card: KanjiCard) {
 }
 
 
-kanji.getCards().forEach(card => populateSimpTradFromJp(card));
+kanji.getCards().forEach(card => populateSimpTradFromJpVariants(card));
 kanji.getCards().forEach(card => populateSimpFromTrad(card));
 kanji.getCards().forEach(card => populateTradFromSimp(card));
 
@@ -192,57 +192,55 @@ function populateJapSemantic(card: KanjiCard, counter?: CountHandler) {
     }
 }
 
-const japSemanticCounter =  make_count_handler();
+const japSemanticCounter = make_count_handler();
 kanji.getCards().forEach(card => populateJapSemantic(card, japSemanticCounter));
 console.log(`Populated ${japSemanticCounter.get()} entries with semantic data`);
 
-// Final population: guess empty characters
-console.log("Guessing empty characters");
-kanji.getChars().forEach(char => {
-    const card: KanjiCard = kanji.at(char, true);
-    let newCard: Partial<KanjiCard> = {};
+// At this point, if we cannot find any japanese character, it's pretty safe to bet it doesn't exist.
 
-    return;
+// However, there may still be some japanese characters with no chinese equivalents. Time to guess those.
 
-    // Then, guess using other fields
-    const guess_empty = (charArr: FuzzyArray, newArr: FuzzyArray | undefined) => {
-        if (!newArr) return;
-
-        const chars = [card.simpChineseChar, card.tradChineseChar, card.japaneseChar]
-        const others = chars.filter((a) => a != charArr);
-
-        // Fill out empty simplified chars
-        if (fuzzy_empty(charArr)) {
-            const candidates = combine_without_duplicates(...others.map(a => a.v), [char]);
-            newArr.v = candidates;
-            newArr.guess = true;
+console.log("Guessing empty chinese characters");
+function populateSimpTradFromJp(card: KanjiCard, simpCounter?: CountHandler, tradCounter?: CountHandler) {
+    if (fuzzy_empty(card.simpChineseChar) && !fuzzy_empty(card.japaneseChar)) {
+        const candidates = card.japaneseChar.v.filter(c => cedict.isSimplified(c));
+        if (candidates.length != 0) {
+            card.simpChineseChar.v = candidates;
+            simpCounter?.increment();
         }
     }
-});
+
+    if (fuzzy_empty(card.tradChineseChar) && !fuzzy_empty(card.japaneseChar)) {
+        const candidates = card.japaneseChar.v.filter(c => cedict.isTraditional(c));
+        if (candidates.length != 0) {
+            card.tradChineseChar.v = candidates;
+            tradCounter?.increment();
+        }
+    }
+}
+const simpCounter = make_count_handler();
+const tradCounter = make_count_handler();
+kanji.getCards().forEach(card => populateSimpTradFromJp(card, simpCounter, tradCounter));
+console.log(`Populated ${simpCounter.get()} simplified and ${tradCounter.get()} traditional characters`);
+
+kanji.getCards().forEach(card => populateSimpFromTrad(card));
+kanji.getCards().forEach(card => populateTradFromSimp(card));
 
 // Validate results
-// - All 3 character types are non-empty
-// - If something is guessed, it should either be japanese only or both simp and trad chinese.
-//   one of (simp, trad) as a guess should be considered invalid (just use simp for trad or vice versa)
-kanji.getChars().forEach(char => {
-    return;
-    const card: KanjiCard = kanji.at(char, true);
-    if (fuzzy_empty(card.japaneseChar) || fuzzy_empty(card.simpChineseChar) || fuzzy_empty(card.tradChineseChar)) {
-        console.error("Error: Missing a field");
-        logCard("", card);
-        return;
-    }
+// - At least one of the three char types is defined
+// - If something is missing, it should either be japanese only or both simp and trad chinese.
+kanji.getCards().forEach(card => {
+    const jp_e: boolean = !fuzzy_empty(card.japaneseChar);
+    const sp_e: boolean = !fuzzy_empty(card.simpChineseChar);
+    const td_e: boolean = !fuzzy_empty(card.tradChineseChar);
 
-    const jp_g: boolean = !!card.japaneseChar.guess;
-    const sp_g: boolean = !!card.simpChineseChar.guess;
-    const td_g: boolean = !!card.tradChineseChar.guess;
-
-    const mode1: boolean = !jp_g && !sp_g && !td_g;
-    const mode2: boolean = !jp_g && sp_g && td_g;
-    const mode3: boolean = jp_g && !sp_g && !td_g;
+    const mode1: boolean = jp_e && sp_e && td_e;
+    const mode2: boolean = jp_e && !sp_e && !td_e;
+    const mode3: boolean = !jp_e && sp_e && td_e;
 
     if (!mode1 && !mode2 && !mode3) {
         console.error("Guess mode invalid");
+        logCard("", card);
         return;
     }
 });

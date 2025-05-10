@@ -50,6 +50,18 @@ export class Cedict {
         }
     }
 
+    public isChinese(mychar: string): boolean {
+        return this.m_simpToTrad.has(mychar) || this.m_entries.has(mychar);
+    }
+
+    public isSimplified(mychar: string): boolean {
+        return this.m_simpToTrad.has(mychar)
+    }
+
+    public isTraditional(mychar: string): boolean {
+        return this.m_entries.has(mychar)
+    }
+
     // Map simplified to traditional
     private m_simpToTrad: Map<string, string> = new Map();
     // Dictionary entries indexed by traditional chinese
