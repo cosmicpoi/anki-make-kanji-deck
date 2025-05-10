@@ -6,6 +6,8 @@ export const k_UNIHAN_DB_PATH: string = 'Unihan';
 
 export const k_KANJIDIC_FILE_PATH: string = 'kanjidic2.xml';
 
+export const k_CEDICT_FILE_PATH: string = 'cedict_ts.u8';
+
 export const k_UNIHAN_FILENAMES = {
     Unihan_Readings: "Unihan_Readings.txt",
     Unihan_Variants: "Unihan_Variants.txt",

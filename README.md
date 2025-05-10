@@ -24,6 +24,14 @@ yarn clean
 ```
 
 ## Sources
+* HSK 1-6 word lists provided by [huamake.com](https://huamake.com/1to6Lists.htm) and 7-9 by [elkmovie/hsk30](https://github.com/elkmovie/hsk30/blob/main/charlist.txt)
+* JLPT lists provided by [kanshudo](https://www.kanshudo.com/collections/jlpt_kanji)
+* [kanjidic2](https://www.edrdg.org/kanjidic/kanjd2index_legacy.html)
+  * to confirm if a glyph is Japanese or Chinese, something not offered by the unicode API (which provides readings to both types of glyphs)
+* [MBDG CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cedict)
+  * to provide simplfied-traditional conversion
+* The the [unihan](https://www.unicode.org/charts/unihan.html) database is used for chinese-japanese glyph conversion
+* Download: `https://www.unicode.org/Public/UCD/latest/ucd/`. (`ucd/UniHan.zip`)
 
 
 ### Stroke order
@@ -31,24 +39,29 @@ Chinese (simplified and traditional) stroke order resolution is done through [Ha
 
 Japanese stroke order is provided through (kanjivg)[https://github.com/KanjiVG/kanjivg].
 
-### Word lists
-HSK word lists provided by [huamake.com](https://huamake.com/1to6Lists.htm) and [elkmovie/hsk30](https://github.com/elkmovie/hsk30/blob/main/charlist.txt)
+## Glyph conversion
 
-JLPT lists provided by [kanshudo](https://www.kanshudo.com/collections/jlpt_kanji)
+Trad/Simplified chinese conversion is done using CEDICT. For Chinese-Japanese we construct a candidate list using unihan's `kSemanticVariant` and `kSpecializedSemanticVariant` fields, then use Kanjidic2 to confirm which glyphs are actually Japanese (because sometimes historical and korean glyphs are included).
 
-We also use [kanjidic2](https://www.edrdg.org/kanjidic/kanjd2index_legacy.html) to differentiate if a glyph is Japanese or not, something not offered by the unicode API
 
-### UniHan Database
-The the [unihan](https://www.unicode.org/charts/unihan.html) database is an extremely helpful resource that provides us with **character equivalence**, **pinyin/onyomi/kunyomi readings**, among other things.
 
-* ([Github repo]((https://github.com/unicode-org/unihan-database)))
-* ([unicode report](https://www.unicode.org/reports/tr38/))
-* Download: `https://www.unicode.org/Public/UCD/latest/ucd/`. (`ucd/UniHan.zip`)
 
-If a link between two characters is determined in `kSimplifiedVariant`, `kTraditionalVariant`, `kSemanticVariant`, or `kSpecializedSemanticVariant`, the characters are merged.
-
-Readings are obtained from `kJapanese`, `kJapaneseKun`, `kJapaneseOn`, `kMandarin`.
 
 ## TODO:
 * Derive english meanings using jmdict/unihan
 * Integrate multiple dictionary sources for better data (JMDict, Kanjidic)
+
+
+## Brainstorm
+In the long run, I'd like to develop a **richly-connected**, ai-assisted, relational database of Chinese/Japanese characters, vocab, grammar, and sentences.
+
+For instance, I'd like to be able to do this:
+```
+learn 僕はいちごが欲しいです
+characters: 僕, 欲
+words: 僕,は,いちご,が,欲しい,です
+grammar: AはYです
+```
+You could tell the system to learn a single sentence, and it would dynamically update all of the databases with the corresponding information in a linked way. So it would note that you have also learned the character, word, and grammar point, and would also relationally connect all of that data together.
+
+It could also work in the other direction: you learn a single character, it propagates out to words and sentences, and those are registered in the system.
