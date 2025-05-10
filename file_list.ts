@@ -7,27 +7,27 @@ export let k_SOURCE_FILE_LIST: FileListEntry[] =
         {
             path: k_CHARACTER_LIST_PATH + '/' + 'HSK__1.txt',
             type: CharacterType.SimplifiedChinese,
-            tags: ['HSK::1']
+            tags: ['HSK::6::5::4::3::2::1']
         },
         {
             path: k_CHARACTER_LIST_PATH + '/' + 'HSK__2.txt',
             type: CharacterType.SimplifiedChinese,
-            tags: ['HSK::2']
+            tags: ['HSK::6::5::4::3::2']
         },
         {
             path: k_CHARACTER_LIST_PATH + '/' + 'HSK__3.txt',
             type: CharacterType.SimplifiedChinese,
-            tags: ['HSK::3']
+            tags: ['HSK::6::5::4::3']
         },
         {
             path: k_CHARACTER_LIST_PATH + '/' + 'HSK__4.txt',
             type: CharacterType.SimplifiedChinese,
-            tags: ['HSK::4']
+            tags: ['HSK::6::5::4']
         },
         {
             path: k_CHARACTER_LIST_PATH + '/' + 'HSK__5.txt',
             type: CharacterType.SimplifiedChinese,
-            tags: ['HSK::5']
+            tags: ['HSK::6::5']
         },
         {
             path: k_CHARACTER_LIST_PATH + '/' + 'HSK__6.txt',
@@ -48,21 +48,21 @@ export let k_SOURCE_FILE_LIST: FileListEntry[] =
         {
             path: k_CHARACTER_LIST_PATH + '/' + 'JLPT__n2.txt',
             type: CharacterType.Japanese,
-            tags: ['JLPT::n2']
+            tags: ['JLPT::n1::n2']
         }, 
         {
             path: k_CHARACTER_LIST_PATH + '/' + 'JLPT__n3.txt',
             type: CharacterType.Japanese,
-            tags: ['JLPT::n3']
+            tags: ['JLPT::n1::n2::n3']
         }, 
         {
             path: k_CHARACTER_LIST_PATH + '/' + 'JLPT__n4.txt',
             type: CharacterType.Japanese,
-            tags: ['JLPT::n4']
+            tags: ['JLPT::n1::n2::n3::n4']
         }, 
         {
             path: k_CHARACTER_LIST_PATH + '/' + 'JLPT__n5.txt',
             type: CharacterType.Japanese,
-            tags: ['JLPT::n5']
+            tags: ['JLPT::n1::n2::n3::n4::n5']
         }, 
     ];
