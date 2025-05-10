@@ -1,6 +1,6 @@
+import * as fs from 'fs'
 import autoBind from "auto-bind";
-import { CharacterType, concatKanjiCards, get_default_kanji_card, KanjiCard } from "./types";
-import { Unihan } from "./unihan";
+import { CharacterType, concatKanjiCards, fuzzy_to_string, get_default_kanji_card, KanjiCard, try_emplace_fuzzy } from "./types";
 
 // Represents character 'master list' that we build up through the db info we have.
 
@@ -13,6 +13,36 @@ export class KanjiMap {
     // Get a list of all currenty map keys
     public getChars(): string[] {
         return Object.keys(this.kanji);
+    }
+
+    // Save to file
+    public toFile(output: string): void {
+        type CleanCard = Partial<{ [k in keyof KanjiCard]: string }>;
+        let cleanMap: { [k: string]: CleanCard } = {};
+        this.getChars().forEach(mychar => {
+            const card = this.kanji[mychar];
+            let cleanCard: CleanCard = {};
+
+            let key: keyof KanjiCard;
+            for (key in card) {
+                if (key != 'tags') {
+                    cleanCard[key] = fuzzy_to_string(card[key]);
+                }
+                else {
+                    cleanCard[key] = JSON.stringify(card[key]);
+                }
+            }
+
+            cleanMap[mychar] = cleanCard;
+        });
+
+        fs.writeFile(output, JSON.stringify(cleanMap), (err) => {
+            if (err) {
+                console.error('Error writing file:', err);
+            } else {
+                console.log('JSON written to ', output);
+            }
+        });
     }
 
     // Merge two entries
@@ -34,16 +64,6 @@ export class KanjiMap {
         this.delete(c2);
         this.ratify(newKey);
         this.kanji[newKey] = newCard;
-    }
-
-    // Fill in japanese, simplified, traditional fields for the targeted entry
-    // Assumes an entry exists already.
-    public populateCharacters(unihan: Unihan, mychar: string): void {
-        if (!this.kanji[mychar]) {
-            console.error("Character alrady exists");
-        }
-
-
     }
 
     // See if an entry exists
@@ -92,13 +112,13 @@ export class KanjiMap {
     public emplace_character(mychar: string, type: CharacterType): void {
         const card: KanjiCard = this.at(mychar);
         if (type == CharacterType.Japanese) {
-            card.japaneseChar = mychar;
+            try_emplace_fuzzy(card.japaneseChar, mychar);
         }
         else if (type == CharacterType.SimplifiedChinese) {
-            card.simpChineseChar = mychar;
+            try_emplace_fuzzy(card.simpChineseChar, mychar);
         }
         else if (type == CharacterType.TraditionalChinese) {
-            card.tradChineseChar = mychar;
+            try_emplace_fuzzy(card.tradChineseChar, mychar);
         }
     }
 

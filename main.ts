@@ -59,8 +59,16 @@ duplicates.forEach(dup => {
 });
 
 console.log(`Merged from ${sumEntries} to ${kanji.getChars().length}`);
+kanji.toFile('kanji_list.json');
 
 // Iterate through all kanji, and populate missing forms
+
+// Fill in japanese, simplified, traditional fields for the targeted entry
+kanji.getChars().forEach(char => {
+    const card: KanjiCard = kanji.at(char, true);
+    
+});
+
 console.log(unihan.hasLink('国', '國'));
 
 // console.log(charToUnicode('中'));
