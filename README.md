@@ -34,7 +34,9 @@ Japanese stroke order is provided through (kanjivg)[https://github.com/KanjiVG/k
 ### Word lists
 HSK word lists provided by [huamake.com](https://huamake.com/1to6Lists.htm) and [elkmovie/hsk30](https://github.com/elkmovie/hsk30/blob/main/charlist.txt)
 
-JLPT lists provided by [kanshudo](https://www.kanshudo.com/collections/jlpt_kanji)A
+JLPT lists provided by [kanshudo](https://www.kanshudo.com/collections/jlpt_kanji)
+
+We also use [kanjidic2](https://www.edrdg.org/kanjidic/kanjd2index_legacy.html) to differentiate if a glyph is Japanese or not, something not offered by the unicode API
 
 ### UniHan Database
 The the [unihan](https://www.unicode.org/charts/unihan.html) database is an extremely helpful resource that provides us with **character equivalence**, **pinyin/onyomi/kunyomi readings**, among other things.

@@ -1,8 +1,9 @@
 import * as fs from 'fs'
-import * as path from 'path'
+import * as wanakana from 'wanakana';
 
 import autoBind from "auto-bind";
 import { k_UNIHAN_ACTIONS, k_UNIHAN_DB_PATH, k_UNIHAN_FILENAMES } from './consts'
+import { combine_without_duplicates } from './types';
 
 //------------------------------------------------------------------------------
 // Helper functions
@@ -32,6 +33,7 @@ function getCleanChar(dbEntry: string): string {
 
 // Represents a directional graph of connections between unicode chars.
 // Provides mixed codepoint/char api.
+// No loops
 class LinkMap {
     private map: Map<string, string[]>;
     constructor() {
@@ -43,6 +45,8 @@ class LinkMap {
     public emplace_link(lhs_str: string, rhs_str: string): void {
         const lhs = getCleanChar(lhs_str);
         const rhs = getCleanChar(rhs_str);
+        if (lhs == rhs) return;
+
         if (!this.map.has(lhs)) {
             this.map.set(lhs, []);
         }
@@ -56,8 +60,12 @@ class LinkMap {
 
     // Add link from lhs to rhs and rhs to lhs
     public emplace_bilink(lhs_str: string, rhs_str: string): void {
-        this.emplace_link(lhs_str, rhs_str);
-        this.emplace_link(rhs_str, lhs_str);
+        const lhs = getCleanChar(lhs_str);
+        const rhs = getCleanChar(rhs_str);
+        if (lhs == rhs) return;
+
+        this.emplace_link(lhs, rhs);
+        this.emplace_link(rhs, lhs);
     }
 
     // Check if a link from lhs to rhs exists
@@ -72,10 +80,10 @@ class LinkMap {
     }
 
     // Get variants of a given character
-    public getLinks(lhs_str: string): string[] | undefined {
+    public getLinks(lhs_str: string): string[] {
         const lhs = getCleanChar(lhs_str);
-        if (!this.map.has(lhs)) return undefined;
-        return this.map.get(lhs);
+        if (!this.map.has(lhs)) return [];
+        return this.map.get(lhs) || [];
     }
 
     // Get a single variant of the given character. Warn if more than one entry is found.
@@ -92,6 +100,43 @@ class LinkMap {
     }
 }
 
+class ReadingMap {
+    private map: Map<string, string[]> = new Map();
+    constructor() {
+        autoBind(this);
+    }
+
+    private ratify(mychar: string): void {
+        if (!this.map.has(mychar)) {
+            this.map.set(mychar, []);
+        }
+    }
+
+    public getKeys(): string[] {
+        return [...this.map.keys()];
+    }
+
+    // get values
+    public get(mychar: string): string[] {
+        return this.map.get(mychar) || [];
+    }
+
+    // get and create if it does not exist
+    private at(mychar: string): string[] {
+        this.ratify(mychar);
+        return this.get(mychar);
+    }
+
+    public emplace_readings(mychar: string, entries: string[]) {
+        const res = this.at(mychar);
+        this.map.set(mychar, combine_without_duplicates(res, entries));
+    }
+
+    public emplace_reading(mychar: string, entry: string) {
+        this.emplace_readings(mychar, [entry]);
+    }
+}
+
 //------------------------------------------------------------------------------
 // Unihan library implementation
 //------------------------------------------------------------------------------
@@ -101,22 +146,11 @@ export class Unihan {
     constructor() {
         autoBind(this);
 
-        /// initialize maps
-        this.kMandarin = new Map();
-        this.kJapanese = new Map();
-        this.kJapaneseKun = new Map();
-        this.kJapaneseOn = new Map();
-
-        this.kSemanticVariant = new LinkMap();
-        this.kSpecializedSemanticVariant = new LinkMap();
-        this.kSimplifiedVariant = new LinkMap();
-        this.kTraditionalVariant = new LinkMap();
-
-        this.unifiedLinks = new LinkMap();
-
         // load data from files
         this.loadData(k_UNIHAN_FILENAMES.Unihan_Readings);
         this.loadData(k_UNIHAN_FILENAMES.Unihan_Variants);
+
+        this.createCachedYomi();
     }
 
     private loadData(filePath: string): void {
@@ -129,28 +163,56 @@ export class Unihan {
 
             const parts = line.split('\t');
             if (parts.length == 0) return;
-            const character = unicodeToChar(parts[0]);
-            const action = parts[1]
-            const reading = parts[2];
+            const character: string = unicodeToChar(parts[0]);
+            const action: string = parts[1]
+            const reading: string[] = parts[2].split(/\s/g);
 
             if (action == k_UNIHAN_ACTIONS.kMandarin) {
-                this.kMandarin.set(character, reading);
+                this.kMandarin.emplace_readings(character, reading);
             } else if (action == k_UNIHAN_ACTIONS.kJapanese) {
-                this.kJapanese.set(character, reading.split(/\s/g));
+                this.kJapanese.emplace_readings(character, reading);
             } else if (action == k_UNIHAN_ACTIONS.kJapaneseKun) {
-                this.kJapaneseKun.set(character, reading.split(/\s/g));
+                this.kJapaneseKun.emplace_readings(character, reading);
             } else if (action == k_UNIHAN_ACTIONS.kJapaneseOn) {
-                this.kJapaneseOn.set(character, reading.split(/\s/g));
+                this.kJapaneseOn.emplace_readings(character, reading);
             } else if (action == k_UNIHAN_ACTIONS.kSemanticVariant) {
-                this.emplace_link(this.kSemanticVariant, character, reading);
+                this.emplace_links(this.kSemanticVariant, character, reading);
             } else if (action == k_UNIHAN_ACTIONS.kSpecializedSemanticVariant) {
-                this.emplace_link(this.kSpecializedSemanticVariant, character, reading);
+                this.emplace_links(this.kSpecializedSemanticVariant, character, reading);
             } else if (action == k_UNIHAN_ACTIONS.kSimplifiedVariant) {
-                this.emplace_link(this.kSimplifiedVariant, character, reading); 
+                this.emplace_links(this.kSimplifiedVariant, character, reading);
             } else if (action == k_UNIHAN_ACTIONS.kTraditionalVariant) {
-                this.emplace_link(this.kTraditionalVariant, character, reading);
+                this.emplace_links(this.kTraditionalVariant, character, reading);
             }
         });
+    }
+
+    // Generate cached on/kunyomi maps from loaded japanese reading maps
+    private createCachedYomi() {
+        console.log(this.kJapaneseKun.getKeys());
+        for (const char of this.kJapaneseKun.getKeys()) {
+            const entries: string[] = this.kJapaneseKun.get(char);
+            const asKana: string[] = entries.map((entry) => wanakana.toHiragana(entry));
+            this.cachedJapaneseKun.emplace_readings(char, asKana);
+        }
+
+        for (const char of this.kJapaneseOn.getKeys()) {
+            const entries: string[] = this.kJapaneseOn.get(char);
+            const asKana: string[] = entries.map((entry) => wanakana.toKatakana(entry));
+            this.cachedJapaneseOn.emplace_readings(char, asKana);
+        }
+
+        for (const char of this.kJapanese.getKeys()) {
+            const entries: string[] = this.kJapaneseOn.get(char);
+            entries.forEach((entry) => {
+                if (wanakana.isHiragana(entry)) {
+                    this.cachedJapaneseKun.emplace_reading(char, wanakana.toHiragana(entry));
+                }
+                else if (wanakana.isKatakana(entry)) {
+                    this.cachedJapaneseOn.emplace_reading(char, wanakana.toKatakana(entry));
+                }
+            });
+        }
     }
 
     // Getters
@@ -166,30 +228,58 @@ export class Unihan {
         // return linkMaps.map((vm) => vm.has_link(lhs, rhs) || vm.has_link(rhs, lhs)).reduce((a, b) => a || b);
     }
 
-    public getTradChineseVariant(mychar: string): string | undefined {
-        return this.kTraditionalVariant.getSingleLink(mychar);
+    public getMandarinPinyin(mychar: string): string[] {
+        return this.kMandarin.get(mychar);
+    }
+
+    public getJapaneseKun(mychar: string): string[] {
+        return this.cachedJapaneseKun.get(mychar);
+    }
+    public getJapaneseOn(mychar: string): string[] {
+        return this.cachedJapaneseOn.get(mychar);
+    }
+
+    public getSimpChineseVariants(mychar: string): string[] {
+        return this.kSimplifiedVariant.getLinks(mychar);
+    }
+
+    public getTradChineseVariants(mychar: string): string[] {
+        return this.kTraditionalVariant.getLinks(mychar);
+    }
+
+    public getGetSpecializedSemanticVariants(mychar: string): string[] {
+        return this.kSpecializedSemanticVariant.getLinks(mychar);
+    }
+
+    public getGetSemanticVariants(mychar: string): string[] {
+        return this.kSemanticVariant.getLinks(mychar);
     }
 
     // As a rule, these are indexed by character ('中') rather than code point (U+XXXX)
 
     // Readings
-    private kMandarin: Map<string, string>;
-    private kJapanese: Map<string, string[]>;
-    private kJapaneseKun: Map<string, string[]>;
-    private kJapaneseOn: Map<string, string[]>;
+    private kMandarin: ReadingMap = new ReadingMap();
+    private kJapanese: ReadingMap = new ReadingMap();
+    private kJapaneseKun: ReadingMap = new ReadingMap();
+    private kJapaneseOn: ReadingMap = new ReadingMap();
+
+    private cachedJapaneseKun: ReadingMap = new ReadingMap();
+    private cachedJapaneseOn: ReadingMap = new ReadingMap();
 
     // Variants
-    private kSemanticVariant: LinkMap;
-    private kSpecializedSemanticVariant: LinkMap;
-    private kSimplifiedVariant: LinkMap;
-    private kTraditionalVariant: LinkMap;
+    private kSemanticVariant: LinkMap = new LinkMap();
+    private kSpecializedSemanticVariant: LinkMap = new LinkMap();
+    private kSimplifiedVariant: LinkMap = new LinkMap();
+    private kTraditionalVariant: LinkMap = new LinkMap();
 
     // Unified link map
-    private unifiedLinks: LinkMap;
+    private unifiedLinks: LinkMap = new LinkMap();
 
+    private emplace_links(lm: LinkMap, lhs: string, rhs: string[]) {
+        rhs.forEach((item) => this.emplace_link(lm, lhs, item));
+    }
     // Helper to build up unified link map while building other maps
-    private emplace_link(lm: LinkMap, lhs: string, rhs: string)
-    {
+    private emplace_link(lm: LinkMap, lhs: string, rhs: string) {
         this.unifiedLinks.emplace_bilink(lhs, rhs);
         lm.emplace_link(lhs, rhs);
     }

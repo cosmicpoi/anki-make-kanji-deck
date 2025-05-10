@@ -17,10 +17,19 @@ export type FuzzyArray = {
     guess?: boolean,
 };
 
+export const combine_without_duplicates = (...arrays: string[][]): string[] =>
+    [...new Set(arrays.flat())];
+
 // Make a fuzzy array from a string
 export const $fa = (a: string): FuzzyArray => ({
     v: [a]
 });
+
+// check if a FuzzyArray is empty
+export const fuzzy_empty = (a: FuzzyArray): boolean => a.v.length == 0;
+
+// get the first element of a (non-empty) FuzzyArray
+export const fuzzy_first = (a: FuzzyArray): string => a.v[0];
 
 export const defaultFuzzyArray = (): FuzzyArray => ({ v: [] });
 
@@ -31,8 +40,7 @@ export function try_emplace_fuzzy(arr: FuzzyArray, val: string): void {
     }
 }
 
-export function fuzzy_to_string(arr: FuzzyArray)
-{
+export function fuzzy_to_string(arr: FuzzyArray) {
     const prefix = arr.guess ? "guess:" : "";
     return JSON.stringify(prefix + arr.v);
 }
@@ -40,7 +48,7 @@ export function fuzzy_to_string(arr: FuzzyArray)
 // Concat without duplicates and logical OR on guesses
 export function concatFuzzyArray(a1: FuzzyArray, a2: FuzzyArray) {
     let newVal: FuzzyArray = {
-        v: [...new Set([...a1.v, ...a2.v])],
+        v: combine_without_duplicates(a1.v, a2.v),
     }
     if (!!(a1?.guess) || !!(a2?.guess)) {
         newVal.guess = true;
@@ -106,33 +114,38 @@ export const get_default_kanji_card = (): KanjiCard => ({
 });
 
 export function concatKanjiCards(c1: KanjiCard, c2: KanjiCard): KanjiCard {
-    const res: KanjiCard = get_default_kanji_card();
-
-    return {
-        // characters
-        japaneseChar: concatFuzzyArray(c1.japaneseChar, c2.japaneseChar),
-        simpChineseChar: concatFuzzyArray(c1.simpChineseChar, c2.simpChineseChar),
-        tradChineseChar: concatFuzzyArray(c1.tradChineseChar, c2.tradChineseChar),
-
-        // readings
-        pinyin: concatFuzzyArray(c1.pinyin, c2.pinyin),
-        onyomi: concatFuzzyArray(c1.onyomi, c2.onyomi),
-        kunyomi: concatFuzzyArray(c1.kunyomi, c2.kunyomi),
-
-        // meaning
-        engMeaning: concatFuzzyArray(c1.engMeaning, c2.engMeaning),
-
-        // example sentences
-        japaneseExampleSentences: concatFuzzyArray(c1.japaneseExampleSentences, c2.japaneseExampleSentences),
-        simpChineseExampleSentences: concatFuzzyArray(c1.simpChineseExampleSentences, c2.simpChineseExampleSentences),
-        tradChineseExampleSentences: concatFuzzyArray(c1.tradChineseExampleSentences, c2.tradChineseExampleSentences),
-
-        // stroke order URIs
-        japaneseStrokeOrder: concatFuzzyArray(c1.japaneseStrokeOrder, c2.japaneseStrokeOrder),
-        simpChineseStrokeOrder: concatFuzzyArray(c1.simpChineseStrokeOrder, c2.simpChineseStrokeOrder),
-        tradChineseStrokeOrder: concatFuzzyArray(c1.tradChineseStrokeOrder, c2.tradChineseStrokeOrder),
-
-        // tags
-        tags: [...new Set([...c1.tags, ...c2.tags])],
+    const res = get_default_kanji_card();
+    let key: keyof KanjiCard;
+    for (key in res) {
+        if (key == 'tags') {
+            res[key] = [...new Set([...c1.tags, ...c2.tags])];
+        }
+        else {
+            res[key] = concatFuzzyArray(c1[key], c2[key]);
+        }
     }
+    return res;
+}
+
+export const card_is_character = (card: KanjiCard, mychar: string): boolean =>
+    card.japaneseChar.v.includes(mychar) || card.simpChineseChar.v.includes(mychar) || card.tradChineseChar.v.includes(mychar);
+
+// combine lookups across `arr`
+export function apply_getter_to_arr(getter: (c: string) => string[], arr: string[]): string[] {
+    let all_guesses: string[] = [];
+    arr.forEach((baseChar: string) => {
+        const guesses: string[] = getter(baseChar);
+        all_guesses.push(...guesses);
+    });
+    return [...new Set(all_guesses)];
+}
+
+// combine the above lookup across multiple arrays
+export function apply_multi_getter(getter: (c: string) => string[], arrs: string[][]) {
+    let all_guesses: string[] = [];
+    arrs.forEach((baseArr: string[]) => {
+        const guesses: string[] = apply_getter_to_arr(getter, baseArr);
+        all_guesses.push(...guesses);
+    });
+    return [...new Set(all_guesses)];
 }

@@ -45,8 +45,9 @@ export class KanjiMap {
         });
     }
 
+
     // Merge two entries
-    public merge(c1: string, c2: string, warn = true): void {
+    public merge(c1: string, c2: string, { warn = true, skipDoubles = true }): void {
         if (!this.has(c1) || !this.has(c2)) {
             if (warn)
                 console.error("Could not find an entry for merge ", c1, c2);
@@ -55,7 +56,15 @@ export class KanjiMap {
         const card1: KanjiCard = this.at(c1, true);
         const card2: KanjiCard = this.at(c2, true);
         const newCard: KanjiCard = concatKanjiCards(card1, card2)
-        // console.log(newCard);
+
+        if (skipDoubles) {
+            if (newCard.japaneseChar.v.length > 1
+                || newCard.simpChineseChar.v.length > 1
+                || newCard.tradChineseChar.v.length > 1) {
+                return;
+            }
+        }
+
         const ord = [c1, c2];
         ord.sort();
         const newKey = ord[0];
