@@ -246,13 +246,11 @@ export class Unihan {
     public getTradChineseVariants(mychar: string): string[] {
         return this.kTraditionalVariant.getLinks(mychar);
     }
-
-    public getGetSpecializedSemanticVariants(mychar: string): string[] {
-        return this.kSpecializedSemanticVariant.getLinks(mychar);
-    }
-
-    public getGetSemanticVariants(mychar: string): string[] {
-        return this.kSemanticVariant.getLinks(mychar);
+    
+    public getGetSemanticOrSpecializedVariants(mychar: string): string[] {
+        const semantic = this.kSemanticVariant.getLinks(mychar);
+        const specialized = this.kSpecializedSemanticVariant.getLinks(mychar);
+        return combine_without_duplicates(semantic, specialized);
     }
 
     // As a rule, these are indexed by character ('中') rather than code point (U+XXXX)

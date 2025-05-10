@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import { Unihan } from './unihan';
+import { Kanjidic } from './kanjidic';
 import { FileListEntry, FuzzyArray, KanjiCard, apply_multi_getter, card_is_character, combine_without_duplicates, fuzzy_empty, fuzzy_first, get_default_kanji_card } from './types'
 import { KanjiMap } from './KanjiMap';
 import { k_SOURCE_FILE_LIST } from './file_list';
@@ -15,6 +16,7 @@ import { k_SOURCE_FILE_LIST } from './file_list';
 
 // Initialize Unihan DB and Kanji Map
 const unihan = new Unihan();
+const kanjidic = new Kanjidic();
 let kanji: KanjiMap = new KanjiMap();
 
 // Iterate through files and build up list of tags
@@ -87,46 +89,45 @@ function populateCharacters(card: KanjiCard) {
     if (fuzzy_empty(card.tradChineseChar)) {
         const guess_sources = [card.simpChineseChar.v, card.japaneseChar.v];
         newCard.tradChineseChar.v = apply_multi_getter(unihan.getTradChineseVariants, guess_sources);
-        if (is_le) console.log(newCard.tradChineseChar.v);
 
-        // If it's STILL empty, just guess as the simplified chinese version 
-        if (fuzzy_empty(newCard.tradChineseChar) && !fuzzy_empty(card.simpChineseChar)) {
-            newCard.tradChineseChar.v = card.simpChineseChar.v;
-            newCard.tradChineseChar.guess = true;
-        }
-        // If it's empty even after that, use the japanese version, only if pinyin exists for it
-        if (fuzzy_empty(newCard.tradChineseChar) && !fuzzy_empty(card.japaneseChar)) {
-            if (!fuzzy_empty(newCard.pinyin)) {
-                newCard.tradChineseChar.v = card.japaneseChar.v;
-                newCard.tradChineseChar.guess = true;
-            }
-        }
+        // // If it's STILL empty, just guess as the simplified chinese version 
+        // if (fuzzy_empty(newCard.tradChineseChar) && !fuzzy_empty(card.simpChineseChar)) {
+        //     newCard.tradChineseChar.v = card.simpChineseChar.v;
+        //     newCard.tradChineseChar.guess = true;
+        // }
+        // // If it's empty even after that, use the japanese version, only if pinyin exists for it
+        // if (fuzzy_empty(newCard.tradChineseChar) && !fuzzy_empty(card.japaneseChar)) {
+        //     if (!fuzzy_empty(newCard.pinyin)) {
+        //         newCard.tradChineseChar.v = card.japaneseChar.v;
+        //         newCard.tradChineseChar.guess = true;
+        //     }
+        // }
     }
     // If we can't find a simp chinese character, fill it in
     if (fuzzy_empty(card.simpChineseChar)) {
         const guess_sources = [card.tradChineseChar.v, card.japaneseChar.v];
         newCard.simpChineseChar.v = apply_multi_getter(unihan.getSimpChineseVariants, guess_sources);
 
-        // If it's STILL empty, just guess as the trad chinese version 
-        if (fuzzy_empty(newCard.simpChineseChar) && !fuzzy_empty(card.tradChineseChar)) {
-            newCard.simpChineseChar.v = card.tradChineseChar.v;
-            newCard.simpChineseChar.guess = true;
-        }
-        // If it's empty even after that, use the japanese version, only if pinyin exists for it
-        if (fuzzy_empty(newCard.simpChineseChar) && !fuzzy_empty(card.japaneseChar)) {
-            if (!fuzzy_empty(newCard.pinyin)) {
-                newCard.simpChineseChar.v = card.japaneseChar.v;
-                newCard.simpChineseChar.guess = true;
-            }
-        }
+        // // If it's STILL empty, just guess as the trad chinese version 
+        // if (fuzzy_empty(newCard.simpChineseChar) && !fuzzy_empty(card.tradChineseChar)) {
+        //     newCard.simpChineseChar.v = card.tradChineseChar.v;
+        //     newCard.simpChineseChar.guess = true;
+        // }
+        // // If it's empty even after that, use the japanese version, only if pinyin exists for it
+        // if (fuzzy_empty(newCard.simpChineseChar) && !fuzzy_empty(card.japaneseChar)) {
+        //     if (!fuzzy_empty(newCard.pinyin)) {
+        //         newCard.simpChineseChar.v = card.japaneseChar.v;
+        //         newCard.simpChineseChar.guess = true;
+        //     }
+        // }
 
     }
-    // If the japanese does not exist, try to derive it from (post-guess) simp/trad
+    // If the japanese does not exist, try to derive it from simp/trad
     if (fuzzy_empty(card.japaneseChar)) {
-        // const simp_guesses = apply_getter_to_arr(newCard.simpChineseChar.v, unihan.getGetSemanticVariants);
-        // const trad_guesses = apply_getter_to_arr(newCard.tradChineseChar.v, unihan.getGetSemanticVariants);
+        const guess_sources = [card.simpChineseChar.v, card.tradChineseChar.v];
+        const candidates: string[] = apply_multi_getter(unihan.getGetSemanticOrSpecializedVariants, guess_sources);
+        console.log("Japanese candidates:", candidates, candidates.map(e => kanjidic.isKanji(e)));
 
-        // console.log("Guessing Japanese for card:", newCard.simpChineseChar, newCard.tradChineseChar, newCard.japaneseChar);
 
     }
 
