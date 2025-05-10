@@ -110,8 +110,8 @@ export class KanjiMap {
         if (tags == undefined) return;
 
         tags.forEach(tag => {
-            if (!card.tags.includes(mychar)) {
-                card.tags.push(tag);
+            if (!card.tags.v.includes(mychar)) {
+                card.tags.v.push(tag);
             }
         })
     }

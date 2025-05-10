@@ -1,3 +1,5 @@
+export const k_GUESS_STRING = '(guess❓)';
+
 export const k_CHARACTER_LIST_PATH: string = 'lists';
 
 export const k_UNIHAN_DB_PATH: string = 'Unihan';

@@ -15,7 +15,7 @@ Also, download `Unihan.zip` ([latest](https://www.unicode.org/Public/UCD/latest/
 ## Running
 To run script:
 ```
-yarn execute
+yarn execute -o myfile.txt
 ```
 
 To clean build folder:
