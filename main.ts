@@ -1,115 +1,66 @@
 import * as fs from 'fs'
-import * as path from 'path'
-import { k_CHARACTER_LIST_PATH } from './consts'
-import { charToUnicode, Unihan } from './unihan';
+import { Unihan } from './unihan';
+import { FileListEntry, KanjiCard, get_default_kanji_card } from './types'
+import { KanjiMap } from './KanjiMap';
+import { k_SOURCE_FILE_LIST } from './file_list';
 
 //------------------------------------------------------------------------------
-// Consts
+// Helper function
 //------------------------------------------------------------------------------
 
-
-
-//------------------------------------------------------------------------------
-// Types
-//------------------------------------------------------------------------------
-
-type KanjiCard = {
-    // characters
-    japaneseChar: string;
-    simpChineseChar: string;
-    tradChineseChar: string;
-
-    // readings
-    pinyin: string;
-    onyomi: string[];
-    kunyomi: string[];
-
-    // meaning
-    engMeaning: string;
-
-    // example sentences
-    japaneseExampleSentences: [];
-    simpChineseExampleSentences: [];
-    tradChineseExampleSentences: [];
-
-    // stroke order URIs
-    japaneseStrokeOrder: string;
-    simpChineseStrokeOrder: string;
-    tradChineseStrokeOrder: string;
-
-    // tags
-    tags: string[];
-};
-
-const get_default_kanji_card = (): KanjiCard => ({
-    // characters
-    japaneseChar: '',
-    simpChineseChar: '',
-    tradChineseChar: '',
-
-    // readings
-    pinyin: '',
-    onyomi: [],
-    kunyomi: [],
-
-    // meaning
-    engMeaning: '',
-
-    // example sentences
-    japaneseExampleSentences: [],
-    simpChineseExampleSentences: [],
-    tradChineseExampleSentences: [],
-
-    // stroke order URIs
-    japaneseStrokeOrder: '',
-    simpChineseStrokeOrder: '',
-    tradChineseStrokeOrder: '',
-
-    // tags
-    tags: []
-});
 
 //------------------------------------------------------------------------------
 // Script
 //------------------------------------------------------------------------------
 
-// Initialize Unihan DB
+// Initialize Unihan DB and Kanji Map
 const unihan = new Unihan();
+let kanji: KanjiMap = new KanjiMap();
 
 // Iterate through files and build up list of tags
-
 let tags: Set<String> = new Set(); // list of all tags
-// 'master list' that we will build up through this script
-let kanji: { [k: string]: KanjiCard } = {};
-
-try {
-    const files: string[] = fs.readdirSync(k_CHARACTER_LIST_PATH);
-    files.forEach((file: string): void => {
-        // strip trailing file extesion and replace __ with ::
-        const stripped = file.split('.').slice(0, -1).join('.');
-        const tag = stripped.replace("__", "::");
-        tags.add(tag);
-
-        // read content
-        const file_path = k_CHARACTER_LIST_PATH + "/" + file;
-        const content = fs.readFileSync(file_path, 'utf-8');
-        // trim whitespace
-        const stripped_content = content.replace(/\s+/g, "");
-        let characters: string[] = stripped_content.split('');
-        // iterate through characters and emplace tags
-        characters.forEach((char: string): void => {
-            if (kanji[char] == undefined) { kanji[char] = get_default_kanji_card(); }
-            if (!kanji[char].tags.includes(char)) {
-                kanji[char].tags.push(tag);
-            }
-        });
-        console.log(`Loaded file for tag ${tag} with ${characters.length} characters`);
-        // console.log(characters);
+let sumEntries = 0;
+k_SOURCE_FILE_LIST.forEach((file: FileListEntry): void => {
+    // Add tags to list
+    file.tags?.forEach(tag => tags.add(tag));
+    // read content
+    const content = fs.readFileSync(file.path, 'utf-8');
+    // trim whitespace
+    const stripped_content = content.replace(/\s+/g, "");
+    let characters: string[] = stripped_content.split('');
+    // iterate through characters and emplace tags
+    characters.forEach((mychar: string): void => {
+        kanji.emplace_character(mychar, file.type);
+        kanji.emplace_tags(mychar, file.tags);
     });
-} catch (err: unknown) {
-    console.error(err);
+    console.log(`Loaded file ${file.path} with tags ${file.tags} with ${characters.length} characters`);
+    sumEntries += characters.length;
+});
+
+// Merge duplicate entries
+console.log("Merging duplicates");
+const duplicates: Set<[string, string]> = new Set();
+const allChars: string[] = kanji.getChars();
+for (let i = 0; i < allChars.length; i++) {
+    for (let j = i + 1; j < allChars.length; j++) {
+        const char1 = allChars[i];
+        const char2 = allChars[j];
+        if (unihan.hasLink(char1, char2)) {
+            const ord = [char1, char2];
+            ord.sort();
+            duplicates.add([ord[0], ord[1]]);
+        }
+    }
 }
 
-// Iterate through all kanji, determine simplified/trad/jap forms, merge duplicates
-// console.log(kanji['中']);
+duplicates.forEach(dup => {
+    const [c1, c2] = dup;
+    kanji.merge(c1, c2, false);
+});
+
+console.log(`Merged from ${sumEntries} to ${kanji.getChars().length}`);
+
+// Iterate through all kanji, and populate missing forms
+console.log(unihan.hasLink('国', '國'));
+
 // console.log(charToUnicode('中'));

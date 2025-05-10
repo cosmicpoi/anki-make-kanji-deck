@@ -30,32 +30,65 @@ function getCleanChar(dbEntry: string): string {
     else return dbEntry;
 }
 
-class VariantMap {
+// Represents a directional graph of connections between unicode chars.
+// Provides mixed codepoint/char api.
+class LinkMap {
     private map: Map<string, string[]>;
     constructor() {
         autoBind(this);
         this.map = new Map();
     }
 
+    // Add link from lhs to rhs
     public emplace_link(lhs_str: string, rhs_str: string): void {
         const lhs = getCleanChar(lhs_str);
         const rhs = getCleanChar(rhs_str);
         if (!this.map.has(lhs)) {
             this.map.set(lhs, []);
         }
-        if (!this.map.has(rhs)) {
-            this.map.set(rhs, []);
-        }
 
-        let lhs_links = this.map.get(lhs);
+
+        const lhs_links = this.map.get(lhs);
         if (lhs_links && !lhs_links.includes(rhs)) {
             lhs_links.push(rhs);
         }
+    }
 
-        let rhs_links = this.map.get(rhs);
-        if (rhs_links && !rhs_links.includes(lhs)) {
-            rhs_links.push(lhs);
+    // Add link from lhs to rhs and rhs to lhs
+    public emplace_bilink(lhs_str: string, rhs_str: string): void {
+        this.emplace_link(lhs_str, rhs_str);
+        this.emplace_link(rhs_str, lhs_str);
+    }
+
+    // Check if a link from lhs to rhs exists
+    public has_link(lhs_str: string, rhs_str: string): boolean {
+        const lhs = getCleanChar(lhs_str);
+        const rhs = getCleanChar(rhs_str);
+
+        if (!this.map.has(lhs)) return false;
+
+        const lhs_links = this.map.get(lhs);
+        return !!(lhs_links?.includes(rhs));
+    }
+
+    // Get variants of a given character
+    public getLinks(lhs_str: string): string[] | undefined {
+        const lhs = getCleanChar(lhs_str);
+        if (!this.map.has(lhs)) return undefined;
+        return this.map.get(lhs);
+    }
+
+    // Get a single variant of the given character. Warn if more than one entry is found.
+    public getSingleLink(lhs_str: string): string | undefined {
+        const links = this.getLinks(lhs_str);
+        if (links == undefined) return undefined;
+
+        if (links.length > 1) {
+            console.error("More than one variant found");
+            return undefined;
         }
+
+        return links[0];
     }
 }
 
@@ -69,15 +102,17 @@ export class Unihan {
         autoBind(this);
 
         /// initialize maps
-        this.kSemanticVariant = new VariantMap();
-        this.kSpecializedSemanticVariant = new VariantMap();
-        this.kSimplifiedVariant = new VariantMap();
-        this.kTraditionalVariant = new VariantMap();
-
         this.kMandarin = new Map();
         this.kJapanese = new Map();
         this.kJapaneseKun = new Map();
         this.kJapaneseOn = new Map();
+
+        this.kSemanticVariant = new LinkMap();
+        this.kSpecializedSemanticVariant = new LinkMap();
+        this.kSimplifiedVariant = new LinkMap();
+        this.kTraditionalVariant = new LinkMap();
+
+        this.unifiedLinks = new LinkMap();
 
         // load data from files
         this.loadData(k_UNIHAN_FILENAMES.Unihan_Readings);
@@ -99,7 +134,6 @@ export class Unihan {
             const reading = parts[2];
 
             if (action == k_UNIHAN_ACTIONS.kMandarin) {
-
                 this.kMandarin.set(character, reading);
             } else if (action == k_UNIHAN_ACTIONS.kJapanese) {
                 this.kJapanese.set(character, reading.split(/\s/g));
@@ -108,17 +142,32 @@ export class Unihan {
             } else if (action == k_UNIHAN_ACTIONS.kJapaneseOn) {
                 this.kJapaneseOn.set(character, reading.split(/\s/g));
             } else if (action == k_UNIHAN_ACTIONS.kSemanticVariant) {
-                this.kSemanticVariant.emplace_link(character, reading);
+                this.emplace_link(this.kSemanticVariant, character, reading);
             } else if (action == k_UNIHAN_ACTIONS.kSpecializedSemanticVariant) {
-                this.kSpecializedSemanticVariant.emplace_link(character, reading);
+                this.emplace_link(this.kSpecializedSemanticVariant, character, reading);
             } else if (action == k_UNIHAN_ACTIONS.kSimplifiedVariant) {
-                this.kSimplifiedVariant.emplace_link(character, reading);
+                this.emplace_link(this.kSimplifiedVariant, character, reading); 
             } else if (action == k_UNIHAN_ACTIONS.kTraditionalVariant) {
-                this.kTraditionalVariant.emplace_link(character, reading);
+                this.emplace_link(this.kTraditionalVariant, character, reading);
             }
-
-
         });
+    }
+
+    // Getters
+    public hasLink(lhs: string, rhs: string): boolean {
+        return this.unifiedLinks.has_link(lhs, rhs);
+        // const linkMaps: LinkMap[] = [
+        //     this.kSemanticVariant,
+        //     this.kSpecializedSemanticVariant,
+        //     this.kSimplifiedVariant,
+        //     this.kTraditionalVariant
+        // ];
+
+        // return linkMaps.map((vm) => vm.has_link(lhs, rhs) || vm.has_link(rhs, lhs)).reduce((a, b) => a || b);
+    }
+
+    public getTradChineseVariant(mychar: string): string | undefined {
+        return this.kTraditionalVariant.getSingleLink(mychar);
     }
 
     // As a rule, these are indexed by character ('中') rather than code point (U+XXXX)
@@ -130,8 +179,18 @@ export class Unihan {
     private kJapaneseOn: Map<string, string[]>;
 
     // Variants
-    private kSemanticVariant: VariantMap;
-    private kSpecializedSemanticVariant: VariantMap;
-    private kSimplifiedVariant: VariantMap;
-    private kTraditionalVariant: VariantMap;
+    private kSemanticVariant: LinkMap;
+    private kSpecializedSemanticVariant: LinkMap;
+    private kSimplifiedVariant: LinkMap;
+    private kTraditionalVariant: LinkMap;
+
+    // Unified link map
+    private unifiedLinks: LinkMap;
+
+    // Helper to build up unified link map while building other maps
+    private emplace_link(lm: LinkMap, lhs: string, rhs: string)
+    {
+        this.unifiedLinks.emplace_bilink(lhs, rhs);
+        lm.emplace_link(lhs, rhs);
+    }
 }
