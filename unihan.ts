@@ -189,7 +189,6 @@ export class Unihan {
 
     // Generate cached on/kunyomi maps from loaded japanese reading maps
     private createCachedYomi() {
-        console.log(this.kJapaneseKun.getKeys());
         for (const char of this.kJapaneseKun.getKeys()) {
             const entries: string[] = this.kJapaneseKun.get(char);
             const asKana: string[] = entries.map((entry) => wanakana.toHiragana(entry));
@@ -246,7 +245,7 @@ export class Unihan {
     public getTradChineseVariants(mychar: string): string[] {
         return this.kTraditionalVariant.getLinks(mychar);
     }
-    
+
     public getGetSemanticOrSpecializedVariants(mychar: string): string[] {
         const semantic = this.kSemanticVariant.getLinks(mychar);
         const specialized = this.kSpecializedSemanticVariant.getLinks(mychar);

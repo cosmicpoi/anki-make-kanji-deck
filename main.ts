@@ -1,12 +1,14 @@
 import * as fs from 'fs'
 import { Unihan } from './unihan';
 import { Kanjidic } from './kanjidic';
-import { FileListEntry, FuzzyArray, KanjiCard, apply_multi_getter, card_is_character, combine_without_duplicates, common_elements, concatFuzzyArray, defaultFuzzyArray, fuzzy_empty, fuzzy_first, fuzzy_join, get_default_kanji_card, logCard, reading_similarity } from './types'
+import { CountHandler, FileListEntry, FuzzyArray, KanjiCard, apply_getter_to_arr, apply_multi_getter, card_is_character, combine_without_duplicates, common_elements, concatFuzzyArray, defaultFuzzyArray, fuzzy_empty, fuzzy_first, fuzzy_join, get_default_kanji_card, logCard, make_count_handler, reading_similarity } from './types'
 import { KanjiMap } from './KanjiMap';
 import { k_SOURCE_FILE_LIST } from './file_list';
 import minimist from 'minimist';
 import { Cedict } from './cedict';
 import { k_CEDICT_FILE_PATH } from './consts';
+import * as OpenCC from 'opencc-js';
+
 
 
 //------------------------------------------------------------------------------
@@ -23,10 +25,12 @@ const args = minimist(process.argv.slice(2));
 // initialize kanji map
 let kanji: KanjiMap = new KanjiMap();
 
-// Initialize resources DB and Kanji Map
+// Initialize resources
 const unihan = new Unihan();
 const kanjidic = new Kanjidic();
 const cedict = new Cedict(k_CEDICT_FILE_PATH);
+const converter_t2s = OpenCC.Converter({ from: 'hk', to: 'cn' });
+const converter_s2t = OpenCC.Converter({ from: 'cn', to: 'hk' });
 
 // Iterate through files and build up list of tags
 let tags: Set<String> = new Set(); // list of all tags
@@ -93,47 +97,40 @@ function populateReadings(card: KanjiCard) {
     card.kunyomi = apply_multi_getter(unihan.getJapaneseKun, sources);
 }
 
-function populateSimpTrad(card: KanjiCard) {
-    
-    const newCard: Partial<KanjiCard> = {};
-    // If we can't find a trad chinese character, fill it in
-    if (fuzzy_empty(card.tradChineseChar)) {
-        const guess_sources: FuzzyArray[] = [card.simpChineseChar, card.japaneseChar];
-        newCard.tradChineseChar = apply_multi_getter(unihan.getTradChineseVariants, guess_sources);
-
-        // If it's STILL empty, just use the simplified chinese version 
-        if (fuzzy_empty(newCard.tradChineseChar) && !fuzzy_empty(card.simpChineseChar)) {
-            newCard.tradChineseChar.v = [...card.simpChineseChar.v];
-        }
+function populateSimpTradFromJp(card: KanjiCard) {
+    // If trad character is empty, guess it from japanese
+    if (fuzzy_empty(card.tradChineseChar) && !fuzzy_empty(card.japaneseChar)) {
+        card.tradChineseChar = apply_getter_to_arr(unihan.getTradChineseVariants, card.japaneseChar);
     }
-    // If we can't find a simp chinese character, fill it in
-    if (fuzzy_empty(card.simpChineseChar)) {
-        const guess_sources: FuzzyArray[] = [card.tradChineseChar, card.japaneseChar];
-        newCard.simpChineseChar = apply_multi_getter(unihan.getSimpChineseVariants, guess_sources);
-
-        // If it's STILL empty, just use the trad chinese version 
-        if (fuzzy_empty(newCard.simpChineseChar) && !fuzzy_empty(card.tradChineseChar)) {
-            newCard.simpChineseChar.v = [...card.tradChineseChar.v];
-        }
+    // If trad character is empty, guess it from japanese
+    if (fuzzy_empty(card.simpChineseChar) && !fuzzy_empty(card.japaneseChar)) {
+        card.simpChineseChar = apply_getter_to_arr(unihan.getSimpChineseVariants, card.japaneseChar);
     }
-
-    if (newCard.simpChineseChar) card.simpChineseChar = newCard.simpChineseChar;
-    if (newCard.tradChineseChar) card.tradChineseChar = newCard.tradChineseChar;
 }
 
-kanji.getChars().forEach(char => {
-    const card: KanjiCard = kanji.at(char, true);
-    // logCard("Populating card:", card);
-    populateReadings(card);
-    populateSimpTrad(card);
-    populateReadings(card);
-    populateSimpTrad(card);
-    // populateCharacters(card);
-    // logCard("Populated card:", card);
-});
+function populateSimpFromTrad(card: KanjiCard) {
+    if (fuzzy_empty(card.simpChineseChar) && !fuzzy_empty(card.tradChineseChar)) {
+        card.simpChineseChar.v = card.tradChineseChar.v.map(c => converter_t2s(c));
+    }
+}
 
-console.log("Merging duplicates by reading");
-{
+function populateTradFromSimp(card: KanjiCard) {
+    if (fuzzy_empty(card.tradChineseChar) && !fuzzy_empty(card.simpChineseChar)) {
+        card.tradChineseChar.v = card.simpChineseChar.v.map(c => converter_s2t(c));
+    }
+}
+
+
+kanji.getCards().forEach(card => populateSimpTradFromJp(card));
+kanji.getCards().forEach(card => populateSimpFromTrad(card));
+kanji.getCards().forEach(card => populateTradFromSimp(card));
+
+// populate readings
+kanji.getCards().forEach(card => populateReadings(card));
+
+function mergeDuplicatesByReading() {
+    console.log("Merging duplicates by reading");
+
     // See which cards are still missing an entry
     const missingChars: string[] = [];
     kanji.getChars().forEach(char => {
@@ -178,9 +175,10 @@ console.log("Merging duplicates by reading");
     });
 }
 
+mergeDuplicatesByReading();
+
 // Populate japanese based on semantic alternatives + simp/trad versions
-function populateJapSemantic(card: KanjiCard) {
-    // If the japanese does not exist, try to derive it from simp/trad
+function populateJapSemantic(card: KanjiCard, counter?: CountHandler) {
     if (fuzzy_empty(card.japaneseChar)) {
         const guess_sources: FuzzyArray[] = [card.simpChineseChar, card.tradChineseChar];
         let candidates: FuzzyArray = apply_multi_getter(unihan.getGetSemanticOrSpecializedVariants, guess_sources);
@@ -188,19 +186,17 @@ function populateJapSemantic(card: KanjiCard) {
         candidates.v = candidates.v.filter((el) => kanjidic.isKanji(el));
 
         if (!fuzzy_empty(candidates)) {
-            // card.japaneseChar.guess = true;
             card.japaneseChar = candidates;
+            counter?.increment();
         }
     }
 }
-kanji.getChars().forEach(char => {
-    const card: KanjiCard = kanji.at(char, true);
-    // First try semantic alternatives
-    populateJapSemantic(card);
-});
+
+const japSemanticCounter =  make_count_handler();
+kanji.getCards().forEach(card => populateJapSemantic(card, japSemanticCounter));
+console.log(`Populated ${japSemanticCounter.get()} entries with semantic data`);
 
 // Final population: guess empty characters
-
 console.log("Guessing empty characters");
 kanji.getChars().forEach(char => {
     const card: KanjiCard = kanji.at(char, true);
@@ -222,17 +218,6 @@ kanji.getChars().forEach(char => {
             newArr.guess = true;
         }
     }
-
-    newCard.simpChineseChar = defaultFuzzyArray();
-    guess_empty(card.simpChineseChar, newCard.simpChineseChar);
-    newCard.tradChineseChar = defaultFuzzyArray();
-    guess_empty(card.tradChineseChar, newCard.tradChineseChar);
-    newCard.japaneseChar = defaultFuzzyArray();
-    guess_empty(card.japaneseChar, newCard.japaneseChar);
-
-    // if (!fuzzy_empty(newCard.simpChineseChar)) card.simpChineseChar = newCard.simpChineseChar;
-    // if (!fuzzy_empty(newCard.tradChineseChar)) card.tradChineseChar = newCard.tradChineseChar;
-    // if (!fuzzy_empty(newCard.japaneseChar)) card.japaneseChar = newCard.japaneseChar;
 });
 
 // Validate results

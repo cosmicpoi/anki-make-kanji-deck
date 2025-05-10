@@ -199,3 +199,17 @@ export function apply_multi_getter(getter: (c: string) => string[], arrs: FuzzyA
     }
     return res;
 }
+
+
+export type CountHandler = {
+    increment: () => void;
+    get: () => number;
+};
+
+export const make_count_handler = (): CountHandler => {
+    let count = 0;
+    const increment = (): number => count++;
+    const get = (): number => count;
+
+    return {increment, get};
+};

@@ -7,10 +7,12 @@
   "license": "MIT",
   "dependencies": {
     "@types/minimist": "^1.2.5",
+    "@types/opencc-js": "^1.0.3",
     "auto-bind": "^5.0.1",
     "hanzi-writer": "^3.7.2",
     "minimist": "^1.2.8",
     "node-js": "^1.0.0",
+    "opencc-js": "^1.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "wanakana": "^5.3.1"

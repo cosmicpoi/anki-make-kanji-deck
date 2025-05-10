@@ -15,6 +15,10 @@ export class KanjiMap {
         return Object.keys(this.kanji);
     }
 
+    public getCards(): KanjiCard[] {
+        return Object.values(this.kanji);
+    }
+
     // Save to file
     public toFile(output: string): void {
         type CleanCard = Partial<{ [k in keyof KanjiCard]: string }>;
