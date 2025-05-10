@@ -48,3 +48,7 @@ The the [unihan](https://www.unicode.org/charts/unihan.html) database is an extr
 If a link between two characters is determined in `kSimplifiedVariant`, `kTraditionalVariant`, `kSemanticVariant`, or `kSpecializedSemanticVariant`, the characters are merged.
 
 Readings are obtained from `kJapanese`, `kJapaneseKun`, `kJapaneseOn`, `kMandarin`.
+
+## TODO:
+* Derive english meanings using jmdict/unihan
+* Integrate multiple dictionary sources for better data (JMDict, Kanjidic)

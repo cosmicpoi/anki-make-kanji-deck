@@ -139,6 +139,7 @@ kanji.getChars().forEach(char => {
     populateReadings(card);
     populateSimpTrad(card);
     populateReadings(card);
+    populateSimpTrad(card);
     // populateCharacters(card);
     // logCard("Populated card:", card);
 });
@@ -221,11 +222,36 @@ kanji.getChars().forEach(char => {
     newCard.japaneseChar = defaultFuzzyArray();
     guess_empty(card.japaneseChar, newCard.japaneseChar);
 
-    if(!fuzzy_empty(newCard.simpChineseChar)) card.simpChineseChar = newCard.simpChineseChar;
-    if(!fuzzy_empty(newCard.tradChineseChar)) card.tradChineseChar = newCard.tradChineseChar;
-    if(!fuzzy_empty(newCard.japaneseChar)) card.japaneseChar = newCard.japaneseChar;
+    if (!fuzzy_empty(newCard.simpChineseChar)) card.simpChineseChar = newCard.simpChineseChar;
+    if (!fuzzy_empty(newCard.tradChineseChar)) card.tradChineseChar = newCard.tradChineseChar;
+    if (!fuzzy_empty(newCard.japaneseChar)) card.japaneseChar = newCard.japaneseChar;
 });
 
+// Validate results
+// - All 3 character types are non-empty
+// - If something is guessed, it should either be japanese only or both simp and trad chinese.
+//   one of (simp, trad) as a guess should be considered invalid (just use simp for trad or vice versa)
+kanji.getChars().forEach(char => {
+    const card: KanjiCard = kanji.at(char, true);
+    if (fuzzy_empty(card.japaneseChar) || fuzzy_empty(card.simpChineseChar) || fuzzy_empty(card.tradChineseChar)) {
+        console.error("Error: Missing a field");
+        logCard("", card);
+        return;
+    }
+
+    const jp_g: boolean = !!card.japaneseChar.guess;
+    const sp_g: boolean = !!card.simpChineseChar.guess;
+    const td_g: boolean = !!card.tradChineseChar.guess;
+
+    const mode1: boolean = !jp_g && !sp_g && !td_g;
+    const mode2: boolean = !jp_g && sp_g && td_g;
+    const mode3: boolean = jp_g && !sp_g && !td_g;
+
+    if (!mode1 && !mode2 && !mode3) {
+        console.error("Guess mode invalid");
+        return;
+    }
+});
 
 // Export results
 if (args['o']) {
