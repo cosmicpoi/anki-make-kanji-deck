@@ -5,6 +5,46 @@ type XMLAttrKey = string; // enum-like
 type XMLTagName = string;
 type XMLAttrObj = Partial<Record<XMLAttrKey, string>>;
 
+// Represents <?xml ?> declaration
+type XMLDeclaration = {
+    version?: string;
+    encoding?: string;
+    standalone?: string;
+};
+
+type Dtd_ELEMENT = {
+    tagName: 'ELEMENT';
+    elementName: string;
+    contentModel?: string;
+};
+
+type Dtd_ATTLIST = {
+    tagName: 'ATTLIST',
+    elementName: string;
+    attributeName?: string;
+    attributeType?: string;
+    defaultDeclaration?: string; // #REQUIRED, #IMPLIED, etc
+};
+
+type Dtd_ENTITY = {
+    tagName: 'ENTITY',
+    key: string;
+    value: string;
+};
+
+type Dtd_NOTATION = {
+    tagName: 'NOTATION',
+    // to implement
+}
+type XMLDtd_Decl = Dtd_ELEMENT | Dtd_ATTLIST | Dtd_ENTITY | Dtd_NOTATION;
+
+type XMLDoctype = {
+    rootTagName: string; // name of root tag
+    public?: string;
+    external?: string;
+    internal?: XMLDtd_Decl[];
+}
+
 // Represents an XML opening tag
 type XMLTagProps = {
     source?: string;
@@ -40,56 +80,71 @@ const as_xml_props = (
 }
 
 type XMLElement = XMLTagProps & {
-    children: (XMLElement | 'string' | 'number')[]
+    children?: (XMLElement | 'string' | 'number')[]
 };
 
-type ParamXMLElement<
+export type ParamXMLElement<
     PTagName extends XMLTagName,
     PAttrKey extends XMLAttrKey
 > = ParamXMLTagProps<PTagName, PAttrKey> & {
-    children: (XMLElement | 'string' | 'number')[]
+    children?: (XMLElement | string | number)[]
 };
 
-type XMLParserHandlerObj = {
+// Helper functions
+// Take a stripped start tag (A for <A> or <A/ >) and get its attrs
+function getTagAttrsFromStripped<
+    PTagName extends XMLTagName = XMLTagName,
+    PAttrKey extends XMLAttrKey = XMLAttrKey
+>(stripped: string): [PTagName, ParamXMLAttrObj<PAttrKey> | undefined] {
+    let tagType = stripped;
+    const tagAttrs: ParamXMLAttrObj<PAttrKey> = {};
+    let hasAttrs = false;
+    if (stripped.includes('=')) {
+        const parts = stripped.split(' ');
+        // has props, need to unpack them
+        tagType = parts[0];
+        for (let i = 1; i < parts.length; i++) {
+            const attrSrc = parts[i];
+            const kv = attrSrc.split("=");
+            const attrKey = kv[0];
+            const attrVal = kv[1].slice(1, -1);
 
+            // @ts-ignore
+            tagAttrs[attrKey] = attrVal;
+            hasAttrs = true;
+        }
+    }
+    const attrs = hasAttrs ? tagAttrs : undefined;
+    return [tagType as PTagName, attrs];
+}
+
+export type ParamXMLParserHandlerObj<
+    PTagName extends XMLTagName,
+    PAttrKey extends XMLAttrKey
+> = {
+    declaration?: (decl: XMLDeclaration) => void,
+    doctype?: (dc: XMLDoctype) => void,
+    elements?: Partial<Record<
+        PTagName,
+        (k: ParamXMLElement<PTagName, PAttrKey>) => void
+    >>
 };
 
 // Function handlers for `parseXML` - basically a function for each tag type
-// type XMLHandlerObj =
 
 const k_BUF_MAX_SIZE = 1024 * 64;
 export async function parseXML<
     PTagName extends XMLTagName = XMLTagName,
     PAttrKey extends XMLAttrKey = XMLAttrKey
->(filePath: string): Promise<void> {
+>(
+    filePath: string,
+    handlers: ParamXMLParserHandlerObj<PTagName, PAttrKey> = {}
+): Promise<void> {
+    const p_getTagAttrsFromStripped = getTagAttrsFromStripped<PTagName, PAttrKey>;
     // Types
     type PTagProps = ParamXMLTagProps<PTagName, PAttrKey>;
     type PAttrObj = ParamXMLAttrObj<PAttrKey>;
-
-    // Helper functions
-    // Take a stripped start tag (A for <A> or <A/ >) and get its attrs
-    function getTagAttrsFromStripped(stripped: string): [PTagName, PAttrObj | undefined] {
-        let tagType = stripped;
-        const tagAttrs: PAttrObj = {};
-        let hasAttrs = false;
-        if (stripped.includes('=')) {
-            const parts = stripped.split(' ');
-            // has props, need to unpack them
-            tagType = parts[0];
-            for (let i = 1; i < parts.length; i++) {
-                const attrSrc = parts[i];
-                const kv = attrSrc.split("=");
-                const attrKey = kv[0];
-                const attrVal = kv[1].slice(1, -1);
-
-                // @ts-ignore
-                tagAttrs[attrKey] = attrVal;
-                hasAttrs = true;
-            }
-        }
-        const attrs = hasAttrs ? tagAttrs : undefined;
-        return [tagType as PTagName, attrs];
-    }
+    type PElement = ParamXMLElement<PTagName, PAttrKey>;
 
     // Create filestream
     const fileStream = fs.createReadStream(filePath);
@@ -101,15 +156,15 @@ export async function parseXML<
     });
 
     // Allocate buffers: token, string, element
-    type POpenToken = PTagProps | '<' | '<!DOCTYPE';
-    type PCloseToken = { tagName: PTagName } | '>' | ']>';
+    type POpenToken = PTagProps | '<' | '<!DOCTYPE' | '<!--' | '<?';
+    type PCloseToken = { tagName: PTagName } | '>' | ']>' | '-->' | '?>';
 
     const prevTokens: POpenToken[] = [];
 
     const strBuffer = new Array(k_BUF_MAX_SIZE).fill('\0');
     let strBufferLength: number = 0;
 
-    let currElement: XMLElement | undefined = undefined;
+    const currElementMap: Partial<Record<PTagName, PElement | undefined>> = {};
 
     // Token and buffer handlers
     const getPrevToken = (): POpenToken | undefined =>
@@ -117,44 +172,75 @@ export async function parseXML<
     const isMatchedPair = (t1: POpenToken, t2: PCloseToken): boolean => {
         if (t1 == '<' && t2 == '>') return true;
         if (t1 == '<!DOCTYPE' && t2 == ']>') return true;
+        if (t1 == '<!--' && t2 == '-->') return true;
+        if (t1 == '<?' && t2 == '?>') return true;
         if (typeof t1 != 'object' || typeof t2 != 'object') return false;
         if (t1.tagName == t2.tagName) return true;
         return false;
     }
 
-    const tryPopToken = (match?: PCloseToken): boolean => {
+    const tryPopToken = (endToken: PCloseToken): boolean => {
         const prevToken = prevTokens.pop();
         if (!prevToken) {
-            console.error('Prev token is undefined');
-            return false;
+            throw 'Prev token is undefined';
         }
-        if (match && !isMatchedPair(prevToken, match)) {
-            console.error('Could not match tokens', prevToken, match);
-            return false;
+        if (!isMatchedPair(prevToken, endToken)) {
+            throw 'Could not match tokens' + prevToken.toString() + ',' + endToken.toString();
         }
-        console.log('popped token', match);
+        if (typeof endToken == 'object') {
+            if (currElementMap[endToken.tagName] == undefined) throw "Map entry null";
+            const el = currElementMap[endToken.tagName];
+            currElementMap[endToken.tagName] = undefined;
+        }
         return true;
     }
     const pushToken = (token: POpenToken): void => {
-        console.log("Pushed token", token);
         prevTokens.push(token)
+        if (typeof token == 'object') {
+            if (currElementMap[token.tagName] != undefined) throw "Map entry non-null";
+            currElementMap[token.tagName] = { ...token };
+        }
     };
+    const replaceTopToken = (token: POpenToken): void => {
+        prevTokens[prevTokens.length - 1] = token;
+    }
 
     const bufferCharacter = (nextChar: string) => {
         strBuffer[strBufferLength++] = nextChar;
     }
 
-    const flushCharBuffer = (): string => {
+    // Keep a rolling buffer up until the given length. Used for look-behind on ]> and -->
+    const bufferCharMaxLen = (nextChar: string, maxLen: number) => {
+        bufferCharacter(nextChar);
+        if (strBufferLength > maxLen) {
+            for (let i = 0; i < maxLen; i++) {
+                strBuffer[i] = strBuffer[i + 1];
+            }
+            strBuffer[maxLen] = '\0';
+            strBufferLength--;
+        }
+    }
+
+    const flushCharBuffer = (reset: boolean = true): string => {
         const slice: string[] = strBuffer.slice(0, strBufferLength);
         const res = slice.join('');
 
-        strBuffer.fill('\0', 0, strBufferLength);
-        strBufferLength = 0;
+        if (reset) {
+            strBuffer.fill('\0', 0, strBufferLength);
+            strBufferLength = 0;
+        }
 
         return res;
     }
 
-    const handleTag = (withoutBrackets: string) => {
+    const pushSelfClosingTag = (tagProps: PTagProps) => {
+        // const el: PElement = {
+        //     ...tagProps,
+        // }
+        // return el;
+    }
+
+    const handleTag = (withoutBrackets: string): boolean => {
         let stripped = withoutBrackets;
         const hasFrontSlash: boolean = stripped.at(0) == '/';
         if (hasFrontSlash) {
@@ -167,10 +253,11 @@ export async function parseXML<
 
         const prevToken = getPrevToken();
         if (typeof prevToken == 'string') {
-            throw "Invalid token";
+            console.error("Invalid token");
+            return false;
         }
 
-        const [tagName, tagAttrs] = getTagAttrsFromStripped(stripped);
+        const [tagName, attributes] = p_getTagAttrsFromStripped(stripped);
         const isEndTag: boolean = hasFrontSlash && (prevToken?.tagName == tagName);
 
         // End tag
@@ -179,40 +266,93 @@ export async function parseXML<
         }
         // Self-closing tag
         else if (hasBackSlash) {
-
+            pushSelfClosingTag({ tagName, attributes });
         }
         // Start tag
         else if (!hasFrontSlash && !hasBackSlash) {
-            pushToken({ tagName, attributes: tagAttrs });
+            pushToken({ tagName, attributes });
         }
         else {
-            throw "handleTag error: Something weird happened";
+            console.error("handleTag error: Something weird happened")
+            return false;
         }
+
+        return true;
     }
 
     // File parsing logic
-    stream.on('data', (chunk) => {
-        try {
+    try {
+        stream.on('data', (chunk) => {
             for (const char of chunk as string) {
                 const prevToken = getPrevToken();
-                if (prevToken == '<') {
+                if (prevToken == '<!--') {
                     if (char == '>') {
-                        const tagContents = flushCharBuffer();
-                        if (!tryPopToken('>')) throw new Error();
-                        handleTag(tagContents);
+                        let contents = flushCharBuffer(false);
+                        if (contents.length >= 2 && contents.slice(-2) == '--') {
+                            if (!tryPopToken('-->')) throw 'Pop token failed'; 
+                            flushCharBuffer();
+                            continue;
+                        }
+                    }
+                    else {
+                        bufferCharMaxLen(char, '--'.length);
+                        // bufferCharacter(char)
+                        continue;
+                    }
+                }
+                else if (prevToken == '<!DOCTYPE') {
+
+                }
+                else if (prevToken == '<?') {
+                    if (char == '>') {
+                        let contents = flushCharBuffer();
+                        if (contents.slice(-1) != '?') throw "Invalid <?xml ?> declaration format";
+                        contents = contents.slice(0, -1);
+                        const [_, attrs] = getTagAttrsFromStripped(contents);
+                        console.log(attrs);
+                        if (!tryPopToken('?>')) throw 'Pop token failed';
+                        continue;
                     }
                     else {
                         bufferCharacter(char);
+                        continue;
                     }
+                }
+                else if (prevToken == '<') {
+                    if (char == '>') {
+                        const tagContents = flushCharBuffer();
+                        if (!tryPopToken('>')) throw new Error();
+                        if (!handleTag(tagContents)) throw new Error();
+                        continue;
+                    }
+                    else if (char == '?') {
+                        replaceTopToken('<?');
+                        continue;
+                    }
+                    bufferCharacter(char);
+                    const bufferContent = flushCharBuffer(false);
+                    console.log("Buffer:", bufferContent);
+                    if (bufferContent == '!--') {
+                        console.log("Replacing top token");
+                        replaceTopToken('<!--');
+                        flushCharBuffer();
+                        continue;
+                    }
+                    else if (bufferContent == '!DOCTYPE') {
+                        replaceTopToken('<!DOCTYPE')
+                        continue;
+                    }
+
                 }
                 else {
                     if (char == '<') {
                         pushToken('<');
+                        continue;
                     }
                 }
             }
-        } catch (err) {
-            console.error(err);
-        }
-    });
+        });
+    } catch (err) {
+        console.error(err);
+    }
 }
