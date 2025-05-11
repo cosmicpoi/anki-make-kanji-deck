@@ -331,7 +331,7 @@ export class Jmdict {
     };
 
     public forEachWord(handler: (word: string) => void) {
-        for (const tup of this.m_kEleToSeq) {
+        for (const tup of this.m_wordToSeq) {
             const [key] = tup;
             handler(key);
         }
@@ -351,14 +351,12 @@ export class Jmdict {
         this.m_entries.set(entry.ent_seq, entry);
 
         entry.k_ele.forEach(({ keb }) => {
-            if (this.m_kEleToSeq.has(keb)) {
-                // console.error("Entry alrady exists", keb);
-                return;
-            }
-            this.m_kEleToSeq.set(keb, entry.ent_seq);
+            // this.m_kEleToSeq.set(keb, entry.ent_seq);
+            this.m_wordToSeq.set(keb, entry.ent_seq);
         })
         entry.r_ele.forEach(({reb}) => {
-            this.m_rEleToSeq.set(reb, entry.ent_seq);
+            // this.m_rEleToSeq.set(reb, entry.ent_seq);
+            this.m_wordToSeq.set(reb, entry.ent_seq);
         })
 
     }
@@ -367,6 +365,8 @@ export class Jmdict {
     private m_kEleToSeq: Map<string, number> = new Map();
     // Index of r_ele to ent seq
     private m_rEleToSeq: Map<string, number> = new Map();
+    // Index of word to ent seq
+    private m_wordToSeq: Map<string, number> = new Map();
     // Dictionary entries indexed by entry seq
     private m_entries: Map<number, JmdictEntry> = new Map();
 }
