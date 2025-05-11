@@ -18,9 +18,14 @@ To run script:
 yarn execute -o myfile.txt
 ```
 
-To generate character lists:
+To generate all-character lists:
 ```
 yarn run generate -c lists/Chinese_All.txt -j lists/Japanese_All.txt
+```
+
+To generated unnested word lists:
+```
+yarn ts-node generate_unnested_words.ts -i lists/words_raw_nested -o lists/words
 ```
 
 To clean build folder:
@@ -31,7 +36,7 @@ yarn clean
 ## Sources
 * HSK 1-6 character lists provided by [huamake.com](https://huamake.com/1to6Lists.htm) and 7-9 by [elkmovie/hsk30](https://github.com/elkmovie/hsk30/blob/main/charlist.txt)
 * JLPT character lists provided by [kanshudo](https://www.kanshudo.com/collections/jlpt_kanji)
-* JLPT word lists provided by [stephenmk/yomitan-jlpt-vocab](https://github.com/stephenmk/yomitan-jlpt-vocab/tree/main)
+* JLPT word lists provided by [stephenmk/yomitan-jlpt-vocab](https://github.com/stephenmk/yomitan-jlpt-vocab/tree/main) and this [anki deck](https://ankiweb.net/shared/info/1550984460)
 * [kanjidic2](https://www.edrdg.org/kanjidic/kanjd2index_legacy.html)
   * to confirm if a glyph is Japanese or Chinese, something not offered by the unicode API (which provides readings to both types of glyphs)
 * [MBDG CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cedict)
