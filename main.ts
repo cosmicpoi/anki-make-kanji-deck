@@ -42,7 +42,7 @@ k_SOURCE_FILE_LIST.forEach((file: FileListEntry): void => {
     const content = fs.readFileSync(file.path, 'utf-8');
     // trim whitespace
     const stripped_content = content.replace(/\s+/g, "");
-    let characters: string[] = stripped_content.split('');
+    let characters: string[] = stripped_content.split('').filter(c => c.length == 1);
     // iterate through characters and emplace tags
     characters.forEach((mychar: string): void => {
         kanji.emplace_character(mychar, file.type);

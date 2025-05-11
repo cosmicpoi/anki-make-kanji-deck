@@ -3,6 +3,18 @@ import { CharacterType, FileListEntry } from "./types";
 
 export let k_SOURCE_FILE_LIST: FileListEntry[] =
     [
+        // All-Character lists
+        // {
+        //     path: k_CHARACTER_LIST_PATH + '/' + 'Chinese_All.txt',
+        //     type: CharacterType.SimplifiedChinese,
+        // },
+
+        // {
+        //     path: k_CHARACTER_LIST_PATH + '/' + 'Japanese_All.txt',
+        //     type: CharacterType.Japanese,
+        // },
+
+        
         // HSK entries
         {
             path: k_CHARACTER_LIST_PATH + '/' + 'HSK__1.txt',
