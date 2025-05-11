@@ -20,6 +20,7 @@
   },
   "scripts": {
     "execute": "yarn ts-node main.ts",
+    "generate": "yarn ts-node generate-word-list.ts",
     "clean": "rm -rf node_modules"
   },
   "devDependencies": {

@@ -18,6 +18,11 @@ To run script:
 yarn execute -o myfile.txt
 ```
 
+To generate character lists:
+```
+yarn run generate -c lists/Chinese_All.txt -j lists/Japanese_All.txt
+```
+
 To clean build folder:
 ```
 yarn clean
@@ -48,8 +53,9 @@ Trad/Simplified chinese conversion is done using CEDICT. For Chinese-Japanese we
 
 
 ## TODO:
-* Derive english meanings using jmdict/unihan
-* Integrate multiple dictionary sources for better data (JMDict, Kanjidic)
+* Stroke order
+* CN/Kun/ON vocab lookup
+* Sentence example generation
 
 
 ## Brainstorm

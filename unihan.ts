@@ -175,13 +175,13 @@ export class Unihan {
                 this.kJapanese.emplace_readings(character, reading);
             }
             else if (action == k_UNIHAN_ACTIONS.kJapaneseKun) {
-                this.kJapaneseKun.emplace_readings(character, reading);
+                this.emplace_readings(this.kJapaneseKun, character, reading);
             }
             else if (action == k_UNIHAN_ACTIONS.kJapaneseOn) {
-                this.kJapaneseOn.emplace_readings(character, reading);
+                this.emplace_readings(this.kJapaneseOn, character, reading);
             }
             else if (action == k_UNIHAN_ACTIONS.kDefinition) {
-                this.kDefinition.emplace_reading(character, reading_line);
+                this.emplace_reading(this.kDefinition, character, reading_line);
             }
             else if (action == k_UNIHAN_ACTIONS.kSemanticVariant) {
                 this.emplace_links(this.kSemanticVariant, character, reading);
@@ -226,6 +226,10 @@ export class Unihan {
     }
 
     // Getters
+    public isCharacter(mychar: string): boolean {
+        return this.cachedAllChars.has(mychar);
+    }
+
     public hasLink(lhs: string, rhs: string): boolean {
         return this.unifiedLinks.has_link(lhs, rhs);
         // const linkMaps: LinkMap[] = [
@@ -267,7 +271,31 @@ export class Unihan {
         return combine_without_duplicates(semantic, specialized);
     }
 
+    // Cached map emplace
+
+    private emplace_links(lm: LinkMap, lhs: string, rhs: string[]) {
+        rhs.forEach((item) => this.emplace_link(lm, lhs, item));
+    }
+    // Helper to build up unified link map while building other maps
+    private emplace_link(lm: LinkMap, lhs: string, rhs: string) {
+        this.unifiedLinks.emplace_bilink(lhs, rhs);
+        lm.emplace_link(lhs, rhs);
+    }
+
+    private emplace_readings(rm: ReadingMap, lhs: string, rhs: string[]) {
+        this.cachedAllChars.add(lhs);
+        rm.emplace_readings(lhs, rhs);
+    }
+
+    private emplace_reading(rm: ReadingMap, lhs: string, rhs: string) {
+        this.cachedAllChars.add(lhs);
+        rm.emplace_reading(lhs, rhs);
+    }
+
     // As a rule, these are indexed by character ('中') rather than code point (U+XXXX)
+
+    // Set of all characters (so we can check if something is a valid hanzi from any language)
+    private cachedAllChars: Set<string> = new Set();
 
     // Readings
     private kMandarin: ReadingMap = new ReadingMap();
@@ -287,13 +315,4 @@ export class Unihan {
 
     // Unified link map
     private unifiedLinks: LinkMap = new LinkMap();
-
-    private emplace_links(lm: LinkMap, lhs: string, rhs: string[]) {
-        rhs.forEach((item) => this.emplace_link(lm, lhs, item));
-    }
-    // Helper to build up unified link map while building other maps
-    private emplace_link(lm: LinkMap, lhs: string, rhs: string) {
-        this.unifiedLinks.emplace_bilink(lhs, rhs);
-        lm.emplace_link(lhs, rhs);
-    }
 }

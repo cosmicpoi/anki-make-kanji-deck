@@ -72,6 +72,10 @@ export class Cedict {
         return this.m_entries.get(tradChar);
     }
 
+    public getKeys(): string[] {
+        return [...this.m_simpToTrad.keys()];
+    }
+
     public getPinyin(mychar: string): string[] | undefined {
         const entry = this.getEntry(mychar);
         if (!entry) return undefined;

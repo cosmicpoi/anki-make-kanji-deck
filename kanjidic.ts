@@ -93,6 +93,10 @@ export class Kanjidic {
         });
     }
 
+    public getChars(): string[] {
+        return [...this.m_entries.keys()];
+    }
+
     public isKanji(mychar: string): boolean {
         return this.m_entries.has(mychar);
     }
