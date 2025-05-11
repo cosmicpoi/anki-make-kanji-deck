@@ -6,19 +6,9 @@ import { KanjiMap } from './KanjiMap';
 import { k_SOURCE_FILE_LIST } from './file_list';
 import minimist from 'minimist';
 import { Cedict } from './cedict';
-import { k_CEDICT_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_tag_CHINESE_ONLY, k_tag_JAPANESE_ONLY } from './consts';
+import { k_CEDICT_FILE_PATH, k_JMDICT_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_tag_CHINESE_ONLY, k_tag_JAPANESE_ONLY } from './consts';
 import * as OpenCC from 'opencc-js';
-
-
-
-//------------------------------------------------------------------------------
-// Helper function
-//------------------------------------------------------------------------------
-
-
-//------------------------------------------------------------------------------
-// Script
-//------------------------------------------------------------------------------
+import { Jmdict } from './jmdict';
 
 const args = minimist(process.argv.slice(2));
 
@@ -29,6 +19,7 @@ let kanji: KanjiMap = new KanjiMap();
 const unihan = new Unihan();
 const kanjidic = new Kanjidic();
 const cedict = new Cedict(k_CEDICT_FILE_PATH);
+const jmdict = new Jmdict(k_JMDICT_FILE_PATH);
 const converter_t2s = OpenCC.Converter({ from: 'hk', to: 'cn' });
 const converter_s2t = OpenCC.Converter({ from: 'cn', to: 'hk' });
 

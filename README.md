@@ -29,8 +29,9 @@ yarn clean
 ```
 
 ## Sources
-* HSK 1-6 word lists provided by [huamake.com](https://huamake.com/1to6Lists.htm) and 7-9 by [elkmovie/hsk30](https://github.com/elkmovie/hsk30/blob/main/charlist.txt)
-* JLPT lists provided by [kanshudo](https://www.kanshudo.com/collections/jlpt_kanji)
+* HSK 1-6 character lists provided by [huamake.com](https://huamake.com/1to6Lists.htm) and 7-9 by [elkmovie/hsk30](https://github.com/elkmovie/hsk30/blob/main/charlist.txt)
+* JLPT character lists provided by [kanshudo](https://www.kanshudo.com/collections/jlpt_kanji)
+* JLPT word lists provided by [stephenmk/yomitan-jlpt-vocab](https://github.com/stephenmk/yomitan-jlpt-vocab/tree/main)
 * [kanjidic2](https://www.edrdg.org/kanjidic/kanjd2index_legacy.html)
   * to confirm if a glyph is Japanese or Chinese, something not offered by the unicode API (which provides readings to both types of glyphs)
 * [MBDG CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cedict)
