@@ -80,7 +80,8 @@ export type KanjiCard = {
     englishMeaning: FuzzyArray;
 
     // example sentences
-    japaneseVocab: FuzzyArray;
+    japaneseKunVocab: FuzzyArray;
+    japaneseOnVocab: FuzzyArray;
     simpChineseVocab: FuzzyArray;
     tradChineseVocab: FuzzyArray;
 
@@ -112,7 +113,8 @@ export const get_default_kanji_card = (): KanjiCard => ({
     // meaning
     englishMeaning: defaultFuzzyArray(),
 
-    japaneseVocab: defaultFuzzyArray(),
+    japaneseKunVocab: defaultFuzzyArray(),
+    japaneseOnVocab: defaultFuzzyArray(),
     simpChineseVocab: defaultFuzzyArray(),
     tradChineseVocab: defaultFuzzyArray(),
 
@@ -140,7 +142,7 @@ export function concatKanjiCards(c1: KanjiCard, c2: KanjiCard): KanjiCard {
 }
 
 export const logCard = (prefix: string, card: KanjiCard) =>
-    console.log(prefix, card.simpChineseChar, card.tradChineseChar, card.japaneseChar, card.pinyin, card.kunyomi, card.onyomi);
+    console.log(prefix, card.japaneseChar, card.simpChineseChar, card.tradChineseChar, card.pinyin, card.kunyomi, card.onyomi);
 
 export const card_is_character = (card: KanjiCard, mychar: string): boolean =>
     card.japaneseChar.v.includes(mychar) || card.simpChineseChar.v.includes(mychar) || card.tradChineseChar.v.includes(mychar);

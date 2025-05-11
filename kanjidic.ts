@@ -80,6 +80,7 @@ export class Kanjidic {
                             }
                         }
                         else if (name == 'meaning') {
+                            if (m_lang) return;
                             if (text) meaning.push(text);
                         }
                     });
@@ -94,6 +95,10 @@ export class Kanjidic {
 
     public isKanji(mychar: string): boolean {
         return this.m_entries.has(mychar);
+    }
+
+    public getEntry(mychar: string): KanjidicEntry | undefined {
+        return this.m_entries.get(mychar);
     }
 
     private m_entries: Map<string, KanjidicEntry> = new Map();

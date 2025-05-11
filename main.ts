@@ -6,7 +6,7 @@ import { KanjiMap } from './KanjiMap';
 import { k_SOURCE_FILE_LIST } from './file_list';
 import minimist from 'minimist';
 import { Cedict } from './cedict';
-import { k_CEDICT_FILE_PATH } from './consts';
+import { k_CEDICT_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_tag_CHINESE_ONLY, k_tag_JAPANESE_ONLY } from './consts';
 import * as OpenCC from 'opencc-js';
 
 
@@ -229,29 +229,72 @@ kanji.getCards().forEach(card => populateTradFromSimp(card));
 // Validate results
 // - At least one of the three char types is defined
 // - If something is missing, it should either be japanese only or both simp and trad chinese.
+// - If jp char exists, on/kun exists
+// - If cn char exists, pinyin exists
+
+const onlyJp: KanjiCard[] = [];
+const onlyCn: KanjiCard[] = [];
 kanji.getCards().forEach(card => {
+    // represents if the given char exists
     const jp_e: boolean = !fuzzy_empty(card.japaneseChar);
     const sp_e: boolean = !fuzzy_empty(card.simpChineseChar);
     const td_e: boolean = !fuzzy_empty(card.tradChineseChar);
 
-    const mode1: boolean = jp_e && sp_e && td_e;
-    const mode2: boolean = jp_e && !sp_e && !td_e;
-    const mode3: boolean = !jp_e && sp_e && td_e;
+    const mode_all: boolean = jp_e && sp_e && td_e;
+    const mode_jpOnly: boolean = jp_e && !sp_e && !td_e;
+    const mode_cnOnly: boolean = !jp_e && sp_e && td_e;
 
-    if (!mode1 && !mode2 && !mode3) {
+    if (!mode_all && !mode_jpOnly && !mode_cnOnly) {
         console.error("Guess mode invalid");
         logCard("", card);
         return;
     }
+
+    if (mode_cnOnly) {
+        onlyCn.push(card);
+        card.tags.v.push(k_tag_CHINESE_ONLY);
+
+        if (fuzzy_empty(card.pinyin)) {
+            console.error("Pinyin missing");
+            logCard("", card);
+        }
+    }
+
+    if (mode_jpOnly) {
+        onlyJp.push(card);
+        card.tags.v.push(k_tag_JAPANESE_ONLY);
+
+        if (combine_without_duplicates(card.kunyomi.v, card.onyomi.v).length == 0) {
+            console.error("Japanese readings missing");
+            logCard("", card);
+        }
+    }
 });
+
+console.log("The following characters only have Japanese entries:");
+console.log(onlyJp.map(card => card.japaneseChar.v.join('/')));
+console.log("The following characters only have Chinese entries:");
+console.log(onlyCn.map(card => combine_without_duplicates(card.simpChineseChar.v, card.tradChineseChar.v))
+    .map(chars => chars.join('/')));
 
 // Populate english definitions
 kanji.getCards().forEach(card => {
     const allChars = combine_without_duplicates(card.simpChineseChar.v, card.tradChineseChar.v, card.japaneseChar.v);
     const charKey = allChars[0];
-    const unihanDefs = unihan.getEnglishDefinition(charKey);
-    // const kanjidicDefs = kanjidic.
-    card.englishMeaning.v = [];
+    const unihanDefs: string[] = unihan.getEnglishDefinition(charKey);
+    const kanjidicDefs: string[] = kanjidic.getEntry(charKey)?.meaning || [];
+    const cedictDefs: string[] = cedict.getDefinitions(charKey) || [];
+
+    // prefer unihan => kanjidict => cedict in this order
+    if (unihanDefs.length != 0) {
+        card.englishMeaning.v = [...unihanDefs];
+    }
+    else if (kanjidicDefs.length != 0) {
+        card.englishMeaning.v = [...kanjidicDefs];
+    }
+    else if (cedictDefs.length != 0) {
+        card.englishMeaning.v = [...cedictDefs];
+    }
 });
 
 // Export results
@@ -261,26 +304,75 @@ if (args['o']) {
         flags: 'w', // 'a' to append
         encoding: 'utf8'
     });
-    // Simulate writing many lines
-    kanji.getChars().forEach(char => {
-        const card = kanji.at(char);
 
+    // No need to specify tags, it always goes at the end
+    const jp_cn_field_order: [keyof KanjiCard, string][] = [
+        ['japaneseChar', ','],
+        ['simpChineseChar', ','],
+        ['tradChineseChar', ','],
+        ['pinyin', ','],
+        ['kunyomi', ','],
+        ['onyomi', ','],
+        ['englishMeaning', ','],
+    ];
+
+    const jp_field_order: [keyof KanjiCard, string][] = [
+        ['japaneseChar', ','],
+        ['kunyomi', ','],
+        ['onyomi', ','],
+        ['englishMeaning', ','],
+        ['japaneseKunVocab', ','],
+        ['japaneseOnVocab', ','],
+    ];
+
+    const cn_field_order: [keyof KanjiCard, string][] = [
+        ['simpChineseChar', ','],
+        ['tradChineseChar', ','],
+        ['pinyin', ','],
+        ['englishMeaning', ','],
+    ];
+
+    const col_count = jp_cn_field_order.length + 2;
+    writeStream.write("#separator:tab\n");
+    writeStream.write("#html:true\n");
+    writeStream.write("#notetype column:1\n");
+    writeStream.write(`#tags column:${col_count}\n`);
+
+    // let keys: string[] = [];
+    // const jjp = kanji.getCards().filter(c => c.tags.v.includes(k_tag_JAPANESE_ONLY));
+    // const ccn = kanji.getCards().filter(c => c.tags.v.includes(k_tag_CHINESE_ONLY));
+    // keys = [jjp[0].japaneseChar.v[0], ccn[0].simpChineseChar.v[0], '中'];
+    // console.log(keys);
+
+    const keys = kanji.getChars();
+    keys.sort();
+    const to_export = keys.map(c => kanji.at(c));
+    to_export.forEach(card => {
         // tuple of key, delimiter
-        const field_order: [keyof KanjiCard, string][] = [
-            ['japaneseChar', ','],
-            ['simpChineseChar', ','],
-            ['tradChineseChar', ','],
-            ['pinyin', ','],
-            ['kunyomi', ','],
-            ['onyomi', ','],
-            ['englishMeaning', ','],
-            ['tags', ' '],
-        ];
+        let field_order: [keyof KanjiCard, string][] = jp_cn_field_order;
+        let note_type = k_note_CN_JP;
+        if (card.tags.v.includes(k_tag_CHINESE_ONLY)) {
+            field_order = cn_field_order;
+            note_type = k_note_CHINESE_ONLY;
+        }
+        else if (card.tags.v.includes(k_tag_JAPANESE_ONLY)) {
+            field_order = jp_field_order;
+            note_type = k_note_JAPANESE_ONLY;
+        }
 
-        let fields: string[] = [];
-        for (const tup of field_order) {
-            const [key, delim] = tup;
-            fields.push(fuzzy_join(card[key], delim));
+        let fields: string[] = Array(col_count).fill('');
+        
+        for (let i = 0; i < col_count; i++) {
+            if (i == 0) {
+               fields[i] = note_type;
+            }
+            else if (i <= field_order.length) {
+                const [key, delim] = field_order[i - 1];
+                fields[i] = fuzzy_join(card[key], delim);
+            }
+            else if (i == col_count - 1) {
+                fields[i] = (fuzzy_join(card.tags, ' '));
+            }
         }
 
         const ok = writeStream.write(fields.join('\t') + '\n');

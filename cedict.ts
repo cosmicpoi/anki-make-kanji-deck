@@ -1,15 +1,15 @@
 import * as fs from 'fs'
 import autoBind from "auto-bind";
 
-type KanjidicReading = {
+type CedictReading = {
     pinyin: string;
     definition: string;
 };
 
-type KanjidicEntry = {
+type CedictEntry = {
     simplified: string;
     traditional: string;
-    reading: KanjidicReading[];
+    reading: CedictReading[];
 };
 
 export class Cedict {
@@ -35,7 +35,7 @@ export class Cedict {
         });
     }
 
-    private m_emplaceEntry(traditional: string, simplified: string, reading: KanjidicReading): void {
+    private m_emplaceEntry(traditional: string, simplified: string, reading: CedictReading): void {
         if (!this.m_simpToTrad.has(simplified)) {
             this.m_simpToTrad.set(simplified, traditional);
         }
@@ -62,8 +62,30 @@ export class Cedict {
         return this.m_entries.has(mychar)
     }
 
+    public getEntry(mychar: string): CedictEntry | undefined {
+        let res = this.m_entries.get(mychar);
+
+        if (res) return res;
+
+        const tradChar = this.m_simpToTrad.get(mychar);
+        if (!tradChar) return undefined;
+        return this.m_entries.get(tradChar);
+    }
+
+    public getPinyin(mychar: string): string[] | undefined {
+        const entry = this.getEntry(mychar);
+        if (!entry) return undefined;
+        return entry.reading.map(r => r.pinyin);
+    }
+
+    public getDefinitions(mychar: string): string[] | undefined {
+        const entry = this.getEntry(mychar);
+        if (!entry) return undefined;
+        return entry.reading.map(r => r.definition);
+    }
+
     // Map simplified to traditional
     private m_simpToTrad: Map<string, string> = new Map();
     // Dictionary entries indexed by traditional chinese
-    private m_entries: Map<string, KanjidicEntry> = new Map();
+    private m_entries: Map<string, CedictEntry> = new Map();
 }
