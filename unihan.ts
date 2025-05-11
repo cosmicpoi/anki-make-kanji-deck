@@ -165,23 +165,34 @@ export class Unihan {
             if (parts.length == 0) return;
             const character: string = unicodeToChar(parts[0]);
             const action: string = parts[1]
+            const reading_line = parts[2];
             const reading: string[] = parts[2].split(/\s/g);
 
             if (action == k_UNIHAN_ACTIONS.kMandarin) {
                 this.kMandarin.emplace_readings(character, reading);
-            } else if (action == k_UNIHAN_ACTIONS.kJapanese) {
+            }
+            else if (action == k_UNIHAN_ACTIONS.kJapanese) {
                 this.kJapanese.emplace_readings(character, reading);
-            } else if (action == k_UNIHAN_ACTIONS.kJapaneseKun) {
+            }
+            else if (action == k_UNIHAN_ACTIONS.kJapaneseKun) {
                 this.kJapaneseKun.emplace_readings(character, reading);
-            } else if (action == k_UNIHAN_ACTIONS.kJapaneseOn) {
+            }
+            else if (action == k_UNIHAN_ACTIONS.kJapaneseOn) {
                 this.kJapaneseOn.emplace_readings(character, reading);
-            } else if (action == k_UNIHAN_ACTIONS.kSemanticVariant) {
+            }
+            else if (action == k_UNIHAN_ACTIONS.kDefinition) {
+                this.kDefinition.emplace_reading(character, reading_line);
+            }
+            else if (action == k_UNIHAN_ACTIONS.kSemanticVariant) {
                 this.emplace_links(this.kSemanticVariant, character, reading);
-            } else if (action == k_UNIHAN_ACTIONS.kSpecializedSemanticVariant) {
+            }
+            else if (action == k_UNIHAN_ACTIONS.kSpecializedSemanticVariant) {
                 this.emplace_links(this.kSpecializedSemanticVariant, character, reading);
-            } else if (action == k_UNIHAN_ACTIONS.kSimplifiedVariant) {
+            }
+            else if (action == k_UNIHAN_ACTIONS.kSimplifiedVariant) {
                 this.emplace_links(this.kSimplifiedVariant, character, reading);
-            } else if (action == k_UNIHAN_ACTIONS.kTraditionalVariant) {
+            }
+            else if (action == k_UNIHAN_ACTIONS.kTraditionalVariant) {
                 this.emplace_links(this.kTraditionalVariant, character, reading);
             }
         });
@@ -242,6 +253,10 @@ export class Unihan {
         return this.kSimplifiedVariant.getLinks(mychar);
     }
 
+    public getEnglishDefinition(mychar: string): string[] {
+        return this.kDefinition.get(mychar);
+    }
+
     public getTradChineseVariants(mychar: string): string[] {
         return this.kTraditionalVariant.getLinks(mychar);
     }
@@ -259,6 +274,7 @@ export class Unihan {
     private kJapanese: ReadingMap = new ReadingMap();
     private kJapaneseKun: ReadingMap = new ReadingMap();
     private kJapaneseOn: ReadingMap = new ReadingMap();
+    private kDefinition: ReadingMap = new ReadingMap();
 
     private cachedJapaneseKun: ReadingMap = new ReadingMap();
     private cachedJapaneseOn: ReadingMap = new ReadingMap();

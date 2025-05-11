@@ -245,6 +245,15 @@ kanji.getCards().forEach(card => {
     }
 });
 
+// Populate english definitions
+kanji.getCards().forEach(card => {
+    const allChars = combine_without_duplicates(card.simpChineseChar.v, card.tradChineseChar.v, card.japaneseChar.v);
+    const charKey = allChars[0];
+    const unihanDefs = unihan.getEnglishDefinition(charKey);
+    // const kanjidicDefs = kanjidic.
+    card.englishMeaning.v = [];
+});
+
 // Export results
 if (args['o']) {
     console.log("Writing to file ", args['o']);
@@ -264,6 +273,7 @@ if (args['o']) {
             ['pinyin', ','],
             ['kunyomi', ','],
             ['onyomi', ','],
+            ['englishMeaning', ','],
             ['tags', ' '],
         ];
 

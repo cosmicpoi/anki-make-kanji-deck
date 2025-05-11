@@ -19,6 +19,7 @@ export const k_UNIHAN_ACTIONS = {
     kJapanese: "kJapanese",
     kJapaneseKun: "kJapaneseKun",
     kJapaneseOn: "kJapaneseOn",
+    kDefinition: "kDefinition",
     // variants
     kSemanticVariant: "kSemanticVariant",
     kSpecializedSemanticVariant: "kSpecializedSemanticVariant",

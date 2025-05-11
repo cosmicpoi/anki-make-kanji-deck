@@ -77,7 +77,7 @@ export type KanjiCard = {
     kunyomi: FuzzyArray;
 
     // meaning
-    engMeaning: FuzzyArray;
+    englishMeaning: FuzzyArray;
 
     // example sentences
     japaneseVocab: FuzzyArray;
@@ -110,7 +110,7 @@ export const get_default_kanji_card = (): KanjiCard => ({
     kunyomi: defaultFuzzyArray(),
 
     // meaning
-    engMeaning: defaultFuzzyArray(),
+    englishMeaning: defaultFuzzyArray(),
 
     japaneseVocab: defaultFuzzyArray(),
     simpChineseVocab: defaultFuzzyArray(),
