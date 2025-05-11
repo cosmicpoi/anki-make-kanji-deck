@@ -219,7 +219,6 @@ export class Jmdict {
             if (prevTag?.type == 'comment') {
                 const match_commentEnd = line.match(/-->\s*$/);
                 if (match_commentEnd) {
-                    console.log(line);
                     if (!tryPopTag('comment')) return;
                     continue;
                 }
@@ -235,11 +234,8 @@ export class Jmdict {
             }
 
             if (prevTag?.type == 'doctype') {
-                console.log("in doctype");
-                // console.log(line);
                 const match_doctypeEnd = line.match(/^\]>$/);
                 if (match_doctypeEnd) {
-                    console.log(line);
                     if (!tryPopTag('doctype')) return;
                     continue;
                 }
@@ -319,56 +315,58 @@ export class Jmdict {
 
                     continue;
                 }
-
-
-                // const match_jmdictEnd = line.match(/^<\/JMdict>$/);
-                // if (match_jmdictEnd) {
-                //     if (prevTag?.type == 'jmdict') {
-
-                //         continue;
-                //     }
-                // }
-            }
-
-            // Process the line here
-            // console.log(line);
-
-            return jmdict;
+            } 
         }
 
+        if (openingTags.length != 0) {
+            console.error("Tree parse error");
+            return undefined;
+        }
 
-        // const res = xml_convert.xml2js(content);
-        // console.log(res);
+        return jmdict;
     }
 
     public doThing(): void {
 
     };
 
+    public forEachWord(handler: (word: string) => void) {
+        for (const tup of this.m_kEleToSeq) {
+            const [key] = tup;
+            handler(key);
+        }
+    }
+
 
     private emplaceEntry(entry: JmdictEntry): void {
-        // console.log("Emplacing entry:", entry);
+        // if ( Math.random() < 0.001) console.log("Emplacing entry:", entry);
         if (entry.ent_seq == k_ENT_SEQ_INVALID) {
             console.error("invalid");
             return;
         }
         if (this.m_entries.has(entry.ent_seq)) {
-            console.error("Entry already exists");
+            console.error("Entry already exists", entry.ent_seq);
             return;
         }
         this.m_entries.set(entry.ent_seq, entry);
 
         entry.k_ele.forEach(({ keb }) => {
             if (this.m_kEleToSeq.has(keb)) {
-                console.error("Entry alrady exists");
+                // console.error("Entry alrady exists", keb);
                 return;
             }
             this.m_kEleToSeq.set(keb, entry.ent_seq);
         })
+        entry.r_ele.forEach(({reb}) => {
+            this.m_rEleToSeq.set(reb, entry.ent_seq);
+        })
+
     }
 
     // Index of k_ele to ent seq
     private m_kEleToSeq: Map<string, number> = new Map();
+    // Index of r_ele to ent seq
+    private m_rEleToSeq: Map<string, number> = new Map();
     // Dictionary entries indexed by entry seq
     private m_entries: Map<number, JmdictEntry> = new Map();
 }
