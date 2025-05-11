@@ -10,7 +10,8 @@ type XMLAttributeObj = Partial<{
     [k in XMLAttrKey]: string;
 }>;
 
-type XMLTagType = 'declaration' | 'comment' | 'doctype' | 'r_ele' | 'sense' | 'entry';
+type XMLTagType = 'declaration' | 'comment' | 'doctype'
+    | 'r_ele' | 'k_ele' | 'sense' | 'entry' | 'ent_seq' | 'keb' | 'reb' | 'pos' | 'gloss';
 
 type DoctypeEntryType = 'ENTITY' | 'ELEMENT' | 'ATTLIST';
 
@@ -46,15 +47,54 @@ type XMLEntity = {
 //     attributes?: XMLAttributeObj;
 // };
 
-type JmdictEntry = {
+// `entSeq` entry sequence - unique numeric id
+// `kanjiElement` - kanji rendering
+// `readingElement` - kana reading
+// `sense` - translations
 
+// The kanji element, or in its absence, the reading element, is
+//         the defining component of each entry.
+//         The overwhelming majority of entries will have a single kanji
+//         element associated with a word in Japanese. Where there are
+//         multiple kanji elements within an entry, they will be orthographical
+//         variants of the same word, either using variations in okurigana, or
+//         alternative and equivalent kanji.
+
+type JmdictSense = {
+    pos: string[]; // pos
+    xref: string[]; // cross-reference
+    gloss: string[];
 };
+type JmdictKele = {
+    keb: string;
+    ke_pri: string[];
+}
+type JmdictRele = {
+    reb: string;
+    re_pri: string[];
+}
+type JmdictEntry = {
+    ent_seq: number; // ent_seq
+    k_ele: JmdictKele[]; // k_ele
+    r_ele: JmdictRele[]; // r_ele
+    sense: JmdictSense[]; // sense
+};
+
+const k_ENT_SEQ_INVALID = -1;
+const make_default_entry = (): JmdictEntry => ({
+    ent_seq: k_ENT_SEQ_INVALID,
+    k_ele: [],
+    r_ele: [],
+    sense: [],
+});
 
 export class Jmdict {
     constructor() {
         autoBind(this);
     }
     static async create(filePath: string): Promise<Jmdict | undefined> {
+        const jmdict = new Jmdict();
+
         const fileStream = fs.createReadStream(filePath);
         // const fileStream = fs.createReadStream(filePath);
 
@@ -62,19 +102,6 @@ export class Jmdict {
             input: fileStream,
             crlfDelay: Infinity, // Recognize all instances of CR LF ('\r\n') as a single line break
         });
-
-        const openingTags: XMLProps[] = [];
-        const entities: XMLEntity[] = [];
-
-
-        const tryPopTag = (tagType: XMLTagType): boolean => {
-            const tag = openingTags.pop();
-            if (!(tag?.type == tagType)) {
-                console.error('Could not find a closing tag for ', tagType);
-                return false;
-            }
-            return true;
-        }
 
         // Take a stripped start tag (A for <A> or <A/>) and get its attrs
         const getTagAttrsFromStripped = (stripped: string): [XMLTagType, XMLAttributeObj | undefined] => {
@@ -100,6 +127,83 @@ export class Jmdict {
             return [tagType as XMLTagType, attrs];
         }
 
+
+        const openingTags: XMLProps[] = [];
+        const entities: XMLEntity[] = [];
+
+        const getPrevTag = (): XMLProps | undefined =>
+            openingTags.length != 0 ? openingTags[openingTags.length - 1] : undefined;
+
+        const tagInRoot = (tagType: XMLTagType): boolean =>
+            openingTags.map(t => t.type).includes(tagType);
+
+        let currentEntry: JmdictEntry | undefined = undefined;
+
+        const onPopTag = (tagType: XMLTagType) => {
+            if (!currentEntry) return;
+            if (tagType == 'entry') {
+                // console.log('Popping and emplacing entry');
+                jmdict.emplaceEntry(currentEntry);
+                currentEntry = undefined;
+            }
+        }
+
+        const onPushTag = (tagType: XMLTagType, tagAttrs: XMLAttributeObj | undefined) => {
+            if (tagType == 'entry') {
+                // console.log('Making new entry');
+                currentEntry = make_default_entry();
+            }
+        }
+
+        const pushTagWithValue = (tagType: XMLTagType, text: string, tagAttrs: XMLAttributeObj | undefined) => {
+            // console.log('Pushing tag with value ', tagType, text);
+            const prevTag = getPrevTag();
+            if (tagInRoot('entry')) {
+                if (!currentEntry) {
+                    console.error("Current entry invalid");
+                    return;
+                }
+
+                if (tagType == 'ent_seq') {
+                    currentEntry.ent_seq = parseInt(text);
+                }
+                else if (tagType == 'keb') {
+                    // console.log('Adding keb', text);
+                    if (prevTag?.type != 'k_ele') {
+                        console.error("Root invalid");
+                        return;
+                    }
+                    currentEntry.k_ele.push({ keb: text, ke_pri: [] });
+                }
+                else if (tagType == 'reb') {
+                    // console.log('Adding reb', text);
+                    if (prevTag?.type != 'r_ele') {
+                        console.error("Root invalid");
+                        return;
+                    }
+                    currentEntry.r_ele.push({ reb: text, re_pri: [] });
+                }
+            }
+        }
+
+        const tryPopTag = (tagType: XMLTagType): boolean => {
+            const tag = openingTags.pop();
+            if (!(tag?.type == tagType)) {
+                console.error('Could not find a closing tag for ', tagType);
+                return false;
+            }
+            // console.log("popped", tagType);
+            onPopTag(tagType);
+            return true;
+        }
+
+        const pushTag = (tagType: XMLTagType, tagAttrs: XMLAttributeObj | undefined) => {
+            openingTags.push(as_xml_props(tagType, tagAttrs));
+            onPushTag(tagType, tagAttrs);
+        }
+
+
+
         for await (const line of rl) {
             const isDeclaration = line.substring(0, 5) == '<?xml';
             if (isDeclaration) {
@@ -111,10 +215,11 @@ export class Jmdict {
                 continue;
             }
 
-            const prevTag = openingTags.length != 0 ? openingTags[openingTags.length - 1] : undefined;
+            const prevTag = getPrevTag();
             if (prevTag?.type == 'comment') {
                 const match_commentEnd = line.match(/-->\s*$/);
                 if (match_commentEnd) {
+                    console.log(line);
                     if (!tryPopTag('comment')) return;
                     continue;
                 }
@@ -122,9 +227,19 @@ export class Jmdict {
                     continue;
                 }
             }
-            else if (prevTag?.type == 'doctype') {
+
+            const match_commentStart = line.match(/^\s*<!--.*$/);
+            if (match_commentStart) {
+                openingTags.push({ source: '<!--', type: 'comment' });
+                continue;
+            }
+
+            if (prevTag?.type == 'doctype') {
+                console.log("in doctype");
+                // console.log(line);
                 const match_doctypeEnd = line.match(/^\]>$/);
                 if (match_doctypeEnd) {
+                    console.log(line);
                     if (!tryPopTag('doctype')) return;
                     continue;
                 }
@@ -141,12 +256,6 @@ export class Jmdict {
 
             }
             else {
-                const match_commentStart = line.match(/^\s*<!--.*$/);
-                if (match_commentStart) {
-                    openingTags.push({ source: '<!--', type: 'comment' });
-                    continue;
-                }
-
                 const match_doctypeStart = line.match(/^<!DOCTYPE JMdict \[$/);
                 if (match_doctypeStart) {
                     openingTags.push({ type: 'doctype' });
@@ -158,8 +267,11 @@ export class Jmdict {
                     if (match_tags.length == 2) {
                         const capture = line.match(/<(.+?)>(.+?)<\/.+>/);
                         if (capture) {
-                            // const tagType = capture[1];
-                            // const text = capture[2];
+                            const stripped = capture[1];
+                            const [tagType, tagAttrs] = getTagAttrsFromStripped(stripped);
+
+                            const text = capture[2];
+                            pushTagWithValue(tagType, text, tagAttrs);
                         }
                         continue;
                     }
@@ -167,7 +279,7 @@ export class Jmdict {
                         let stripped = match_tags[0].slice(1, -1);
 
                         const hasFrontSlash: boolean = stripped.at(0) == '/';
-                        if ( hasFrontSlash ) {
+                        if (hasFrontSlash) {
                             stripped = stripped.substring(1);
                         }
                         const hasBackSlash: boolean = stripped.at(-1) == '/';
@@ -189,11 +301,9 @@ export class Jmdict {
                             // console.log("one-line tag:", tagType, tagAttrs, line);
                         }
                         // start tag
-                        else if (!hasFrontSlash && !hasBackSlash){
-                            const stripped = match_tags[0].slice(1, -1);
-                            const [tagType, tagAttrs] = getTagAttrsFromStripped(stripped);
+                        else if (!hasFrontSlash && !hasBackSlash) {
                             // console.log("pushing tag: ", tagType, tagAttrs, line);
-                            openingTags.push(as_xml_props(tagType, tagAttrs))
+                            pushTag(tagType, tagAttrs);
 
                             continue;
                         }
@@ -222,13 +332,13 @@ export class Jmdict {
 
             // Process the line here
             // console.log(line);
+
+            return jmdict;
         }
 
 
         // const res = xml_convert.xml2js(content);
         // console.log(res);
-
-        return new Jmdict();
     }
 
     public doThing(): void {
@@ -236,7 +346,29 @@ export class Jmdict {
     };
 
 
+    private emplaceEntry(entry: JmdictEntry): void {
+        // console.log("Emplacing entry:", entry);
+        if (entry.ent_seq == k_ENT_SEQ_INVALID) {
+            console.error("invalid");
+            return;
+        }
+        if (this.m_entries.has(entry.ent_seq)) {
+            console.error("Entry already exists");
+            return;
+        }
+        this.m_entries.set(entry.ent_seq, entry);
 
-    // Dictionary entries indexed by traditional chinese
-    private m_entries: Map<string, JmdictEntry> = new Map();
+        entry.k_ele.forEach(({ keb }) => {
+            if (this.m_kEleToSeq.has(keb)) {
+                console.error("Entry alrady exists");
+                return;
+            }
+            this.m_kEleToSeq.set(keb, entry.ent_seq);
+        })
+    }
+
+    // Index of k_ele to ent seq
+    private m_kEleToSeq: Map<string, number> = new Map();
+    // Dictionary entries indexed by entry seq
+    private m_entries: Map<number, JmdictEntry> = new Map();
 }
