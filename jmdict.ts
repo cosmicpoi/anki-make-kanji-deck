@@ -10,7 +10,7 @@ type XMLAttributeObj = Partial<{
     [k in XMLAttrKey]: string;
 }>;
 
-type XMLTagType = 'declaration' | 'comment' | 'doctype';
+type XMLTagType = 'declaration' | 'comment' | 'doctype' | 'r_ele' | 'sense' | 'entry';
 
 type DoctypeEntryType = 'ENTITY' | 'ELEMENT' | 'ATTLIST';
 
@@ -66,12 +66,14 @@ export class Jmdict {
         const openingTags: XMLProps[] = [];
         const entities: XMLEntity[] = [];
 
-        const tryPopTag = (tagType: XMLTagType): void => {
+
+        const tryPopTag = (tagType: XMLTagType): boolean => {
             const tag = openingTags.pop();
             if (!(tag?.type == tagType)) {
-                console.error('Could not find a comment closing tag');
-                return undefined;
+                console.error('Could not find a closing tag for ', tagType);
+                return false;
             }
+            return true;
         }
 
         // Take a stripped start tag (A for <A> or <A/>) and get its attrs
@@ -99,6 +101,11 @@ export class Jmdict {
         }
 
         for await (const line of rl) {
+            const isDeclaration = line.substring(0, 5) == '<?xml';
+            if (isDeclaration) {
+                continue;
+            }
+
             const match_commentWholeLine = line.match(/^<!--.+-->$/);
             if (match_commentWholeLine) {
                 continue;
@@ -108,7 +115,7 @@ export class Jmdict {
             if (prevTag?.type == 'comment') {
                 const match_commentEnd = line.match(/-->\s*$/);
                 if (match_commentEnd) {
-                    tryPopTag('comment');
+                    if (!tryPopTag('comment')) return;
                     continue;
                 }
                 else {
@@ -118,8 +125,7 @@ export class Jmdict {
             else if (prevTag?.type == 'doctype') {
                 const match_doctypeEnd = line.match(/^\]>$/);
                 if (match_doctypeEnd) {
-                    tryPopTag('doctype');
-                    console.log("End doctype");
+                    if (!tryPopTag('doctype')) return;
                     continue;
                 }
                 const match_doctypeEntry = line.match(/^<!(.+)>$/);
@@ -127,8 +133,7 @@ export class Jmdict {
                 if (match_doctypeEntry) {
                     const parts = match_doctypeEntry[1].split(" ");
                     const entryType = parts[0] as DoctypeEntryType;
-                    if (entryType == 'ENTITY')
-                    {
+                    if (entryType == 'ENTITY') {
                         entities.push({ key: parts[1], value: parts[2] });
                     }
                     continue;
@@ -148,19 +153,63 @@ export class Jmdict {
                     continue;
                 }
 
-                // const match_linetag = line.match(/^<(.+?)\/>$/);
-                // if (match_linetag) {
-                //     continue;
-                // }
+                const match_tags = line.match(/<(.+?)>/g);
+                if (match_tags) {
+                    if (match_tags.length == 2) {
+                        const capture = line.match(/<(.+?)>(.+?)<\/.+>/);
+                        if (capture) {
+                            // const tagType = capture[1];
+                            // const text = capture[2];
+                        }
+                        continue;
+                    }
+                    else if (match_tags.length == 1) {
+                        let stripped = match_tags[0].slice(1, -1);
 
-                // const match_opentag = line.match(/^<(.+?)>$/);
-                // if (match_opentag) {
-                //     const [tagType, tagAttrs] = getTagAttrsFromStripped(match_opentag[1]);
+                        const hasFrontSlash: boolean = stripped.at(0) == '/';
+                        if ( hasFrontSlash ) {
+                            stripped = stripped.substring(1);
+                        }
+                        const hasBackSlash: boolean = stripped.at(-1) == '/';
+                        if (hasBackSlash) {
+                            stripped = stripped.slice(0, -1);
+                        }
 
-                //     console.log(as_xml_props(tagType, tagAttrs));
-                //     // openingTags.push(as_xml_props(tagType, tagAttrs));
-                //     continue;
-                // }
+                        const [tagType, tagAttrs] = getTagAttrsFromStripped(stripped);
+                        const isEndTag: boolean = hasFrontSlash && (prevTag?.type == tagType);
+
+                        // end tag
+                        if (isEndTag) {
+                            // console.log("popping tag: ", tagType, tagAttrs, line);
+                            if (!tryPopTag(stripped as XMLTagType)) return;
+                            continue;
+                        }
+                        // one-line tag
+                        else if (hasBackSlash) {
+                            // console.log("one-line tag:", tagType, tagAttrs, line);
+                        }
+                        // start tag
+                        else if (!hasFrontSlash && !hasBackSlash){
+                            const stripped = match_tags[0].slice(1, -1);
+                            const [tagType, tagAttrs] = getTagAttrsFromStripped(stripped);
+                            // console.log("pushing tag: ", tagType, tagAttrs, line);
+                            openingTags.push(as_xml_props(tagType, tagAttrs))
+
+                            continue;
+                        }
+                        else {
+                            console.error("Something weird happened");
+                            return undefined;
+                        }
+                    }
+                    else { // (match_tags.length > 2)
+                        console.error("We don't know how to handle this line", line);
+                        return undefined;
+                    }
+
+                    continue;
+                }
+
 
                 // const match_jmdictEnd = line.match(/^<\/JMdict>$/);
                 // if (match_jmdictEnd) {
