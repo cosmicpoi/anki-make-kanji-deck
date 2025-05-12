@@ -5,8 +5,9 @@
 
 <test>
 a
-  <child>
+  <child asd="expl" asfd="123">
   asd
   <subchild>xml</subchild>
+  <subbfily sss='1234'/>
   </child>
 </test>

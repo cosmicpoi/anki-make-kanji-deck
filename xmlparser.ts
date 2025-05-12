@@ -362,13 +362,6 @@ export async function parseXML<
         return res;
     }
 
-    const pushSelfClosingTag = (tagProps: PTagProps) => {
-        // const el: PElement = {
-        //     ...tagProps,
-        // }
-        // return el;
-    }
-
     const handleTag = (withoutBrackets: string): boolean => {
         let stripped = withoutBrackets;
         const hasFrontSlash: boolean = stripped.at(0) == '/';
@@ -414,9 +407,15 @@ export async function parseXML<
         }
         // Self-closing tag
         else if (hasBackSlash) {
-            pushSelfClosingTag({ tagName, attributes });
-            if (props.onElement) props.onElement({ tagName, attributes });
-            if (props.onSelfcloseTag) props.onSelfcloseTag({ tagName, attributes });
+            const el: PElement = { tagName, attributes };
+            if (hasRootPath()) {
+                const parKey = getRootPathKey();
+                if (!currElementMap[parKey]) throw "Should be defined";
+                xmlEmplaceChild(currElementMap[parKey], el) ;
+            }
+
+            if (props.onElement) props.onElement(el); 
+            if (props.onSelfcloseTag) props.onSelfcloseTag(el);
         }
         // Start tag
         else if (!hasFrontSlash && !hasBackSlash) {
