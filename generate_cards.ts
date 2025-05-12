@@ -64,10 +64,11 @@ class CharIndex {
 
 async function buildKanji() {
     const unihan = new Unihan(k_UNIHAN_DB_PATH);
+    const kanjidic = new Kanjidic(k_KANJIDIC_FILE_PATH);
     const cedict = new Cedict(k_CEDICT_FILE_PATH);
 
     // Populate transliterations and readings
-    const kanji: KanjiMap = buildKanjiMapFromFileList(k_SOURCE_FILE_LIST, { unihan, cedict });
+    const kanji: KanjiMap = buildKanjiMapFromFileList(k_SOURCE_FILE_LIST, { unihan, kanjidic, cedict });
 
 
     // return;
