@@ -19,7 +19,6 @@ let kanji: KanjiMap = new KanjiMap();
 const unihan = new Unihan();
 const kanjidic = new Kanjidic();
 const cedict = new Cedict(k_CEDICT_FILE_PATH);
-const jmdict = new Jmdict(k_JMDICT_FILE_PATH);
 const converter_t2s = OpenCC.Converter({ from: 'hk', to: 'cn' });
 const converter_s2t = OpenCC.Converter({ from: 'cn', to: 'hk' });
 

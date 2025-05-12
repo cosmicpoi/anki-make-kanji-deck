@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 import autoBind from "auto-bind";
-import { CharacterType, concatKanjiCards, fuzzy_to_string, get_default_kanji_card, KanjiCard, try_emplace_fuzzy } from "./types";
+import { CharacterType, concatKanjiCards, fuzzy_join, fuzzy_to_string, get_default_kanji_card, KanjiCard, try_emplace_fuzzy } from "./types";
+import { k_note_CN_JP, k_tag_CHINESE_ONLY, k_note_CHINESE_ONLY, k_tag_JAPANESE_ONLY, k_note_JAPANESE_ONLY } from './consts';
 
 // Represents character 'master list' that we build up through the db info we have.
 
@@ -133,6 +134,98 @@ export class KanjiMap {
         else if (type == CharacterType.TraditionalChinese) {
             try_emplace_fuzzy(card.tradChineseChar, mychar);
         }
+    }
+
+    public writeToFile(filePath: string) {
+        console.log("Writing to file ", filePath);
+        const writeStream = fs.createWriteStream(filePath, {
+            flags: 'w', // 'a' to append
+            encoding: 'utf8'
+        });
+
+        // No need to specify tags, it always goes at the end
+        const jp_cn_field_order: [keyof KanjiCard, string][] = [
+            ['japaneseChar', ','],
+            ['simpChineseChar', ','],
+            ['tradChineseChar', ','],
+            ['pinyin', ','],
+            ['kunyomi', ','],
+            ['onyomi', ','],
+            ['englishMeaning', ','],
+        ];
+
+        const jp_field_order: [keyof KanjiCard, string][] = [
+            ['japaneseChar', ','],
+            ['kunyomi', ','],
+            ['onyomi', ','],
+            ['englishMeaning', ','],
+            ['japaneseKunVocab', ','],
+            ['japaneseOnVocab', ','],
+        ];
+
+        const cn_field_order: [keyof KanjiCard, string][] = [
+            ['simpChineseChar', ','],
+            ['tradChineseChar', ','],
+            ['pinyin', ','],
+            ['englishMeaning', ','],
+        ];
+
+        const col_count = jp_cn_field_order.length + 2;
+        writeStream.write("#separator:tab\n");
+        writeStream.write("#html:true\n");
+        writeStream.write("#notetype column:1\n");
+        writeStream.write(`#tags column:${col_count}\n`);
+
+        // let keys: string[] = [];
+        // const jjp = kanji.getCards().filter(c => c.tags.v.includes(k_tag_JAPANESE_ONLY));
+        // const ccn = kanji.getCards().filter(c => c.tags.v.includes(k_tag_CHINESE_ONLY));
+        // keys = [jjp[0].japaneseChar.v[0], ccn[0].simpChineseChar.v[0], '中'];
+        // console.log(keys);
+
+        const keys = this.getChars();
+        keys.sort();
+        const to_export = keys.map(c => this.at(c));
+        to_export.forEach(card => {
+            // tuple of key, delimiter
+            let field_order: [keyof KanjiCard, string][] = jp_cn_field_order;
+            let note_type = k_note_CN_JP;
+            if (card.tags.v.includes(k_tag_CHINESE_ONLY)) {
+                field_order = cn_field_order;
+                note_type = k_note_CHINESE_ONLY;
+            }
+            else if (card.tags.v.includes(k_tag_JAPANESE_ONLY)) {
+                field_order = jp_field_order;
+                note_type = k_note_JAPANESE_ONLY;
+            }
+
+            let fields: string[] = Array(col_count).fill('');
+
+            for (let i = 0; i < col_count; i++) {
+                if (i == 0) {
+                    fields[i] = note_type;
+                }
+                else if (i <= field_order.length) {
+                    const [key, delim] = field_order[i - 1];
+                    fields[i] = fuzzy_join(card[key], delim);
+                }
+                else if (i == col_count - 1) {
+                    fields[i] = (fuzzy_join(card.tags, ' '));
+                }
+            }
+
+            const ok = writeStream.write(fields.join('\t') + '\n');
+
+            if (!ok) {
+                // Stream buffer is full, wait for drain before continuing
+                writeStream.once('drain', () => {
+                    console.log('Drain event triggered, resuming writes...');
+                });
+            }
+        })
+
+        writeStream.end(() => {
+            console.log('Finished writing file.');
+        });
     }
 
     // It would be nice to index these specifically by jp/trad/simp etc, but there's no guarantee
