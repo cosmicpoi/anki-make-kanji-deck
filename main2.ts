@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import { k_JMDICT_FILE_PATH } from "./consts";
 import { Jmdict } from "./jmdict";
 import * as xmlparser from './xmlparser';
-import { ParamXMLElement, ParamXMLParserHandlerObj, XMLDtdDecl } from './xmlparser';
+import { ParamXMLElement, XMLParserProps, XMLDtdDecl } from './xmlparser';
 
 type JmdictAttrKey = {
     'xml:lang': 'xml:lang';
@@ -66,21 +66,21 @@ type JmEntry = JmdictElement & {
 
 async function doThing() {
 
-    const onEntry = (el: JmdictElement) => {
-        const entry = el as JmEntry;
-        // console.log(entry);
+    const onElement = (el: JmdictElement) => {
+        console.log("Received element: ", JSON.stringify(el));
     };
 
     const onDtd = (e: XMLDtdDecl) => {
         
     }
 
-    const handlers: ParamXMLParserHandlerObj<keyof JmdictTagType, keyof JmdictAttrKey> = {
+    const handlers: XMLParserProps<keyof JmdictTagType, keyof JmdictAttrKey> = {
+        skipRoot: false,
         onDeclaration: (d) => { console.log('h', d); },
         onDoctype: (d) => { console.log('h', d); },
         onDtdDecl: onDtd,
         // onComment: (d) => { console.log('h', d); },
-        onElements: { 'entry': onEntry },
+        onElement: onElement,
         addSource: {
             // '!ELEMENT': true,
             // '!ENTITY': true,

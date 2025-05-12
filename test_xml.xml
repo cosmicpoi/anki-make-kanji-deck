@@ -3,23 +3,10 @@
         Added the g_type attribute
 -->
 
-<!DOCTYPE catalog [
-  <!ELEMENT catalog (book+)>
-  <!ELEMENT book (title, author, genre, price, publish_date, description)>
-  <!ELEMENT title (#PCDATA)>
-  <!ELEMENT author (#PCDATA)>
-  <!ELEMENT genre (#PCDATA)>
-  <!ELEMENT price (#PCDATA)>
-  <!ELEMENT publish_date (#PCDATA)>
-  <!ELEMENT description (#PCDATA)>
-
-  <!ATTLIST book
-    id          ID          #REQUIRED
-    lang        CDATA       "en"
-    edition     (first | second | third | revised) "first"
-    available   (yes | no)  #IMPLIED
-    rating      NMTOKEN     #IMPLIED
-    isbn        IDREF       #IMPLIED
-    isbn2        IDREF       #IMPLIED "fourth"
-  >
-]>
+<test>
+a
+  <child>
+  asd
+  <subchild>xml</subchild>
+  </child>
+</test>

@@ -2,37 +2,19 @@ import * as fs from 'fs'
 import * as readline from 'readline';
 import autoBind from "auto-bind";
 
-enum XMLAttrKey {
+enum JmdictAttrKey {
+    xml_lang = "xml:lang",
+};
+enum JmdictAttrKey {
     xml_lang = "xml:lang",
 };
 
-type XMLAttributeObj = Partial<{
-    [k in XMLAttrKey]: string;
-}>;
+type JmdictAttrs = ParamXMLAttrObj<typeof JmdictAttrKey>;
 
-type XMLTagType = 'declaration' | 'comment' | 'doctype'
+type JmdictTagType = 'declaration' | 'comment' | 'doctype'
     | 'r_ele' | 'k_ele' | 'sense' | 'entry' | 'ent_seq' | 'keb' | 'reb' | 'pos' | 'gloss';
 
 type DoctypeEntryType = 'ENTITY' | 'ELEMENT' | 'ATTLIST';
-
-// Represents an XML opening tag
-type XMLProps = {
-    source?: string;
-    type: XMLTagType;
-    attributes?: XMLAttributeObj;
-}
-
-const as_xml_props = (
-    type: XMLTagType,
-    attributes: XMLAttributeObj | undefined = undefined,
-    source: string | undefined = undefined
-): XMLProps => {
-    const props: XMLProps = { type };
-    if (attributes) props.attributes = attributes;
-    if (source) props.source = source;
-
-    return props;
-}
 
 type XMLEntity = {
     source?: string;

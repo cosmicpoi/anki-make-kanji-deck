@@ -89,15 +89,32 @@ const as_xml_props = (
     return props;
 }
 
+type XMLChild = XMLElement | 'string' | 'number';
 type XMLElement = XMLTagProps & {
-    children?: (XMLElement | 'string' | 'number')[]
+    children?: XMLChild[]
 };
+
+function xmlEmplaceChild<
+    PTagName extends XMLTagName = XMLTagName,
+    PAttrKey extends XMLAttrKey = XMLAttrKey
+>(
+    el: ParamXMLElement<PTagName, PAttrKey>,
+    c: ParamXMLChild<PTagName, PAttrKey>
+) {
+    if (!el.children) el.children = [];
+    el.children.push(c);;
+}
+
+type ParamXMLChild<
+    PTagName extends XMLTagName,
+    PAttrKey extends XMLAttrKey
+> = ParamXMLElement<PTagName, PAttrKey> | string | number;
 
 export type ParamXMLElement<
     PTagName extends XMLTagName,
     PAttrKey extends XMLAttrKey
 > = ParamXMLTagProps<PTagName, PAttrKey> & {
-    children?: (XMLElement | string | number)[]
+    children?: ParamXMLChild<PTagName, PAttrKey>[];
 };
 
 // Helper functions
@@ -185,16 +202,21 @@ function splitAroundBoundaries(content: string): string[] {
     return res.filter(s => s.length > 0);
 }
 
-export type ParamXMLParserHandlerObj<
+export type XMLParserProps<
     PTagName extends XMLTagName,
     PAttrKey extends XMLAttrKey
 > = {
+    skipRoot?: boolean,
     onDeclaration?: (decl: XMLDeclaration) => void,
     onDoctype?: (dc: XMLDoctype) => void,
-    onElements?: Partial<Record<
-        PTagName,
-        (k: ParamXMLElement<PTagName, PAttrKey>) => void
-    >>,
+    // onElements?: Partial<Record<
+    //     PTagName,
+    //     (k: ParamXMLElement<PTagName, PAttrKey>) => void
+    // >>,
+    onElement?: (el: ParamXMLElement<PTagName, PAttrKey>) => void;
+    onOpenTag?: (openTag: ParamXMLTagProps<PTagName, PAttrKey>) => void;
+    onCloseTag?: (closeTag: PTagName) => void;
+    onSelfcloseTag?: (scTag: ParamXMLTagProps<PTagName, PAttrKey>) => void;
     onDtdDecl?: (dtd: XMLDtdDecl) => void;
     onComment?: (cmt: string) => void;
     addSource?: Partial<Record<PTagName, boolean> & {
@@ -214,7 +236,7 @@ export async function parseXML<
     PAttrKey extends XMLAttrKey = XMLAttrKey
 >(
     filePath: string,
-    props: ParamXMLParserHandlerObj<PTagName, PAttrKey> = {}
+    props: XMLParserProps<PTagName, PAttrKey> = {}
 ): Promise<void> {
     const p_getTagAttrsFromStripped = getTagAttrsFromStripped<PTagName, PAttrKey>;
     // Types
@@ -242,7 +264,9 @@ export async function parseXML<
     let strBufferLength: number = 0;
 
     let currDoctype: XMLDoctype | undefined = undefined;
-    const currElementMap: Partial<Record<PTagName, PElement | undefined>> = {};
+    const currElementMap: { [k: string]: PElement | undefined } = {};
+    let currText: string | undefined = undefined;
+
     const emplaceDtd = (dtd: XMLDtdDecl) => {
         if (!currDoctype) throw "Curr doctype not defined";
         if (!currDoctype.internal) currDoctype.internal = [];
@@ -254,6 +278,24 @@ export async function parseXML<
             props.onDtdDecl(dtd);
         }
     }
+    // List of tag from root to current
+    const getNthPathKey = (n: number): string => {
+        const nodes: PElement[] = prevTokens.filter((tok) => typeof tok == 'object');
+        const names: string[] = nodes.map(n => n.tagName);
+        const path = names.slice(0, names.length - n);
+        return path.join(',')
+    }
+    const getRootPathKey = (): string => getNthPathKey(0);
+    const getParentPathKey = (): string => getNthPathKey(1);
+    // If skipRoot is on, paths have minimum length 2, since we don't cache the root element
+    const hasRootPath = (): boolean => {
+        if (props.skipRoot) return prevTokens.length >= 2;
+        return prevTokens.length >= 1;
+    };
+    const hasParentRootPath = (): boolean => {
+        if (props.skipRoot) return prevTokens.length >= 3
+        return prevTokens.length >= 2;
+    };
 
 
     // Token and buffer handlers
@@ -283,19 +325,10 @@ export async function parseXML<
         if (!isMatchedPair(prevToken, endToken)) {
             throw 'Could not match tokens' + prevToken.toString() + ',' + endToken.toString();
         }
-        if (typeof endToken == 'object') {
-            if (currElementMap[endToken.tagName] == undefined) throw "Map entry null";
-            const el = currElementMap[endToken.tagName];
-            currElementMap[endToken.tagName] = undefined;
-        }
         return true;
     }
     const pushToken = (token: POpenToken): void => {
         prevTokens.push(token)
-        if (typeof token == 'object') {
-            if (currElementMap[token.tagName] != undefined) throw "Map entry non-null";
-            currElementMap[token.tagName] = { ...token };
-        }
     };
     const replaceTopToken = (token: POpenToken): void => {
         prevTokens[prevTokens.length - 1] = token;
@@ -358,15 +391,55 @@ export async function parseXML<
 
         // End tag
         if (isEndTag) {
-            if (!tryPopToken({ tagName })) throw "Could not pop tag";
+            if (hasRootPath()) {
+                const mapKey = getRootPathKey();
+                if (!currElementMap[mapKey]) throw "Should be defined"
+
+                if (currText) {
+                    xmlEmplaceChild(currElementMap[mapKey], currText);
+                    currText = undefined;
+                }
+                if (props.onElement) props.onElement(currElementMap[mapKey]);
+                if (hasParentRootPath()) {
+                    const parKey = getParentPathKey();
+                    if (!currElementMap[parKey]) throw "Should be defined"
+                    xmlEmplaceChild(currElementMap[parKey], currElementMap[mapKey]);
+                }
+                currElementMap[mapKey] = undefined;
+            }
+            if (!tryPopToken({ tagName })) { throw "Could not pop tag"; }
+
+
+            if (props.onCloseTag) props.onCloseTag(tagName);
         }
         // Self-closing tag
         else if (hasBackSlash) {
             pushSelfClosingTag({ tagName, attributes });
+            if (props.onElement) props.onElement({ tagName, attributes });
+            if (props.onSelfcloseTag) props.onSelfcloseTag({ tagName, attributes });
         }
         // Start tag
         else if (!hasFrontSlash && !hasBackSlash) {
+            if (currText) {
+                if (hasRootPath()) {
+                    const parentKey = getRootPathKey();
+                    if (!currElementMap[parentKey]) throw 'Tag should be defined';
+                    xmlEmplaceChild(currElementMap[parentKey], currText);
+                    currText = undefined;
+                }
+            }
             pushToken({ tagName, attributes });
+            if (hasRootPath()) {
+                const mapKey = getRootPathKey();
+                if (currElementMap[mapKey]) throw 'Tag should be undefined';
+                const el: PElement = { tagName, attributes, children: [] };
+                if (props.addSource?.[tagName]) {
+                    el.source = stripped;
+                }
+                currElementMap[mapKey] = el;
+            }
+
+            if (props.onOpenTag) props.onOpenTag({ tagName, attributes });
         }
         else {
             console.error("handleTag error: Something weird happened")
@@ -386,7 +459,6 @@ export async function parseXML<
             for (const char of chunk as string) {
                 const flushBufWithCurrentChar = (reset: boolean = true): string =>
                     flushCharBuffer(reset) + char;
-
 
                 const prevToken = getPrevToken();
                 if (prevToken == '<!--') {
@@ -429,7 +501,7 @@ export async function parseXML<
                         continue;
                     }
                     else if (char == '>') {
-                        tryPopToken('>');
+                        if (!tryPopToken('>')) throw 'Token error';
                         flushCharBuffer();
                         continue;
                     }
@@ -440,7 +512,7 @@ export async function parseXML<
 
 
                     if (char == ']') {
-                        tryPopToken(']');
+                        if (!tryPopToken(']')) throw 'token error';
                         if (!currDoctype) throw 'currDocType is undefined';
                         if (props.onDoctype) props.onDoctype({ ...currDoctype });
                         currDoctype = undefined;
@@ -471,7 +543,7 @@ export async function parseXML<
                 }
                 else if (prevToken == '<!ELEMENT') {
                     if (char == '>') {
-                        tryPopToken('>');
+                        if (!tryPopToken('>')) throw 'token error';
                         const content = flushCharBuffer().trim();
                         const parts = splitAroundBoundaries(content);
                         const elementName = parts[0];
@@ -496,7 +568,7 @@ export async function parseXML<
                 }
                 else if (prevToken == '<!ENTITY') {
                     if (char == '>') {
-                        tryPopToken('>');
+                        if (!tryPopToken('>')) throw 'token error';
                         const content = flushCharBuffer().trim();
                         const parts = splitAroundBoundaries(content);
                         const key = parts[0];
@@ -522,7 +594,7 @@ export async function parseXML<
                 }
                 else if (prevToken == '<!ATTLIST') {
                     if (char == '>') {
-                        tryPopToken('>');
+                        if (!tryPopToken('>')) throw "token error";
                         const content = flushCharBuffer();
                         const parts = splitAroundBoundaries(content.trim());
 
@@ -577,7 +649,7 @@ export async function parseXML<
                     }
                 }
                 else if (prevToken == '<!NOTATION') {
-
+                    // TODO: implement this
                 }
                 else if (prevToken == '<') {
                     if (char == '>') {
@@ -606,11 +678,32 @@ export async function parseXML<
                     bufferCharacter(char);
                     continue;
                 }
-                else {
+                else if (typeof prevToken == 'object') {
+                    // bufferCharacter(char);
+                    if (char == '<') {
+                        const content = flushCharBuffer();
+                        const text = content.trim();
+                        currText = text;
+                        pushToken('<');
+                        continue;
+                    }
+                    else {
+                        bufferCharacter(char);
+                        continue;
+                    }
+                    continue;
+                }
+                else if (prevToken == undefined) {
                     if (char == '<') {
                         pushToken('<');
                         continue;
                     }
+
+                    continue;
+                }
+                else {
+                    console.error(prevToken, char);
+                    throw "Unhandled case";
                 }
             }
         });
