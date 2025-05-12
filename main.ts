@@ -47,7 +47,7 @@ console.log("Merging duplicates");
 {
     const duplicates: Set<[string, string]> = new Set();
 
-    const allChars: string[] = kanji.getChars();
+    const allChars: string[] = kanji.getKeys();
     for (let i = 0; i < allChars.length; i++) {
         for (let j = i + 1; j < allChars.length; j++) {
             const char1 = allChars[i];
@@ -66,7 +66,7 @@ console.log("Merging duplicates");
     });
 }
 
-console.log(`Merged from ${sumEntries} to ${kanji.getChars().length}`);
+console.log(`Merged from ${sumEntries} to ${kanji.getKeys().length}`);
 
 // Iterate through all kanji, and populate missing forms
 
@@ -123,7 +123,7 @@ function mergeDuplicatesByReading() {
 
     // See which cards are still missing an entry
     const missingChars: string[] = [];
-    kanji.getChars().forEach(char => {
+    kanji.getKeys().forEach(char => {
         const card: KanjiCard = kanji.at(char, true);
         if (fuzzy_empty(card.simpChineseChar) || fuzzy_empty(card.tradChineseChar) || fuzzy_empty(card.japaneseChar)) {
             missingChars.push(char);
@@ -334,7 +334,7 @@ if (args['o']) {
     // keys = [jjp[0].japaneseChar.v[0], ccn[0].simpChineseChar.v[0], '中'];
     // console.log(keys);
 
-    const keys = kanji.getChars();
+    const keys = kanji.getKeys();
     keys.sort();
     const to_export = keys.map(c => kanji.at(c));
     to_export.forEach(card => {

@@ -8,7 +8,7 @@ import { KanjiMap } from "./KanjiMap";
 import { Unihan } from "./unihan";
 import { getPreferredReading, Jmdict, JmdictEntry } from "./jmdict";
 import autoBind from "auto-bind";
-import { isHanCharacter } from "./types";
+import { fuzzy_empty, isHanCharacter, KanjiCard } from "./types";
 
 const args = minimist(process.argv.slice(2));
 
@@ -19,10 +19,44 @@ class CharIndex {
     }
 
     public annotateDictEntry(entry: JmdictEntry) {
+        if (entry.k_ele.length == 0) return;
 
+        const [pref, score] = getPreferredReading(entry);
+
+        const wordKanji = new Set<string>();
+        for (const mychar of pref) {
+            if (isHanCharacter(mychar)) wordKanji.add(mychar);
+        }
+        if (wordKanji.size > 0) {
+            // console.log("Emplacing relationship:", pref, wordKanji);
+            this.emplaceRel(entry.ent_seq, wordKanji)
+        }
     }
 
-    private m_seqToKanji: Map<number, string[]> = new Map();
+    private emplaceRel(seq: number, kanji: Iterable<string>) {
+        const res = this.m_seqToKanji.get(seq);
+        if (!res) {
+            this.m_seqToKanji.set(seq, new Set(kanji));
+        }
+
+        for (const c of kanji) {
+            res?.add(c);
+
+            const resk = this.m_kanjiToSec.get(c);
+            if (!resk) {
+                this.m_kanjiToSec.set(c, [seq]);
+                continue;
+            }
+            resk.push(seq);
+        }
+        // console.log(this.m_seqToKanji.get(seq));
+    }
+
+    public getSeqs(char: string): number[] {
+        return this.m_kanjiToSec.get(char) || [];
+    }
+
+    private m_seqToKanji: Map<number, Set<string>> = new Map();
     private m_kanjiToSec: Map<string, number[]> = new Map();
 }
 
@@ -35,32 +69,36 @@ async function buildKanji() {
     // Populate transliterations and readings
     const kanji: KanjiMap = buildKanjiMapFromFileList(k_SOURCE_FILE_LIST, { unihan, kanjidic, cedict });
 
-    if (args['o']) {
-        kanji.writeToFile(args['o']);
-    }
-
     // const jmdict: Jmdict = await Jmdict.create(k_JMDICT_FILE_PATH);
     const jmdict: Jmdict = await Jmdict.create('test_xml.xml');
 
     // scratchwork -------------------
-    jmdict.forEachWord((word: string) => {
-        const entry = jmdict.getEntry(word);
-        if (!entry) return
-        if (entry.k_ele.length == 0) return;
 
-
-        const [pref, score] = getPreferredReading(entry);
-
-        const wordKanji = new Set<string>();
-        for (const mychar of pref) {
-            if (isHanCharacter(mychar)) wordKanji.add(mychar);
-        }
-        console.log(`${pref} has kanji ` + [...wordKanji]);
-
-
-
-
+    // Populate index
+    const charIndex = new CharIndex();
+    jmdict.forEachEntry((entry: JmdictEntry) => {
+        charIndex.annotateDictEntry(entry);
     });
+
+    const getPreferredWordBySeq = (seq: number): string | undefined => {
+        const entry = jmdict.getEntryBySeq(seq);
+        return entry ? getPreferredReading(entry)[0] : undefined;
+    }
+
+    kanji.forEachCard((c: KanjiCard) => {
+        if (fuzzy_empty(c.japaneseChar)) return;
+        const seqs = charIndex.getSeqs(c.japaneseChar.v[0]);
+        const words = seqs.map(seq => getPreferredWordBySeq(seq))
+        const words_d: string[] = words.filter(w => !!w) as string[];
+        c.japaneseOnVocab.v = words_d;
+        if (words_d.length > 0)
+            console.log(c.japaneseChar, words);
+    });
+    // charIndex.getSeqs()
+
+    if (args['o']) {
+        kanji.writeToFile(args['o']);
+    }
 }
 
 buildKanji();

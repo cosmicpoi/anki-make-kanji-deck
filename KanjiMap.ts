@@ -11,9 +11,15 @@ export class KanjiMap {
         this.kanji = {};
     }
 
-    // Get a list of all currenty map keys
+    // Get a list of all currently map keys
     public getChars(): string[] {
         return Object.keys(this.kanji);
+    }
+
+    public forEachCard(handler: (c: KanjiCard) => void) {
+        for (const char in this.kanji) {
+            handler(this.kanji[char]);
+        }
     }
 
     public getCards(): KanjiCard[] {
@@ -24,7 +30,7 @@ export class KanjiMap {
     public toFile(output: string): void {
         type CleanCard = Partial<{ [k in keyof KanjiCard]: string }>;
         let cleanMap: { [k: string]: CleanCard } = {};
-        this.getChars().forEach(mychar => {
+        this.getChars().forEach((mychar: string) => {
             const card = this.kanji[mychar];
             let cleanCard: CleanCard = {};
 
@@ -151,6 +157,8 @@ export class KanjiMap {
             ['pinyin', ','],
             ['kunyomi', ','],
             ['onyomi', ','],
+            ['japaneseKunVocab', ','],
+            ['japaneseOnVocab', ','],
             ['englishMeaning', ','],
         ];
 

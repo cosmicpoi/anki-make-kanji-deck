@@ -374,10 +374,19 @@ export class Jmdict {
 
     }
 
-    public getEntry(text: string): JmdictEntry | undefined {
+    public getEntryByWord(text: string): JmdictEntry | undefined {
         const seq = this.m_wordToSeq.get(text);
         if (seq == undefined) return undefined;
         return this.m_entries.get(seq);
+    }
+
+    public getEntryBySeq(seq: number): JmdictEntry | undefined {
+        return this.m_entries.get(seq);
+    }
+
+    public getPreferredWordBySeq(seq: number): string | undefined {
+        const entry = this.getEntryBySeq(seq);
+        return entry ? getPreferredReading(entry)[0] : undefined;
     }
 
     public getAbbrevs(): Readonly<Record<string, string>> {
