@@ -417,6 +417,11 @@ export async function parseXML<
                         currDoctype = { rootTagName };
                         continue;
                     }
+                    else if (char == '>') {
+                        tryPopToken('>');
+                        flushCharBuffer();
+                        continue;
+                    }
                 }
                 else if (prevToken == '[') {
                     const parentToken = getNthParent(2);
@@ -507,8 +512,8 @@ export async function parseXML<
                 else if (prevToken == '<!ATTLIST') {
                     if (char == '>') {
                         tryPopToken('>');
-                        const content = flushCharBuffer().trim();
-                        const parts = splitAroundBoundaries(content);
+                        const content = flushCharBuffer();
+                        const parts = splitAroundBoundaries(content.trim());
 
                         const elementName = parts[0];
                         let dtd: Dtd_ATTLIST = {
@@ -525,7 +530,6 @@ export async function parseXML<
 
                         let currAttr: Dtd_ATTLIST_Attr = defaultAttr();
 
-                        console.log(parts);
                         for (let i = 1; i < parts.length; i++) {
                             const part = parts[i];
                             if (part.at(0) == '#')
