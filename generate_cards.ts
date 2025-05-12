@@ -64,22 +64,26 @@ class CharIndex {
 
 async function buildKanji() {
     const unihan = new Unihan(k_UNIHAN_DB_PATH);
-    const kanjidic = new Kanjidic(k_KANJIDIC_FILE_PATH);
     const cedict = new Cedict(k_CEDICT_FILE_PATH);
 
     // Populate transliterations and readings
-    const kanji: KanjiMap = buildKanjiMapFromFileList(k_SOURCE_FILE_LIST, { unihan, kanjidic, cedict });
+    const kanji: KanjiMap = buildKanjiMapFromFileList(k_SOURCE_FILE_LIST, { unihan, cedict });
 
 
     // return;
     // const jmdict: Jmdict = await Jmdict.create(k_JMDICT_FILE_PATH);
     const jmdict: Jmdict = await Jmdict.create('test_xml.xml');
 
+    if (args['o']) {
+        kanji.writeToFile(args['o']);
+    }
+    return;
+
     // scratchwork -------------------
-    const bccwj: Bccwj = await Bccwj.create(k_BCCWJ_FILE_PATH, 10);
-    bccwj.forEachEntry(e => {
-        console.log(e);
-    })
+    const bccwj: Bccwj = await Bccwj.create(k_BCCWJ_FILE_PATH);
+    
+    console.log(bccwj.getEntry('中'));
+    console.log(unihan.getEntry('中'));
 
     return;
 
@@ -105,9 +109,7 @@ async function buildKanji() {
     });
     // charIndex.getSeqs()
 
-    if (args['o']) {
-        kanji.writeToFile(args['o']);
-    }
+    
 }
 
 buildKanji();

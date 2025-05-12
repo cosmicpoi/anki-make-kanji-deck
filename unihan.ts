@@ -7,6 +7,7 @@ import { combine_without_duplicates } from './types';
 const k_UNIHAN_FILENAMES = {
     Unihan_Readings: "Unihan_Readings.txt",
     Unihan_Variants: "Unihan_Variants.txt",
+    Unihan_IRGSources: "Unihan_IRGSources.txt",
 };
 
 //------------------------------------------------------------------------------
@@ -42,9 +43,9 @@ function getCleanChar(dbEntry: string): string {
 type UnihanEntry = {
     /* Raw data */
     // IRGs
-    kIRG_JSource?: string;
-    kIRG_HSource?: string;
     kIRG_GSource?: string
+    kIRG_HSource?: string;
+    kIRG_JSource?: string;
     // readings
     kMandarin?: string[];
     kJapanese?: string[];
@@ -95,11 +96,20 @@ export class Unihan {
 
             const emplace_variants = (key: UnihanVariant, lhs: string, rhs: string[]) => {
                 const clean_chars = reading.map(r => getCleanChar(r));
-                this.emplace_variants(key, lhs, rhs);
+                this.emplace_variants(key, getCleanChar(lhs), clean_chars);
             }
 
             const action = action_str as keyof UnihanEntry;
-            if (action == 'kMandarin') {
+            if (action == 'kIRG_GSource') {
+                this.emplace_irg('kIRG_GSource', character, reading_line);
+            } 
+            else if (action == 'kIRG_HSource') {
+                this.emplace_irg('kIRG_HSource', character, reading_line);
+            }
+            else if (action == 'kIRG_JSource') {
+                this.emplace_irg('kIRG_JSource', character, reading_line);
+            }
+            else if (action == 'kMandarin') {
                 this.emplace_readings('kMandarin', character, reading);
             }
             else if (action == 'kJapanese') {
@@ -132,12 +142,12 @@ export class Unihan {
     // Generate cached on/kunyomi maps from loaded japanese reading maps
     private createCachedYomi() {
         this.m_entries.forEach(entry => {
-
-
             const allKun = new Set<string>();
             const allOn = new Set<string>();
-            if (entry.kJapaneseKun) entry.kJapaneseKun.forEach(r => allKun.add(r));
-            if (entry.kJapaneseOn) entry.kJapaneseOn.forEach(r => allOn.add(r));
+            if (entry.kJapaneseKun)
+                entry.kJapaneseKun.forEach(r => allKun.add(wanakana.toHiragana(r)));
+            if (entry.kJapaneseOn)
+                entry.kJapaneseOn.forEach(r => allOn.add(wanakana.toKatakana(r)));
             if (entry.kJapanese) entry.kJapanese.forEach(r => {
                 if (wanakana.isHiragana(r)) {
                     allKun.add(r);
@@ -173,6 +183,20 @@ export class Unihan {
         return hasSimplified || hasTraditional || hasSemantic || hasSpecializedSemantic;
     }
 
+    // IRG getters
+    public isJapanese(mychar: string): boolean {
+        return !!(this.m_entries.get(mychar)?.kIRG_JSource)
+    }
+
+    public isSimplified(mychar: string): boolean {
+        return !!(this.m_entries.get(mychar)?.kIRG_GSource)
+    }
+
+    public isTraditional(mychar: string): boolean {
+        return !!(this.m_entries.get(mychar)?.kIRG_HSource)
+    }
+
+    // reading getters
     public getMandarinPinyin(mychar: string): string[] {
         return this.m_entries.get(mychar)?.kMandarin || [];
     }
@@ -184,6 +208,7 @@ export class Unihan {
         return this.m_entries.get(mychar)?.cachedJapaneseOn || [];
     }
 
+    // variant getters
     public getSimpChineseVariants(mychar: string): string[] {
         return this.m_entries.get(mychar)?.kSimplifiedVariant || [];
     }
@@ -202,7 +227,11 @@ export class Unihan {
         return combine_without_duplicates(semantic, specialized);
     }
 
-    // Cached map emplace
+    // Internal emplace helpers
+    private emplace_irg(key: UnihanIRG, lhs: string, rhs: string) {
+        const entry = this.at(lhs);
+        entry[key] = rhs;
+    }
 
     private emplace_variants(key: UnihanVariant, lhs: string, rhs: string[]) {
         const entry = this.at(lhs);
@@ -214,6 +243,10 @@ export class Unihan {
         const entry = this.at(lhs);
         if (!entry[key]) entry[key] = [];
         entry[key] = entry[key].concat(rhs);
+    }
+
+    public getEntry(k: string): UnihanEntry | undefined {
+        return this.m_entries.get(k);
     }
 
     private at(k: string): UnihanEntry {

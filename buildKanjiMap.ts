@@ -1,6 +1,5 @@
 import * as fs from 'fs'
 import { Unihan } from './unihan';
-import { Kanjidic } from './kanjidic';
 import { CountHandler, FileListEntry, FuzzyArray, KanjiCard, apply_getter_to_arr, apply_multi_getter, card_is_character, combine_without_duplicates, common_elements, concatFuzzyArray, defaultFuzzyArray, fuzzy_empty, fuzzy_first, fuzzy_join, get_default_kanji_card, logCard, make_count_handler, reading_similarity } from './types'
 import { KanjiMap } from './KanjiMap';
 import { Cedict } from './cedict';
@@ -11,7 +10,6 @@ export function buildKanjiMapFromFileList(
     fileList: FileListEntry[],
     modules: {
         unihan: Unihan,
-        kanjidic: Kanjidic,
         cedict: Cedict
     }
 ): KanjiMap {
@@ -19,7 +17,7 @@ export function buildKanjiMapFromFileList(
     let kanji: KanjiMap = new KanjiMap();
 
     // Initialize resources
-    const { unihan, kanjidic, cedict } = modules;
+    const { unihan, cedict } = modules;
     const converter_t2s = OpenCC.Converter({ from: 'hk', to: 'cn' });
     const converter_s2t = OpenCC.Converter({ from: 'cn', to: 'hk' });
 
@@ -174,7 +172,7 @@ export function buildKanjiMapFromFileList(
             const guess_sources: FuzzyArray[] = [card.simpChineseChar, card.tradChineseChar];
             let candidates: FuzzyArray = apply_multi_getter(unihan.getGetSemanticOrSpecializedVariants, guess_sources);
             candidates.v = combine_without_duplicates(candidates.v, card.simpChineseChar.v, card.tradChineseChar.v);
-            candidates.v = candidates.v.filter((el) => kanjidic.isKanji(el));
+            candidates.v = candidates.v.filter((el) => unihan.isJapanese(el));
 
             if (!fuzzy_empty(candidates)) {
                 card.japaneseChar = candidates;
@@ -273,15 +271,11 @@ export function buildKanjiMapFromFileList(
         const allChars = combine_without_duplicates(card.simpChineseChar.v, card.tradChineseChar.v, card.japaneseChar.v);
         const charKey = allChars[0];
         const unihanDefs: string[] = unihan.getEnglishDefinition(charKey);
-        const kanjidicDefs: string[] = kanjidic.getEntry(charKey)?.meaning || [];
         const cedictDefs: string[] = cedict.getDefinitions(charKey) || [];
 
-        // prefer unihan => kanjidict => cedict in this order
+        // prefer unihan => cedict in this order
         if (unihanDefs.length != 0) {
             card.englishMeaning.v = [...unihanDefs];
-        }
-        else if (kanjidicDefs.length != 0) {
-            card.englishMeaning.v = [...kanjidicDefs];
         }
         else if (cedictDefs.length != 0) {
             card.englishMeaning.v = [...cedictDefs];
