@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import { k_JMDICT_FILE_PATH } from "./consts";
 import { Jmdict } from "./jmdict";
 import * as xmlparser from './xmlparser';
-import { ParamXMLElement, ParamXMLParserHandlerObj } from './xmlparser';
+import { ParamXMLElement, ParamXMLParserHandlerObj, XMLDtdDecl } from './xmlparser';
 
 type JmdictAttrKey = {
     'xml:lang': 'xml:lang';
@@ -71,8 +71,24 @@ async function doThing() {
         // console.log(entry);
     };
 
+    const onDtd = (e: XMLDtdDecl) => {
+        if(e.tagName == '!ATTLIST') 
+        {
+            console.log(JSON.stringify(e));
+        }
+    }
+
     const handlers: ParamXMLParserHandlerObj<keyof JmdictTagType, keyof JmdictAttrKey> = {
-        elements: { 'entry': onEntry },
+        onDeclaration: (d) => { console.log('h', d); },
+        onDoctype: (d) => { console.log('h', d); },
+        onDtdDecl: onDtd,
+        // onComment: (d) => { console.log('h', d); },
+        onElements: { 'entry': onEntry },
+        addSource: {
+            // '!ELEMENT': true,
+            // '!ENTITY': true,
+            // '!ATTLIST': true,
+        }
     };
 
     // k_JMDICT_FILE_PATH
@@ -101,3 +117,4 @@ async function doThing() {
 }
 
 doThing();
+// console.log(splitAroundBoundaries('ELEMENT entry            "ent_seq, k_ele*, r_ele+, sense+"'));
