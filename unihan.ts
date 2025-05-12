@@ -2,8 +2,26 @@ import * as fs from 'fs'
 import * as wanakana from 'wanakana';
 
 import autoBind from "auto-bind";
-import { k_UNIHAN_ACTIONS, k_UNIHAN_DB_PATH, k_UNIHAN_FILENAMES } from './consts'
 import { combine_without_duplicates } from './types';
+
+const k_UNIHAN_FILENAMES = {
+    Unihan_Readings: "Unihan_Readings.txt",
+    Unihan_Variants: "Unihan_Variants.txt",
+};
+
+const k_UNIHAN_ACTIONS = {
+    // readings
+    kMandarin: "kMandarin",
+    kJapanese: "kJapanese",
+    kJapaneseKun: "kJapaneseKun",
+    kJapaneseOn: "kJapaneseOn",
+    kDefinition: "kDefinition",
+    // variants
+    kSemanticVariant: "kSemanticVariant",
+    kSpecializedSemanticVariant: "kSpecializedSemanticVariant",
+    kSimplifiedVariant: "kSimplifiedVariant",
+    kTraditionalVariant: "kTraditionalVariant",
+};
 
 //------------------------------------------------------------------------------
 // Helper functions
@@ -143,18 +161,18 @@ class ReadingMap {
 
 // Class to load and interact with the Unihan db
 export class Unihan {
-    constructor() {
+    constructor(unihanDir: string) {
         autoBind(this);
 
         // load data from files
-        this.loadData(k_UNIHAN_FILENAMES.Unihan_Readings);
-        this.loadData(k_UNIHAN_FILENAMES.Unihan_Variants);
+        this.loadData(unihanDir, k_UNIHAN_FILENAMES.Unihan_Readings);
+        this.loadData(unihanDir, k_UNIHAN_FILENAMES.Unihan_Variants);
 
         this.createCachedYomi();
     }
 
-    private loadData(filePath: string): void {
-        const filename: string = k_UNIHAN_DB_PATH + "/" + filePath;
+    private loadData(unihanDir: string, filePath: string): void {
+        const filename: string = unihanDir + "/" + filePath;
         const content = fs.readFileSync(filename, 'utf-8');
         const lines: string[] = content.split('\n');
 
