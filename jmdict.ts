@@ -348,6 +348,10 @@ export class Jmdict {
         return this.m_entries.values();
     }
 
+    public getNumEntries(): number {
+        return this.m_entries.size;
+    }
+
     private emplaceEntity(key: string, value: string): void {
         this.m_entityAbbrev[key] = value;
     }
@@ -384,10 +388,7 @@ export class Jmdict {
         return this.m_entries.get(seq);
     }
 
-    public getPreferredWordBySeq(seq: number): string | undefined {
-        const entry = this.getEntryBySeq(seq);
-        return entry ? getPreferredReading(entry)[0] : undefined;
-    }
+    
 
     public getAbbrevs(): Readonly<Record<string, string>> {
         return this.m_entityAbbrev;

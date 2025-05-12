@@ -63,7 +63,7 @@ class CharIndex {
 
 
 async function buildKanji() {
-    const unihan = new Unihan(k_UNIHAN_DB_PATH);
+    const unihan = await Unihan.create(k_UNIHAN_DB_PATH);
     const kanjidic = new Kanjidic(k_KANJIDIC_FILE_PATH);
     const cedict = new Cedict(k_CEDICT_FILE_PATH);
 

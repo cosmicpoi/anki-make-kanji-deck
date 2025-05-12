@@ -43,9 +43,10 @@ function getCleanChar(dbEntry: string): string {
 type UnihanEntry = {
     /* Raw data */
     // IRGs
-    kIRG_GSource?: string
+    kIRG_GSource?: string;
     kIRG_HSource?: string;
     kIRG_JSource?: string;
+    kTotalStrokes?: number;
     // readings
     kMandarin?: string[];
     kJapanese?: string[];
@@ -63,23 +64,29 @@ type UnihanEntry = {
     cachedJapaneseOn?: string[];
 };
 
-type UnihanIRG = 'kIRG_JSource' | 'kIRG_HSource' | 'kIRG_GSource';
+type UnihanIRG = 'kIRG_JSource' | 'kIRG_HSource' | 'kIRG_GSource' | 'kTotalStrokes';
 type UnihanReading = 'kMandarin' | 'kJapanese' | 'kJapaneseKun' | 'kJapaneseOn' | 'kDefinition';
 type UnihanVariant = 'kSemanticVariant' | 'kSpecializedSemanticVariant' | 'kSimplifiedVariant' | 'kTraditionalVariant';
 
 // Class to load and interact with the Unihan db
 export class Unihan {
-    constructor(unihanDir: string) {
+    constructor() {
         autoBind(this);
-
-        // load data from files
-        this.loadData(unihanDir, k_UNIHAN_FILENAMES.Unihan_Readings);
-        this.loadData(unihanDir, k_UNIHAN_FILENAMES.Unihan_Variants);
-
-        this.createCachedYomi();
     }
 
-    private loadData(unihanDir: string, filePath: string): void {
+    static async create(unihanDir: string) {
+        const unihan = new Unihan();
+
+        // load data from files
+        unihan.loadData(unihanDir, k_UNIHAN_FILENAMES.Unihan_Readings);
+        unihan.loadData(unihanDir, k_UNIHAN_FILENAMES.Unihan_Variants);
+
+        unihan.createCachedYomi();
+
+        return unihan;
+    }
+
+    private async loadData(unihanDir: string, filePath: string): Promise<void> {
         const filename: string = unihanDir + "/" + filePath;
         const content = fs.readFileSync(filename, 'utf-8');
         const lines: string[] = content.split('\n');
@@ -102,12 +109,15 @@ export class Unihan {
             const action = action_str as keyof UnihanEntry;
             if (action == 'kIRG_GSource') {
                 this.emplace_irg('kIRG_GSource', character, reading_line);
-            } 
+            }
             else if (action == 'kIRG_HSource') {
                 this.emplace_irg('kIRG_HSource', character, reading_line);
             }
             else if (action == 'kIRG_JSource') {
                 this.emplace_irg('kIRG_JSource', character, reading_line);
+            }
+            else if (action == 'kTotalStrokes') {
+                this.emplace_irg('kTotalStrokes', character, reading_line);
             }
             else if (action == 'kMandarin') {
                 this.emplace_readings('kMandarin', character, reading);
@@ -230,7 +240,11 @@ export class Unihan {
     // Internal emplace helpers
     private emplace_irg(key: UnihanIRG, lhs: string, rhs: string) {
         const entry = this.at(lhs);
-        entry[key] = rhs;
+        if (key == 'kTotalStrokes') {
+            entry[key] = parseInt(rhs);
+        } else {
+            entry[key] = rhs;
+        }
     }
 
     private emplace_variants(key: UnihanVariant, lhs: string, rhs: string[]) {
