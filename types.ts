@@ -213,5 +213,44 @@ export const make_count_handler = (): CountHandler => {
     const increment = (): number => count++;
     const get = (): number => count;
 
-    return {increment, get};
+    return { increment, get };
 };
+
+export function isHanCharacter(char: string): boolean {
+    const code = char.charCodeAt(0);
+    // CJK Unified Ideographs Extension A (U+3400 through U+4DBF)
+    if (code >= 0x3400 && code <= 0x4DBF) return true;
+
+    // CJK Unified Ideographs (U+4E00 through U+9FFF)
+    if (code >= 0x4E00 && code <= 0x9FFF) return true;
+
+    // CJK Compatibility Ideographs (U+F900 through U+FAD9)
+    if (code >= 0xF900 && code <= 0xFAD9) return true;
+
+    // CJK Unified Ideographs Extension B (U+20000 through U+2A6DF)
+    // CJK Unified Ideographs Extension C (U+2A700 through U+2B739)
+    // CJK Unified Ideographs Extension D (U+2B740 through U+2B81D)
+    // CJK Unified Ideographs Extension E (U+2B820 through U+2CEA1)
+    // CJK Unified Ideographs Extension F (U+2CEB0 through U+2EBE0)
+    // CJK Unified Ideographs Extension I (U+2EBF0 through U+2EE5D)
+    if (code >= 0x20000 && code <= 0x2A6DF) return true;
+
+    // CJK Compatibility Ideographs Supplement (U+2F800 through U+2FA1D)
+    if (code >= 0x2F800 && code <= 0x2FA1D) return true;
+
+    // CJK Unified Ideographs Extension G (U+30000 through U+3134A)
+    // CJK Unified Ideographs Extension H (U+31350 through U+323AF)
+    if (code >= 0x30000 && code <= 0x323AF) return true;
+
+    return false;
+}
+
+function isHiragana(char: string) {
+    const code = char.charCodeAt(0);
+    return code >= 0x3040 && code <= 0x309F;
+}
+
+function isKatakana(char: string) {
+    const code = char.charCodeAt(0);
+    return (code >= 0x30A0 && code <= 0x30FF) || (code >= 0x31F0 && code <= 0x31FF);
+}

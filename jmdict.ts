@@ -36,7 +36,7 @@ type JmdictRele = {
     re_pri: string[];
 }
 
-type JmdictEntry = {
+export type JmdictEntry = {
     ent_seq: number; // ent_seq
     k_ele: JmdictKele[]; // k_ele
     r_ele: JmdictRele[]; // r_ele
@@ -71,6 +71,8 @@ type JmdictAttrKey = {
 type JmdictTagType = {
     r_ele: 'r_ele';
     k_ele: 'k_ele';
+    ke_pri: 'ke_pri';
+    re_pri: 're_pri';
     sense: 'sense';
     entry: 'entry';
     ent_seq: 'ent_seq';
@@ -141,6 +143,94 @@ type JME_Entry = JmdictElement & {
     tagName: 'entry',
     children: (JME_EntSeq | JME_Kele | JME_Rele | JME_Sense)[],
 };
+
+//----------------------------------------------------------------------------------------------------------------------
+// Helper functions
+//----------------------------------------------------------------------------------------------------------------------
+
+const k_SCORE_1 = 1;
+const k_SCORE_2 = 1 / 5;
+const k_SCORE_NF_DEN = 50;
+
+const getScore = (pris: string[]): number => {
+    let score = 0;
+    for (const pri of pris) {
+        if (pri.match(/^nf\d\d$/)) {
+            const xx = parseInt(pri.slice(-2, 0));
+            score += xx / k_SCORE_NF_DEN;
+        }
+        else if (pri.slice(-1) == '1') {
+            score += k_SCORE_1;
+        }
+        else if (pri.slice(-1) == '2') {
+            score += k_SCORE_2;
+        }
+    }
+
+    return score;
+}
+
+export function getPreferredKele(entry: JmdictEntry): [string | undefined, number] {
+    if (entry.k_ele.length == 0) return [undefined, -1]
+
+    let preferred: string | undefined = undefined;
+    let highestScore = 0; // score is # of pri1 + # of pri2 / 5
+    for (const k_ele of entry.k_ele) {
+        const score = getScore(k_ele.ke_pri);
+        if (score > highestScore) {
+            preferred = k_ele.keb;
+            highestScore = score;
+        }
+    }
+
+    if (preferred == undefined) {
+        return [entry.k_ele[0].keb, 0];
+    }
+    else {
+        return [preferred, highestScore]
+    };
+}
+
+export function getPreferredRele(entry: JmdictEntry): [string | undefined, number] {
+    if (entry.r_ele.length == 0) return [undefined, -1];
+
+    let preferred: string | undefined = undefined;
+    let highestScore = 0; // score is # of pri1 + # of pri2 / 5
+
+    for (const r_ele of entry.r_ele) {
+        const score = getScore(r_ele.re_pri);
+        if (score > highestScore) {
+            preferred = r_ele.reb;
+            highestScore = score;
+        }
+    }
+
+    if (preferred == undefined) {
+        return [entry.r_ele[0].reb, 0];
+    }
+    else {
+        return [preferred, highestScore]
+    };
+}
+
+// Scoring system:
+// - 1 point for each xx1 tag
+// - 1 / n+1 point for each xx2 tag (where n is number of possible tags)
+// - xx / 50 points for each nfxx tag (since they go up to 50)
+export function getPreferredReading(entry: JmdictEntry): [string, number] {
+    const [prefK, scoreK] = getPreferredKele(entry);
+    const [prefR, scoreR] = getPreferredRele(entry);
+
+    if ((scoreK > scoreR) && prefK) {
+        return [prefK, scoreK];
+    } else if ((scoreK < scoreR) && prefR) {
+        return [prefR, scoreR];
+    }
+    else {
+        if (prefK) return [prefK, scoreK];
+        return [prefR as string, scoreR];
+    }
+}
 
 //----------------------------------------------------------------------------------------------------------------------
 // Jmdict Implementation
@@ -225,15 +315,37 @@ export class Jmdict {
         return jmdict;
     }
 
-    public doThing(): void {
-
-    };
-
     public forEachWord(handler: (word: string) => void) {
         for (const tup of this.m_wordToSeq) {
             const [key] = tup;
             handler(key);
         }
+    }
+
+    public getWords(): Iterator<string> {
+        return this.m_wordToSeq.keys();
+    }
+
+    public forEachSeq(handler: (seq: number) => void) {
+        for (const tup of this.m_entries) {
+            const [seq] = tup;
+            handler(seq);
+        }
+    }
+
+    public getSeq(): Iterator<number> {
+        return this.m_entries.keys();
+    }
+
+    public forEachEntry(handler: (entry: JmdictEntry) => void) {
+        for (const tup of this.m_entries) {
+            const [_seq, entry] = tup;
+            handler(entry);
+        }
+    }
+
+    public getEntries(): Iterator<JmdictEntry> {
+        return this.m_entries.values();
     }
 
     private emplaceEntity(key: string, value: string): void {
@@ -260,6 +372,12 @@ export class Jmdict {
             this.m_wordToSeq.set(reb, entry.ent_seq);
         })
 
+    }
+
+    public getEntry(text: string): JmdictEntry | undefined {
+        const seq = this.m_wordToSeq.get(text);
+        if (seq == undefined) return undefined;
+        return this.m_entries.get(seq);
     }
 
     public getAbbrevs(): Readonly<Record<string, string>> {

@@ -15,7 +15,7 @@ Also, download `Unihan.zip` ([latest](https://www.unicode.org/Public/UCD/latest/
 ## Running
 To run script:
 ```
-yarn execute -o myfile.txt
+yarn ts-node generate_cards.ts -o myfile.txt
 ```
 
 To generate all-character lists:
@@ -57,13 +57,6 @@ Trad/Simplified chinese conversion is done using CEDICT. For Chinese-Japanese we
 
 
 
-
-## TODO:
-* Stroke order
-* CN/Kun/ON vocab lookup
-* Sentence example generation
-
-
 ## Brainstorm
 In the long run, I'd like to develop a **richly-connected**, ai-assisted, relational database of Chinese/Japanese characters, vocab, grammar, and sentences.
 
@@ -77,3 +70,11 @@ grammar: AはYです
 You could tell the system to learn a single sentence, and it would dynamically update all of the databases with the corresponding information in a linked way. So it would note that you have also learned the character, word, and grammar point, and would also relationally connect all of that data together.
 
 It could also work in the other direction: you learn a single character, it propagates out to words and sentences, and those are registered in the system.
+
+
+## TODO:
+* Stroke order
+* CN/Kun/ON vocab lookup
+* Sentence example generation
+* Vocab card generation
+* Integrate "usually_kana" and other tags

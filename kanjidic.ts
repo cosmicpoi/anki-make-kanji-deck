@@ -1,6 +1,5 @@
 import * as fs from 'fs'
 import autoBind from "auto-bind";
-import { k_KANJIDIC_FILE_PATH } from "./consts";
 import * as xml_convert from 'xml-js'
 
 type XMLName = 'reading_meaning' | 'character' | 'literal' | 'reading' | 'meaning';
@@ -35,9 +34,9 @@ type KanjidicEntry = {
 };
 
 export class Kanjidic {
-    constructor() {
+    constructor(filePath: string) {
         autoBind(this);
-        this.loadData(k_KANJIDIC_FILE_PATH);
+        this.loadData(filePath);
     }
     private loadData(filePath: string): void {
         const content = fs.readFileSync(filePath, 'utf-8');

@@ -9,6 +9,7 @@ import { Cedict } from "./cedict";
 import { k_CEDICT_FILE_PATH } from "./consts";
 import { Kanjidic } from "./kanjidic";
 import { Unihan } from "./unihan";
+import { isHanCharacter } from './types';
 
 const unihan = new Unihan();
 const kanjidic = new Kanjidic();
@@ -45,7 +46,7 @@ if (args['c']) {
 
     const keys = cedict.getKeys()
         .filter(w => w.length == 1)
-        .filter(c => unihan.isCharacter(c));
+        .filter(c => isHanCharacter(c));
     
     writeCharsToFile(keys, path);
 }
