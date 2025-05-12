@@ -243,6 +243,17 @@ export async function parseXML<
 
     let currDoctype: XMLDoctype | undefined = undefined;
     const currElementMap: Partial<Record<PTagName, PElement | undefined>> = {};
+    const emplaceDtd = (dtd: XMLDtdDecl) => {
+        if (!currDoctype) throw "Curr doctype not defined";
+        if (!currDoctype.internal) currDoctype.internal = [];
+        currDoctype.internal.push(dtd);
+    }
+    const onDtdDecl = (dtd: XMLDtdDecl) => {
+        emplaceDtd(dtd);
+        if (props.onDtdDecl) {
+            props.onDtdDecl(dtd);
+        }
+    }
 
 
     // Token and buffer handlers
@@ -474,7 +485,7 @@ export async function parseXML<
                             dtd.source = prevToken + content + '>';
                         }
 
-                        if (props.onDtdDecl) props.onDtdDecl(dtd);
+                        if (props.onDtdDecl) onDtdDecl(dtd);
 
                         continue;
                     }
@@ -500,7 +511,7 @@ export async function parseXML<
                             dtd.source = prevToken + content + '>';
                         }
 
-                        if (props.onDtdDecl) props.onDtdDecl(dtd);
+                        if (props.onDtdDecl) onDtdDecl(dtd);
 
                         continue;
                     }
@@ -556,7 +567,7 @@ export async function parseXML<
                         if (props.addSource?.['!ATTLIST']) {
                             dtd.source = prevToken + content + '>';
                         }
-                        if (props.onDtdDecl) props.onDtdDecl(dtd);
+                        if (props.onDtdDecl) onDtdDecl(dtd);
 
                         continue;
                     }
@@ -566,7 +577,7 @@ export async function parseXML<
                     }
                 }
                 else if (prevToken == '<!NOTATION') {
-                    
+
                 }
                 else if (prevToken == '<') {
                     if (char == '>') {

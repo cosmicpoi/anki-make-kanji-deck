@@ -3,16 +3,6 @@
         Added the g_type attribute
 -->
 
-<!DOCTYPE JMdict [
-<!ELEMENT JMdict (entry*)>
-<!--                                                                   -->
-
-<!ATTLIST lsource xml:lang CDATA "eng">
-
-<!ENTITY sk "search-only kana form">
-]>
-
-<!--
 <!DOCTYPE catalog [
   <!ELEMENT catalog (book+)>
   <!ELEMENT book (title, author, genre, price, publish_date, description)>
@@ -33,4 +23,3 @@
     isbn2        IDREF       #IMPLIED "fourth"
   >
 ]>
--->

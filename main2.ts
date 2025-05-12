@@ -72,11 +72,7 @@ async function doThing() {
     };
 
     const onDtd = (e: XMLDtdDecl) => {
-        if(e.tagName == '!ATTLIST') 
-        {
-            console.log(e.source);
-            console.log(JSON.stringify(e));
-        }
+        
     }
 
     const handlers: ParamXMLParserHandlerObj<keyof JmdictTagType, keyof JmdictAttrKey> = {
@@ -88,7 +84,7 @@ async function doThing() {
         addSource: {
             // '!ELEMENT': true,
             // '!ENTITY': true,
-            '!ATTLIST': true,
+            // '!ATTLIST': true,
         }
     };
 
