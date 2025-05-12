@@ -1,7 +1,7 @@
 import minimist from "minimist";
 import { buildKanjiMapFromFileList } from "./buildKanjiMap";
 import { Cedict } from "./cedict";
-import { k_CEDICT_FILE_PATH, k_JMDICT_FILE_PATH, k_KANJIDIC_FILE_PATH, k_UNIHAN_DB_PATH } from "./consts";
+import { k_BCCWJ_FILE_PATH, k_CEDICT_FILE_PATH, k_JMDICT_FILE_PATH, k_KANJIDIC_FILE_PATH, k_UNIHAN_DB_PATH } from "./consts";
 import { k_SOURCE_FILE_LIST } from "./file_list";
 import { Kanjidic } from "./kanjidic";
 import { KanjiMap } from "./KanjiMap";
@@ -9,6 +9,7 @@ import { Unihan } from "./unihan";
 import { getPreferredReading, Jmdict, JmdictEntry } from "./jmdict";
 import autoBind from "auto-bind";
 import { fuzzy_empty, isHanCharacter, KanjiCard } from "./types";
+import { Bccwj } from "./bccwj";
 
 const args = minimist(process.argv.slice(2));
 
@@ -69,10 +70,18 @@ async function buildKanji() {
     // Populate transliterations and readings
     const kanji: KanjiMap = buildKanjiMapFromFileList(k_SOURCE_FILE_LIST, { unihan, kanjidic, cedict });
 
+
+    // return;
     // const jmdict: Jmdict = await Jmdict.create(k_JMDICT_FILE_PATH);
     const jmdict: Jmdict = await Jmdict.create('test_xml.xml');
 
     // scratchwork -------------------
+    const bccwj: Bccwj = await Bccwj.create(k_BCCWJ_FILE_PATH, 10);
+    bccwj.forEachEntry(e => {
+        console.log(e);
+    })
+
+    return;
 
     // Populate index
     const charIndex = new CharIndex();

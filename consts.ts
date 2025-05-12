@@ -7,6 +7,7 @@ export const k_UNIHAN_DB_PATH: string = 'Unihan';
 export const k_KANJIDIC_FILE_PATH: string = 'kanjidic2.xml';
 export const k_CEDICT_FILE_PATH: string = 'cedict_ts.u8';
 export const k_JMDICT_FILE_PATH: string = 'JMdict_e';
+export const k_BCCWJ_FILE_PATH: string = 'BCCWJ_frequencylist_suw_ver1_0.tsv';
 
 
 

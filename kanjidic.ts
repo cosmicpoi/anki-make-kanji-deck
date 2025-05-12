@@ -37,6 +37,8 @@ export class Kanjidic {
     constructor(filePath: string) {
         autoBind(this);
         this.loadData(filePath);
+
+        console.log("Loaded kanjidic entries: ", this.m_entries.size);
     }
     private loadData(filePath: string): void {
         const content = fs.readFileSync(filePath, 'utf-8');

@@ -719,6 +719,7 @@ export async function parseXML<
             })
         } catch (err) {
             console.error(err);
+            reject();
         }
     })
 }
