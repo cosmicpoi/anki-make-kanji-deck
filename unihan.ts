@@ -158,15 +158,19 @@ export class Unihan {
     }
 
     public hasLink(lhs: string, rhs: string): boolean {
-        return this.unifiedLinks.has_link(lhs, rhs);
-        // const linkMaps: LinkMap[] = [
-        //     this.kSemanticVariant,
-        //     this.kSpecializedSemanticVariant,
-        //     this.kSimplifiedVariant,
-        //     this.kTraditionalVariant
-        // ];
+        return this.hasLinkOneWay(lhs, rhs) || this.hasLinkOneWay(rhs, lhs);
+    }
 
-        // return linkMaps.map((vm) => vm.has_link(lhs, rhs) || vm.has_link(rhs, lhs)).reduce((a, b) => a || b);
+    private hasLinkOneWay(lhs: string, rhs: string): boolean {
+        const res = this.m_entries.get(lhs);
+        if (!res) return false;
+        const hasSimplified = res.kSimplifiedVariant?.includes(rhs) || false
+        const hasTraditional = res.kTraditionalVariant?.includes(rhs) || false
+
+        const hasSemantic = res.kSemanticVariant?.includes(rhs) || false
+        const hasSpecializedSemantic = res.kSpecializedSemanticVariant?.includes(rhs) || false
+
+        return hasSimplified || hasTraditional || hasSemantic || hasSpecializedSemantic;
     }
 
     public getMandarinPinyin(mychar: string): string[] {
