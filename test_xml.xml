@@ -1,13 +1,80 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Rev 1.09
-        Added the g_type attribute
--->
-
-<test>
-a
-  <child asd="expl" asfd="123">
-  asd
-  <subchild>xml</subchild>
-  <subbfily sss='1234'/>
-  </child>
-</test>
+<entry>
+  <ent_seq>1000490</ent_seq>
+  <k_ele>
+    <keb>甘子</keb>
+  </k_ele>
+  <k_ele>
+    <keb>天魚</keb>
+  </k_ele>
+  <k_ele>
+    <keb>雨子</keb>
+  </k_ele>
+  <r_ele>
+    <reb>あまご</reb>
+  </r_ele>
+  <r_ele>
+    <reb>アマゴ</reb>
+    <re_nokanji/>
+  </r_ele>
+  <sense>
+    <pos>&n;</pos>
+    <xref>皐月鱒</xref>
+    <misc>&uk;</misc>
+    <gloss>land-locked variety of red-spotted masu trout (Oncorhynchus masou ishikawae)</gloss>
+    <gloss>amago</gloss>
+  </sense>
+</entry>
+<entry>
+  <ent_seq>1000500</ent_seq>
+  <r_ele>
+    <reb>あやす</reb>
+  </r_ele>
+  <sense>
+    <pos>&v5s;</pos>
+    <pos>&vt;</pos>
+    <gloss>to cuddle</gloss>
+    <gloss>to comfort</gloss>
+    <gloss>to rock</gloss>
+    <gloss>to soothe</gloss>
+    <gloss>to dandle</gloss>
+    <gloss>to humor</gloss>
+    <gloss>to humour</gloss>
+    <gloss>to lull</gloss>
+  </sense>
+</entry>
+<entry>
+  <ent_seq>1000510</ent_seq>
+  <r_ele>
+    <reb>あやふや</reb>
+    <re_pri>ichi1</re_pri>
+  </r_ele>
+  <sense>
+    <pos>&adj-na;</pos>
+    <misc>&on-mim;</misc>
+    <gloss>uncertain</gloss>
+    <gloss>indefinite</gloss>
+    <gloss>vague</gloss>
+    <gloss>ambiguous</gloss>
+    <gloss>equivocal</gloss>
+    <gloss>dubious</gloss>
+    <gloss>doubtful</gloss>
+    <gloss>non-committal</gloss>
+  </sense>
+</entry>
+<entry>
+  <ent_seq>1000520</ent_seq>
+  <r_ele>
+    <reb>あら</reb>
+    <re_pri>ichi1</re_pri>
+  </r_ele>
+  <r_ele>
+    <reb>あらー</reb>
+  </r_ele>
+  <sense>
+    <pos>&int;</pos>
+    <misc>&fem;</misc>
+    <gloss>oh!</gloss>
+    <gloss>ah!</gloss>
+    <gloss>oh no</gloss>
+  </sense>
+</entry>

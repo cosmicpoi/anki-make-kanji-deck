@@ -89,7 +89,7 @@ const as_xml_props = (
     return props;
 }
 
-type XMLChild = XMLElement | 'string' | 'number';
+type XMLChild = XMLElement | string;
 type XMLElement = XMLTagProps & {
     children?: XMLChild[]
 };
@@ -108,7 +108,7 @@ function xmlEmplaceChild<
 type ParamXMLChild<
     PTagName extends XMLTagName,
     PAttrKey extends XMLAttrKey
-> = ParamXMLElement<PTagName, PAttrKey> | string | number;
+> = ParamXMLElement<PTagName, PAttrKey> | string;
 
 export type ParamXMLElement<
     PTagName extends XMLTagName,
@@ -411,10 +411,10 @@ export async function parseXML<
             if (hasRootPath()) {
                 const parKey = getRootPathKey();
                 if (!currElementMap[parKey]) throw "Should be defined";
-                xmlEmplaceChild(currElementMap[parKey], el) ;
+                xmlEmplaceChild(currElementMap[parKey], el);
             }
 
-            if (props.onElement) props.onElement(el); 
+            if (props.onElement) props.onElement(el);
             if (props.onSelfcloseTag) props.onSelfcloseTag(el);
         }
         // Start tag
@@ -450,263 +450,275 @@ export async function parseXML<
 
     const dtd_tags: POpenToken[] = ['<!ENTITY', '<!ELEMENT', '<!NOTATION', '<!ATTLIST'];
 
-
-
     // File parsing logic
-    try {
-        stream.on('data', (chunk) => {
-            for (const char of chunk as string) {
-                const flushBufWithCurrentChar = (reset: boolean = true): string =>
-                    flushCharBuffer(reset) + char;
+    const onReadChunk = (chunk: string) => {
+        for (const char of chunk) {
+            const flushBufWithCurrentChar = (reset: boolean = true): string =>
+                flushCharBuffer(reset) + char;
 
-                const prevToken = getPrevToken();
-                if (prevToken == '<!--') {
-                    if (char == '>') {
-                        let contents = flushCharBuffer(false);
-                        if (contents.length >= 2 && contents.slice(-2) == '--') {
-                            if (!tryPopToken('-->')) throw 'Pop token failed';
-                            if (props.onComment) props.onComment('<!--' + contents + '-->');
-                            flushCharBuffer();
-                            continue;
-                        }
-                    }
-                    else {
-                        bufferCharMaxLen(char, k_COMMENT_MAX_LENGTH);
-                        // bufferCharacter(char)
-                        continue;
-                    }
-                }
-                else if (prevToken == '<?') {
-                    if (char == '>') {
-                        let contents = flushCharBuffer();
-                        if (contents.slice(-1) != '?') throw "Invalid <?xml ?> declaration format";
-                        contents = contents.slice(0, -1);
-                        const [_, attrs] = getTagAttrsFromStripped(contents);
-                        if (!tryPopToken('?>')) throw 'Pop token failed';
-                        if (props.onDeclaration) props.onDeclaration({ ...attrs } as XMLDeclaration);
-                        continue;
-                    }
-                    else {
-                        bufferCharacter(char);
-                        continue;
-                    }
-                }
-                else if (prevToken == '<!DOCTYPE') {
-                    if (char == '[') {
-                        pushToken('[');
-                        const content = flushCharBuffer()
-                        const rootTagName = content.replace(/\s/g, '');
-                        currDoctype = { rootTagName };
-                        continue;
-                    }
-                    else if (char == '>') {
-                        if (!tryPopToken('>')) throw 'Token error';
+            const prevToken = getPrevToken();
+            if (prevToken == '<!--') {
+                if (char == '>') {
+                    let contents = flushCharBuffer(false);
+                    if (contents.length >= 2 && contents.slice(-2) == '--') {
+                        if (!tryPopToken('-->')) throw 'Pop token failed';
+                        if (props.onComment) props.onComment('<!--' + contents + '-->');
                         flushCharBuffer();
                         continue;
                     }
                 }
-                else if (prevToken == '[') {
-                    const parentToken = getNthParent(2);
-                    if (parentToken != '<!DOCTYPE') throw "Invalid token";
-
-
-                    if (char == ']') {
-                        if (!tryPopToken(']')) throw 'token error';
-                        if (!currDoctype) throw 'currDocType is undefined';
-                        if (props.onDoctype) props.onDoctype({ ...currDoctype });
-                        currDoctype = undefined;
-                        continue;
-                    }
-
-                    let matchedDtd = false;
-                    const content = flushBufWithCurrentChar(false);
-                    for (const tag of dtd_tags) {
-                        if (typeof tag == 'object') continue;
-                        if (content.slice(-1 * tag.length) == tag) {
-                            pushToken(tag);
-                            flushCharBuffer();
-                            matchedDtd = true;
-                            break;
-                        }
-                    }
-                    if (matchedDtd) continue;
-
-                    if (content.slice(-1 * '<!--'.length) == '<!--') {
-                        pushToken('<!--');
-                        flushCharBuffer();
-                        continue;
-                    }
-
+                else {
+                    bufferCharMaxLen(char, k_COMMENT_MAX_LENGTH);
+                    // bufferCharacter(char)
+                    continue;
+                }
+            }
+            else if (prevToken == '<?') {
+                if (char == '>') {
+                    let contents = flushCharBuffer();
+                    if (contents.slice(-1) != '?') throw "Invalid <?xml ?> declaration format";
+                    contents = contents.slice(0, -1);
+                    const [_, attrs] = getTagAttrsFromStripped(contents);
+                    if (!tryPopToken('?>')) throw 'Pop token failed';
+                    if (props.onDeclaration) props.onDeclaration({ ...attrs } as XMLDeclaration);
+                    continue;
+                }
+                else {
                     bufferCharacter(char);
                     continue;
                 }
-                else if (prevToken == '<!ELEMENT') {
-                    if (char == '>') {
-                        if (!tryPopToken('>')) throw 'token error';
-                        const content = flushCharBuffer().trim();
-                        const parts = splitAroundBoundaries(content);
-                        const elementName = parts[0];
-                        const contentModel = parts[1];
-
-                        let dtd: Dtd_ELEMENT = {
-                            tagName: '!ELEMENT', elementName, contentModel
-                        };
-
-                        if (props.addSource?.['!ELEMENT']) {
-                            dtd.source = prevToken + content + '>';
-                        }
-
-                        if (props.onDtdDecl) onDtdDecl(dtd);
-
-                        continue;
-                    }
-                    else {
-                        bufferCharacter(char);
-                        continue;
-                    }
-                }
-                else if (prevToken == '<!ENTITY') {
-                    if (char == '>') {
-                        if (!tryPopToken('>')) throw 'token error';
-                        const content = flushCharBuffer().trim();
-                        const parts = splitAroundBoundaries(content);
-                        const key = parts[0];
-                        const value = parts[1];
-                        let dtd: Dtd_ENTITY = {
-                            tagName: '!ENTITY',
-                            key,
-                            value: trimQuotes(value),
-                        };
-
-                        if (props.addSource?.['!ENTITY']) {
-                            dtd.source = prevToken + content + '>';
-                        }
-
-                        if (props.onDtdDecl) onDtdDecl(dtd);
-
-                        continue;
-                    }
-                    else {
-                        bufferCharacter(char);
-                        continue;
-                    }
-                }
-                else if (prevToken == '<!ATTLIST') {
-                    if (char == '>') {
-                        if (!tryPopToken('>')) throw "token error";
-                        const content = flushCharBuffer();
-                        const parts = splitAroundBoundaries(content.trim());
-
-                        const elementName = parts[0];
-                        let dtd: Dtd_ATTLIST = {
-                            tagName: '!ATTLIST',
-                            elementName,
-                            attributes: [],
-                        };
-
-                        const defaultAttr = () => ({
-                            attributeName: '',
-                            dataType: '',
-                            defaultDeclaration: {}
-                        });
-
-                        let currAttr: Dtd_ATTLIST_Attr = defaultAttr();
-
-                        for (let i = 1; i < parts.length; i++) {
-                            const part = parts[i];
-                            if (part.at(0) == '#')
-                                currAttr.defaultDeclaration.defaultType = part;
-                            else if (part.at(0) == '"')
-                                currAttr.defaultDeclaration.defaultValue = trimQuotes(part);
-                            else {
-                                if (currAttr.attributeName == '')
-                                    currAttr.attributeName = part;
-                                else if (currAttr.dataType == '')
-                                    currAttr.dataType = part;
-                                else {
-                                    dtd.attributes.push(currAttr);
-                                    currAttr = defaultAttr();
-                                    currAttr.attributeName = part;
-                                }
-                            }
-                        }
-                        if (currAttr.attributeName != '' && currAttr.dataType != '') {
-                            dtd.attributes.push(currAttr);
-                            currAttr = defaultAttr();
-                        }
-
-                        if (props.addSource?.['!ATTLIST']) {
-                            dtd.source = prevToken + content + '>';
-                        }
-                        if (props.onDtdDecl) onDtdDecl(dtd);
-
-                        continue;
-                    }
-                    else {
-                        bufferCharacter(char);
-                        continue;
-                    }
-                }
-                else if (prevToken == '<!NOTATION') {
-                    // TODO: implement this
-                }
-                else if (prevToken == '<') {
-                    if (char == '>') {
-                        const tagContents = flushCharBuffer();
-                        if (!tryPopToken('>')) throw new Error();
-                        if (!handleTag(tagContents)) throw new Error();
-                        continue;
-                    }
-                    else if (char == '?') {
-                        replaceTopToken('<?');
-                        continue;
-                    }
-
-                    const bufferContent = flushBufWithCurrentChar(false);
-                    if (bufferContent == '!--') {
-                        replaceTopToken('<!--');
-                        flushCharBuffer();
-                        continue;
-                    }
-                    else if (bufferContent == '!DOCTYPE') {
-                        replaceTopToken('<!DOCTYPE')
-                        flushCharBuffer();
-                        continue;
-                    }
-
-                    bufferCharacter(char);
+            }
+            else if (prevToken == '<!DOCTYPE') {
+                if (char == '[') {
+                    pushToken('[');
+                    const content = flushCharBuffer()
+                    const rootTagName = content.replace(/\s/g, '');
+                    currDoctype = { rootTagName };
                     continue;
                 }
-                else if (typeof prevToken == 'object') {
-                    // bufferCharacter(char);
-                    if (char == '<') {
-                        const content = flushCharBuffer();
-                        const text = content.trim();
-                        currText = text;
-                        pushToken('<');
-                        continue;
-                    }
-                    else {
-                        bufferCharacter(char);
-                        continue;
-                    }
+                else if (char == '>') {
+                    if (!tryPopToken('>')) throw 'Token error';
+                    flushCharBuffer();
                     continue;
                 }
-                else if (prevToken == undefined) {
-                    if (char == '<') {
-                        pushToken('<');
-                        continue;
+            }
+            else if (prevToken == '[') {
+                const parentToken = getNthParent(2);
+                if (parentToken != '<!DOCTYPE') throw "Invalid token";
+
+
+                if (char == ']') {
+                    if (!tryPopToken(']')) throw 'token error';
+                    if (!currDoctype) throw 'currDocType is undefined';
+                    if (props.onDoctype) props.onDoctype({ ...currDoctype });
+                    currDoctype = undefined;
+                    continue;
+                }
+
+                let matchedDtd = false;
+                const content = flushBufWithCurrentChar(false);
+                for (const tag of dtd_tags) {
+                    if (typeof tag == 'object') continue;
+                    if (content.slice(-1 * tag.length) == tag) {
+                        pushToken(tag);
+                        flushCharBuffer();
+                        matchedDtd = true;
+                        break;
                     }
+                }
+                if (matchedDtd) continue;
+
+                if (content.slice(-1 * '<!--'.length) == '<!--') {
+                    pushToken('<!--');
+                    flushCharBuffer();
+                    continue;
+                }
+
+                bufferCharacter(char);
+                continue;
+            }
+            else if (prevToken == '<!ELEMENT') {
+                if (char == '>') {
+                    if (!tryPopToken('>')) throw 'token error';
+                    const content = flushCharBuffer().trim();
+                    const parts = splitAroundBoundaries(content);
+                    const elementName = parts[0];
+                    const contentModel = parts[1];
+
+                    let dtd: Dtd_ELEMENT = {
+                        tagName: '!ELEMENT', elementName, contentModel
+                    };
+
+                    if (props.addSource?.['!ELEMENT']) {
+                        dtd.source = prevToken + content + '>';
+                    }
+
+                    if (props.onDtdDecl) onDtdDecl(dtd);
 
                     continue;
                 }
                 else {
-                    console.error(prevToken, char);
-                    throw "Unhandled case";
+                    bufferCharacter(char);
+                    continue;
                 }
             }
-        });
-    } catch (err) {
-        console.error(err);
-    }
+            else if (prevToken == '<!ENTITY') {
+                if (char == '>') {
+                    if (!tryPopToken('>')) throw 'token error';
+                    const content = flushCharBuffer().trim();
+                    const parts = splitAroundBoundaries(content);
+                    const key = parts[0];
+                    const value = parts[1];
+                    let dtd: Dtd_ENTITY = {
+                        tagName: '!ENTITY',
+                        key,
+                        value: trimQuotes(value),
+                    };
+
+                    if (props.addSource?.['!ENTITY']) {
+                        dtd.source = prevToken + content + '>';
+                    }
+
+                    if (props.onDtdDecl) onDtdDecl(dtd);
+
+                    continue;
+                }
+                else {
+                    bufferCharacter(char);
+                    continue;
+                }
+            }
+            else if (prevToken == '<!ATTLIST') {
+                if (char == '>') {
+                    if (!tryPopToken('>')) throw "token error";
+                    const content = flushCharBuffer();
+                    const parts = splitAroundBoundaries(content.trim());
+
+                    const elementName = parts[0];
+                    let dtd: Dtd_ATTLIST = {
+                        tagName: '!ATTLIST',
+                        elementName,
+                        attributes: [],
+                    };
+
+                    const defaultAttr = () => ({
+                        attributeName: '',
+                        dataType: '',
+                        defaultDeclaration: {}
+                    });
+
+                    let currAttr: Dtd_ATTLIST_Attr = defaultAttr();
+
+                    for (let i = 1; i < parts.length; i++) {
+                        const part = parts[i];
+                        if (part.at(0) == '#')
+                            currAttr.defaultDeclaration.defaultType = part;
+                        else if (part.at(0) == '"')
+                            currAttr.defaultDeclaration.defaultValue = trimQuotes(part);
+                        else {
+                            if (currAttr.attributeName == '')
+                                currAttr.attributeName = part;
+                            else if (currAttr.dataType == '')
+                                currAttr.dataType = part;
+                            else {
+                                dtd.attributes.push(currAttr);
+                                currAttr = defaultAttr();
+                                currAttr.attributeName = part;
+                            }
+                        }
+                    }
+                    if (currAttr.attributeName != '' && currAttr.dataType != '') {
+                        dtd.attributes.push(currAttr);
+                        currAttr = defaultAttr();
+                    }
+
+                    if (props.addSource?.['!ATTLIST']) {
+                        dtd.source = prevToken + content + '>';
+                    }
+                    if (props.onDtdDecl) onDtdDecl(dtd);
+
+                    continue;
+                }
+                else {
+                    bufferCharacter(char);
+                    continue;
+                }
+            }
+            else if (prevToken == '<!NOTATION') {
+                // TODO: implement this
+            }
+            else if (prevToken == '<') {
+                if (char == '>') {
+                    const tagContents = flushCharBuffer();
+                    if (!tryPopToken('>')) throw new Error();
+                    if (!handleTag(tagContents)) throw new Error();
+                    continue;
+                }
+                else if (char == '?') {
+                    replaceTopToken('<?');
+                    continue;
+                }
+
+                const bufferContent = flushBufWithCurrentChar(false);
+                if (bufferContent == '!--') {
+                    replaceTopToken('<!--');
+                    flushCharBuffer();
+                    continue;
+                }
+                else if (bufferContent == '!DOCTYPE') {
+                    replaceTopToken('<!DOCTYPE')
+                    flushCharBuffer();
+                    continue;
+                }
+
+                bufferCharacter(char);
+                continue;
+            }
+            else if (typeof prevToken == 'object') {
+                // bufferCharacter(char);
+                if (char == '<') {
+                    const content = flushCharBuffer();
+                    const text = content.trim();
+                    currText = text;
+                    pushToken('<');
+                    continue;
+                }
+                else {
+                    bufferCharacter(char);
+                    continue;
+                }
+                continue;
+            }
+            else if (prevToken == undefined) {
+                if (char == '<') {
+                    pushToken('<');
+                    continue;
+                }
+
+                continue;
+            }
+            else {
+                console.error(prevToken, char);
+                throw "Unhandled case";
+            }
+        }
+    };
+
+    // Attach handlers in promise
+    return new Promise((resolve, reject) => {
+        try {
+            stream.on('data', (c) => onReadChunk(c as string));
+
+            stream.on('end', () => {
+                resolve();
+            })
+
+            stream.on('error', (err) => {
+                console.error(err);
+                reject();
+            })
+        } catch (err) {
+            console.error(err);
+        }
+    })
 }

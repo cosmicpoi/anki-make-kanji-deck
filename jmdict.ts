@@ -1,33 +1,12 @@
-import * as fs from 'fs'
-import * as readline from 'readline';
 import autoBind from "auto-bind";
+import * as xmlparser from './xmlparser';
+import { ParamXMLElement, XMLDtdDecl, XMLParserProps } from "./xmlparser";
 
-enum JmdictAttrKey {
-    xml_lang = "xml:lang",
-};
-enum JmdictAttrKey {
-    xml_lang = "xml:lang",
-};
+//----------------------------------------------------------------------------------------------------------------------
+// Types
+//----------------------------------------------------------------------------------------------------------------------
 
-type JmdictAttrs = ParamXMLAttrObj<typeof JmdictAttrKey>;
-
-type JmdictTagType = 'declaration' | 'comment' | 'doctype'
-    | 'r_ele' | 'k_ele' | 'sense' | 'entry' | 'ent_seq' | 'keb' | 'reb' | 'pos' | 'gloss';
-
-type DoctypeEntryType = 'ENTITY' | 'ELEMENT' | 'ATTLIST';
-
-type XMLEntity = {
-    source?: string;
-    key: string;
-    value: string;
-};
-
-// type XMLElement = {
-//     type: 'comment' | 'text' | 'element';
-//     // name: XMLName;
-//     content: XMLElement[] | string;
-//     attributes?: XMLAttributeObj;
-// };
+// Dictionary types 
 
 // `entSeq` entry sequence - unique numeric id
 // `kanjiElement` - kanji rendering
@@ -41,11 +20,12 @@ type XMLEntity = {
 //         multiple kanji elements within an entry, they will be orthographical
 //         variants of the same word, either using variations in okurigana, or
 //         alternative and equivalent kanji.
-
 type JmdictSense = {
     pos: string[]; // pos
     xref: string[]; // cross-reference
     gloss: string[];
+    misc: string[];
+    s_inf: string[];
 };
 type JmdictKele = {
     keb: string;
@@ -55,6 +35,7 @@ type JmdictRele = {
     reb: string;
     re_pri: string[];
 }
+
 type JmdictEntry = {
     ent_seq: number; // ent_seq
     k_ele: JmdictKele[]; // k_ele
@@ -62,249 +43,185 @@ type JmdictEntry = {
     sense: JmdictSense[]; // sense
 };
 
+const makeDefaultSense = (): JmdictSense =>
+    ({ pos: [], xref: [], gloss: [], misc: [], s_inf: [] });
+
+const k_KEB_INVALID = '';
+const makeDefaultKele = (): JmdictKele =>
+    ({ keb: k_KEB_INVALID, ke_pri: [] });
+
+const k_REB_INVALID = '';
+const makeDefaultRele = (): JmdictRele =>
+    ({ reb: k_REB_INVALID, re_pri: [] });
+
 const k_ENT_SEQ_INVALID = -1;
-const make_default_entry = (): JmdictEntry => ({
+const makeDefaultEntry = (): JmdictEntry => ({
     ent_seq: k_ENT_SEQ_INVALID,
     k_ele: [],
     r_ele: [],
     sense: [],
 });
 
+// XML Schema
+
+type JmdictAttrKey = {
+    'xml:lang': 'xml:lang';
+};
+
+type JmdictTagType = {
+    r_ele: 'r_ele';
+    k_ele: 'k_ele';
+    sense: 'sense';
+    entry: 'entry';
+    ent_seq: 'ent_seq';
+    keb: 'keb';
+    reb: 'reb';
+    pos: 'pos';
+    gloss: 'gloss';
+    xref: 'xref';
+    misc: 'misc';
+    s_inf: 's_inf';
+};
+
+type JmdictElement = ParamXMLElement<keyof JmdictTagType, keyof JmdictAttrKey>;
+
+type JME_EntSeq = JmdictElement & {
+    tagName: 'ent_seq'
+    children: [string];
+};
+type JME_Keb = JmdictElement & {
+    tagName: 'keb',
+    children: [string];
+};
+type JME_Kepri = JmdictElement & {
+    tagName: 'ke_pri'
+    children: [string];
+};
+type JME_Kele = JmdictElement & {
+    tagName: 'k_ele',
+    children: (JME_Keb | JME_Kepri)[]
+};
+type JME_Reb = JmdictElement & {
+    tagName: 'reb',
+    children: [string];
+};
+type JME_Repri = JmdictElement & {
+    tagName: 're_pri'
+    children: [string];
+};
+type JME_Rele = JmdictElement & {
+    tagName: 'r_ele',
+    children: (JME_Reb | JME_Repri)[]
+};
+type JME_Gloss = JmdictElement & {
+    tagName: 'gloss',
+    children: [string]
+};
+type JME_Pos = JmdictElement & {
+    tagName: 'pos',
+    children: [string]
+};
+type JME_Misc = JmdictElement & {
+    tagName: 'misc',
+    children: [string]
+};
+type JME_Xref = JmdictElement & {
+    tagName: 'xref',
+    children: [string]
+};
+type JME_Sinf = JmdictElement & {
+    tagName: 's_inf',
+    children: [string]
+};
+type JME_Sense = JmdictElement & {
+    tagName: 'sense',
+    children: (JME_Gloss | JME_Misc | JME_Pos | JME_Xref | JME_Misc | JME_Sinf)[]
+};
+type JME_Entry = JmdictElement & {
+    tagName: 'entry',
+    children: (JME_EntSeq | JME_Kele | JME_Rele | JME_Sense)[],
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+// Jmdict Implementation
+//----------------------------------------------------------------------------------------------------------------------
+
 export class Jmdict {
     constructor() {
         autoBind(this);
     }
-    static async create(filePath: string): Promise<Jmdict | undefined> {
+    static async create(filePath: string): Promise<Jmdict> {
         const jmdict = new Jmdict();
 
-        const fileStream = fs.createReadStream(filePath);
-        // const fileStream = fs.createReadStream(filePath);
 
-        const rl = readline.createInterface({
-            input: fileStream,
-            crlfDelay: Infinity, // Recognize all instances of CR LF ('\r\n') as a single line break
-        });
+        const serializeKele = (el: JME_Kele): JmdictKele => {
+            const kele = makeDefaultKele();
+            for (const child of el.children) {
+                if (child.tagName == 'keb') kele.keb = child.children[0];
+                else if (child.tagName == 'ke_pri') kele.ke_pri.push(child.children[0]);
+            }
+            return kele;
+        };
+        const serializeRele = (el: JME_Rele): JmdictRele => {
+            const rele = makeDefaultRele();
+            for (const child of el.children) {
+                if (child.tagName == 'reb') rele.reb = child.children[0];
+                else if (child.tagName == 're_pri') rele.re_pri.push(child.children[0]);
+            }
+            return rele;
+        };
+        const serializeSense = (el: JME_Sense): JmdictSense => {
+            const sense = makeDefaultSense();
+            for (const child of el.children) {
+                if (child.tagName == 'pos') sense.pos.push(child.children[0]);
+                else if (child.tagName == 'gloss') sense.gloss.push(child.children[0]);
+                else if (child.tagName == 'xref') sense.xref.push(child.children[0]);
+                else if (child.tagName == 'misc') sense.misc.push(child.children[0]);
+                else if (child.tagName == 's_inf') sense.s_inf.push(child.children[0]);
+            }
+            return sense;
+        }
+        const serializeEntry = (el: JME_Entry): JmdictEntry => {
+            const entry: JmdictEntry = makeDefaultEntry();
 
-        // Take a stripped start tag (A for <A> or <A/>) and get its attrs
-        const getTagAttrsFromStripped = (stripped: string): [XMLTagType, XMLAttributeObj | undefined] => {
-            let tagType = stripped;
-            const tagAttrs: XMLAttributeObj = {};
-            let hasAttrs = false;
-            if (stripped.includes('=')) {
-                const parts = stripped.split(' ');
-                // has props, need to unpack them
-                tagType = parts[0];
-                for (let i = 1; i < parts.length; i++) {
-                    const attrSrc = parts[i];
-                    const kv = attrSrc.split("=");
-                    const attrKey = kv[0];
-                    const attrVal = kv[1].slice(1, -1);
-
-                    // @ts-ignore
-                    tagAttrs[attrKey] = attrVal;
-                    hasAttrs = true;
+            for (const child of el.children) {
+                if (child.tagName == 'ent_seq') {
+                    entry.ent_seq = parseInt(child.children[0]);
+                }
+                else if (child.tagName == 'k_ele') {
+                    entry.k_ele.push(serializeKele(child));
+                }
+                else if (child.tagName == 'r_ele') {
+                    entry.r_ele.push(serializeRele(child));
+                }
+                else if (child.tagName == 'sense') {
+                    entry.sense.push(serializeSense(child));
                 }
             }
-            const attrs = hasAttrs ? tagAttrs : undefined;
-            return [tagType as XMLTagType, attrs];
-        }
+            return entry;
+        };
 
-
-        const openingTags: XMLProps[] = [];
-        const entities: XMLEntity[] = [];
-
-        const getPrevTag = (): XMLProps | undefined =>
-            openingTags.length != 0 ? openingTags[openingTags.length - 1] : undefined;
-
-        const tagInRoot = (tagType: XMLTagType): boolean =>
-            openingTags.map(t => t.type).includes(tagType);
-
-        let currentEntry: JmdictEntry | undefined = undefined;
-
-        const onPopTag = (tagType: XMLTagType) => {
-            if (!currentEntry) return;
-            if (tagType == 'entry') {
-                // console.log('Popping and emplacing entry');
-                jmdict.emplaceEntry(currentEntry);
-                currentEntry = undefined;
+        const onElement = (el: JmdictElement) => {
+            if (el.tagName == 'entry') {
+                const entry: JmdictEntry = serializeEntry(el as JME_Entry)
+                // console.dir(entry, { depth: null, colors: true });
+                jmdict.emplaceEntry(entry);
             }
-        }
+        };
 
-        const onPushTag = (tagType: XMLTagType, tagAttrs: XMLAttributeObj | undefined) => {
-            if (tagType == 'entry') {
-                // console.log('Making new entry');
-                currentEntry = make_default_entry();
-            }
-        }
-
-        const pushTagWithValue = (tagType: XMLTagType, text: string, tagAttrs: XMLAttributeObj | undefined) => {
-            // console.log('Pushing tag with value ', tagType, text);
-            const prevTag = getPrevTag();
-            if (tagInRoot('entry')) {
-                if (!currentEntry) {
-                    console.error("Current entry invalid");
-                    return;
-                }
-
-                if (tagType == 'ent_seq') {
-                    currentEntry.ent_seq = parseInt(text);
-                }
-                else if (tagType == 'keb') {
-                    // console.log('Adding keb', text);
-                    if (prevTag?.type != 'k_ele') {
-                        console.error("Root invalid");
-                        return;
-                    }
-                    currentEntry.k_ele.push({ keb: text, ke_pri: [] });
-                }
-                else if (tagType == 'reb') {
-                    // console.log('Adding reb', text);
-                    if (prevTag?.type != 'r_ele') {
-                        console.error("Root invalid");
-                        return;
-                    }
-                    currentEntry.r_ele.push({ reb: text, re_pri: [] });
-                }
+        const onDtd = (e: XMLDtdDecl) => {
+            if (e.tagName == '!ENTITY') {
+                jmdict.emplaceEntity(e.key, e.value);
             }
         }
 
-        const tryPopTag = (tagType: XMLTagType): boolean => {
-            const tag = openingTags.pop();
-            if (!(tag?.type == tagType)) {
-                console.error('Could not find a closing tag for ', tagType);
-                return false;
-            }
-            // console.log("popped", tagType);
-            onPopTag(tagType);
-            return true;
-        }
+        const handlers: XMLParserProps<keyof JmdictTagType, keyof JmdictAttrKey> = {
+            skipRoot: false,
+            onDtdDecl: onDtd,
+            onElement: onElement,
+        };
 
-        const pushTag = (tagType: XMLTagType, tagAttrs: XMLAttributeObj | undefined) => {
-            openingTags.push(as_xml_props(tagType, tagAttrs));
-            onPushTag(tagType, tagAttrs);
-        }
-
-
-
-        for await (const line of rl) {
-            const isDeclaration = line.substring(0, 5) == '<?xml';
-            if (isDeclaration) {
-                continue;
-            }
-
-            const match_commentWholeLine = line.match(/^<!--.+-->$/);
-            if (match_commentWholeLine) {
-                continue;
-            }
-
-            const prevTag = getPrevTag();
-            if (prevTag?.type == 'comment') {
-                const match_commentEnd = line.match(/-->\s*$/);
-                if (match_commentEnd) {
-                    if (!tryPopTag('comment')) return;
-                    continue;
-                }
-                else {
-                    continue;
-                }
-            }
-
-            const match_commentStart = line.match(/^\s*<!--.*$/);
-            if (match_commentStart) {
-                openingTags.push({ source: '<!--', type: 'comment' });
-                continue;
-            }
-
-            if (prevTag?.type == 'doctype') {
-                const match_doctypeEnd = line.match(/^\]>$/);
-                if (match_doctypeEnd) {
-                    if (!tryPopTag('doctype')) return;
-                    continue;
-                }
-                const match_doctypeEntry = line.match(/^<!(.+)>$/);
-                const match_entity = line.match(/^<!ENTITY (.+) "(.+)">$/);
-                if (match_doctypeEntry) {
-                    const parts = match_doctypeEntry[1].split(" ");
-                    const entryType = parts[0] as DoctypeEntryType;
-                    if (entryType == 'ENTITY') {
-                        entities.push({ key: parts[1], value: parts[2] });
-                    }
-                    continue;
-                }
-
-            }
-            else {
-                const match_doctypeStart = line.match(/^<!DOCTYPE JMdict \[$/);
-                if (match_doctypeStart) {
-                    openingTags.push({ type: 'doctype' });
-                    continue;
-                }
-
-                const match_tags = line.match(/<(.+?)>/g);
-                if (match_tags) {
-                    if (match_tags.length == 2) {
-                        const capture = line.match(/<(.+?)>(.+?)<\/.+>/);
-                        if (capture) {
-                            const stripped = capture[1];
-                            const [tagType, tagAttrs] = getTagAttrsFromStripped(stripped);
-
-                            const text = capture[2];
-                            pushTagWithValue(tagType, text, tagAttrs);
-                        }
-                        continue;
-                    }
-                    else if (match_tags.length == 1) {
-                        let stripped = match_tags[0].slice(1, -1);
-
-                        const hasFrontSlash: boolean = stripped.at(0) == '/';
-                        if (hasFrontSlash) {
-                            stripped = stripped.substring(1);
-                        }
-                        const hasBackSlash: boolean = stripped.at(-1) == '/';
-                        if (hasBackSlash) {
-                            stripped = stripped.slice(0, -1);
-                        }
-
-                        const [tagType, tagAttrs] = getTagAttrsFromStripped(stripped);
-                        const isEndTag: boolean = hasFrontSlash && (prevTag?.type == tagType);
-
-                        // end tag
-                        if (isEndTag) {
-                            // console.log("popping tag: ", tagType, tagAttrs, line);
-                            if (!tryPopTag(stripped as XMLTagType)) return;
-                            continue;
-                        }
-                        // one-line tag
-                        else if (hasBackSlash) {
-                            // console.log("one-line tag:", tagType, tagAttrs, line);
-                        }
-                        // start tag
-                        else if (!hasFrontSlash && !hasBackSlash) {
-                            // console.log("pushing tag: ", tagType, tagAttrs, line);
-                            pushTag(tagType, tagAttrs);
-
-                            continue;
-                        }
-                        else {
-                            console.error("Something weird happened");
-                            return undefined;
-                        }
-                    }
-                    else { // (match_tags.length > 2)
-                        console.error("We don't know how to handle this line", line);
-                        return undefined;
-                    }
-
-                    continue;
-                }
-            } 
-        }
-
-        if (openingTags.length != 0) {
-            console.error("Tree parse error");
-            return undefined;
-        }
-
+        await xmlparser.parseXML<keyof JmdictTagType, keyof JmdictAttrKey>(filePath, handlers);
         return jmdict;
     }
 
@@ -319,9 +236,11 @@ export class Jmdict {
         }
     }
 
+    private emplaceEntity(key: string, value: string): void {
+        this.m_entityAbbrev[key] = value;
+    }
 
     private emplaceEntry(entry: JmdictEntry): void {
-        // if ( Math.random() < 0.001) console.log("Emplacing entry:", entry);
         if (entry.ent_seq == k_ENT_SEQ_INVALID) {
             console.error("invalid");
             return;
@@ -336,12 +255,18 @@ export class Jmdict {
             // this.m_kEleToSeq.set(keb, entry.ent_seq);
             this.m_wordToSeq.set(keb, entry.ent_seq);
         })
-        entry.r_ele.forEach(({reb}) => {
+        entry.r_ele.forEach(({ reb }) => {
             // this.m_rEleToSeq.set(reb, entry.ent_seq);
             this.m_wordToSeq.set(reb, entry.ent_seq);
         })
 
     }
+
+    public getAbbrevs(): Readonly<Record<string, string>> {
+        return this.m_entityAbbrev;
+    };
+    // Entity abbreviations
+    private m_entityAbbrev: Record<string, string> = {};
 
     // Index of k_ele to ent seq
     private m_kEleToSeq: Map<string, number> = new Map();

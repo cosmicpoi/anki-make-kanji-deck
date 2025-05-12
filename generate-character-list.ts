@@ -1,3 +1,8 @@
+//
+// Generate a list of all chinese/japanese characters
+//
+
+
 import * as fs from 'fs'
 import minimist from "minimist";
 import { Cedict } from "./cedict";

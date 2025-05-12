@@ -20,7 +20,7 @@ yarn execute -o myfile.txt
 
 To generate all-character lists:
 ```
-yarn run generate -c lists/Chinese_All.txt -j lists/Japanese_All.txt
+yarn ts-node generate-character-list.ts -c lists/Chinese_All.txt -j lists/Japanese_All.txt
 ```
 
 To generated unnested word lists:
