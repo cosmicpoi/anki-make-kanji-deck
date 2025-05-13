@@ -9,7 +9,7 @@ import { Bccwj } from "./bccwj";
 import { KanjiCard } from "./KanjiCard";
 import { Bclu } from "./Bclu";
 import { Hanzidb } from './Hanzidb';
-import { combine_without_duplicates } from './types';
+import { combine_without_duplicates, hskTag, jlptTag } from './types';
 
 const args = minimist(process.argv.slice(2));
 
@@ -41,7 +41,22 @@ async function buildKanji() {
         else if (card.simpChineseChar.length == 0 && card.tradChineseChar.length == 0) {
             card.tags.push(k_tag_JAPANESE_ONLY);
         }
-    })
+    });
+
+    // Populate JLPT / HSK levels
+    cards.forEach(card => {
+        const jlptLevels = card.japaneseChar.map(c => kanjidic.getJLPT(c));
+        const minJlptLevel = jlptLevels.reduce((a, b) => Math.min(a, b), 0);
+        if (minJlptLevel != 0) {
+            card.tags.push(jlptTag(minJlptLevel));
+        }
+
+        const hskLevels = card.simpChineseChar.map(c => hanzidb.getHSK(c));
+        const maxHskLevel = hskLevels.reduce((a, b) => Math.max(a, b), 0);
+        if (maxHskLevel != 0) {
+            card.tags.push(hskTag(maxHskLevel));
+        }
+    });
 
     // Now write to file
 

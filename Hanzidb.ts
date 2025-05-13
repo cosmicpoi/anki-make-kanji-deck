@@ -84,9 +84,13 @@ export class Hanzidb {
         return values.reduce((a1, a2) => [...a1, ...a2]);
     }
 
+    public getHSK(char: string): number {
+        return this.m_charToHsk.get(char) || 0;
+    }
+
     public getNMostFrequent(n: number): string[] {
         if (n > this.m_entries.size) {
-            console.error("N too large");
+            console.error("N too large, max is ", this.m_entries.size);
             return [];
         }
         return Array(n).fill(0)
@@ -109,11 +113,14 @@ export class Hanzidb {
             const res = this.m_hskToChar.get(entry.hsk_level);
             if (!res) this.m_hskToChar.set(entry.hsk_level, [entry.character]);
             else res.push(entry.character);
+
+            this.m_charToHsk.set(entry.character, entry.hsk_level);
         }
     }
 
     // Map lemma to entry
     private m_rankToChar: Map<number, string> = new Map();
     private m_hskToChar: Map<number, string[]> = new Map();
+    private m_charToHsk: Map<string, number> = new Map();
     private m_entries: Map<string, HanzidbEntry> = new Map();
 }

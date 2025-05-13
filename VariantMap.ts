@@ -119,8 +119,6 @@ export class VariantMap {
         log_v(verbose, "Entries left with only japanese characters: ", jp_only);
         log_v(verbose, "Entries left with only chinese characters: ", cn_only);
 
-        log_v(verbose, "Cleaning extraneous traditional characters");
-        // this.forEachEntry((e) => this.depopulateExtraTrad(e));
 
     }
 
@@ -200,13 +198,6 @@ export class VariantMap {
         }
         this.populateTradFromSimp(entry);
         this.populateSimpFromTrad(entry);
-    }
-
-    // If a character has more than one trad option, and the simplified option is included in it, remove it
-    private depopulateExtraTrad(entry: VariantMapEntry) {
-        if (entry.tradChineseChar.length > 1 && entry.simpChineseChar.length > 0) {
-            entry.tradChineseChar = entry.tradChineseChar.filter(e => !entry.simpChineseChar.includes(e));
-        }
     }
 
     /* Predicates */

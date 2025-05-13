@@ -304,3 +304,19 @@ export function pairsOf<T, S>(a1: Iterable<T>, a2: Iterable<S>): [T, S][] {
 
     return pairs;
 }
+
+export function jlptTag(n: number) {
+    let tag = "JLPT";
+    for (let i = 1; i <= n; i++) {
+        tag = tag + "::n" + i;
+    }
+    return tag;
+}
+
+export function hskTag(n: number) {
+    let tag = "HSK";
+    for (let i = 6; i >= n; i--) {
+        tag = tag + "::" + i;
+    }
+    return tag;
+}

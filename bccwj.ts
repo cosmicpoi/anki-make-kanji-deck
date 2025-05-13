@@ -57,10 +57,10 @@ export class Bccwj {
                 wType: vals[5] as BccwjWordType,
                 frequency: parseInt(vals[6]),
             };
-            bccwj.emplaceEntry(entry);
+            bccwj.emplaceEntry(count, entry);
 
+            count++;
             if (props?.maxLines) {
-                count++;
                 if (count >= props.maxLines) break;
             }
         }
@@ -81,12 +81,15 @@ export class Bccwj {
         this.m_entries.forEach(handler);
     }
 
-    private emplaceEntry(entry: BccwjEntry): void {
+    private emplaceEntry(rank: number, entry: BccwjEntry): void {
         if (!this.m_entries.has(entry.lemma)) {
-            this.m_entries.set(entry.lemma, entry);
+            
         }
+        this.m_entries.set(entry.lemma, entry);
+        this.m_freqRankToWord.set(rank, entry.lemma);
     }
 
     // Map lemma to entry
+    private m_freqRankToWord: Map<number, string> = new Map();
     private m_entries: Map<string, BccwjEntry> = new Map();
 }

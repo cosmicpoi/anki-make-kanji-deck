@@ -35,7 +35,6 @@ export class Kanjidic {
     static async create(filePath: string): Promise<Kanjidic> {
         const kanjidic = new Kanjidic();
 
-        let i = 0;
         const onElement = (el: XMLElement) => {
             if (el.tagName != 'character') return;
             if (!el.children) return;
@@ -93,8 +92,7 @@ export class Kanjidic {
             }
 
             if (entry.character != k_ENTRY_CHAR_INVALID) {
-                kanjidic.emplaceEntry(i, entry);
-                i++;
+                kanjidic.emplaceEntry(entry);
             }
         }
 
@@ -112,18 +110,13 @@ export class Kanjidic {
     }
 
     public getJLPTChars(): string[] {
+        console.log(this.m_entries.size);
         const values: string[][] = [...this.m_jlptToChar.values()];
         return values.reduce((a1, a2) => [...a1, ...a2]);
     }
 
-    public getNMostFrequent(n: number): string[] {
-        if (n > this.m_entries.size) {
-            console.error("N too large");
-            return [];
-        }
-        return Array(n).fill(0)
-            .map((_, i) => this.m_freqRankToChar.get(i) || '')
-            .filter(s => s != '');
+    public getJLPT(char: string): number {
+        return this.m_charToJlpt.get(char) || 0;
     }
 
     public getEntry(mychar: string): KanjidicEntry | undefined {
@@ -135,26 +128,31 @@ export class Kanjidic {
     }
 
     // Set logic
-    private emplaceEntry(rank: number, entry: KanjidicEntry): void {
+    private emplaceEntry(entry: KanjidicEntry): void {
         this.m_entries.set(entry.character, entry);
-        this.m_freqRankToChar.set(rank, entry.character);
 
         if (entry?.jlpt != undefined) {
             const res = this.m_jlptToChar.get(entry.jlpt);
             if (!res) this.m_jlptToChar.set(entry.jlpt, [entry.character]);
             else res.push(entry.character);
+
+            this.m_charToJlpt.set(entry.character, entry.jlpt);
         }
 
         if (entry?.grade != undefined) {
             const res = this.m_gradeToChar.get(entry.grade);
             if (!res) this.m_gradeToChar.set(entry.grade, [entry.character]);
             else res.push(entry.character);
+
+            this.m_charToGrade.set(entry.character, entry.grade);
         }
     }
 
     // Fields
     private m_freqRankToChar: Map<number, string> = new Map();
     private m_gradeToChar: Map<number, string[]> = new Map();
+    private m_charToGrade: Map<string, number> = new Map();
     private m_jlptToChar: Map<number, string[]> = new Map();
+    private m_charToJlpt: Map<string, number> = new Map();
     private m_entries: Map<string, KanjidicEntry> = new Map();
 }
