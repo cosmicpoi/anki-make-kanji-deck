@@ -9,7 +9,23 @@ export const k_CEDICT_FILE_PATH: string = 'cedict_ts.u8';
 export const k_JMDICT_FILE_PATH: string = 'JMdict_e';
 export const k_BCCWJ_FILE_PATH: string = 'BCCWJ_frequencylist_suw_ver1_0.tsv';
 
+export const k_HSK_FILE_LIST: string[] = [
+    'HSK__1.txt',
+    'HSK__2.txt',
+    'HSK__3.txt',
+    'HSK__4.txt',
+    'HSK__5.txt',
+    'HSK__6.txt',
+    'HSK__7-9.txt' 
+];
 
+export const k_JLPT_FILE_LIST: string[] = [
+    'JLPT__n5.txt',
+    'JLPT__n4.txt',
+    'JLPT__n3.txt',
+    'JLPT__n2.txt',
+    'JLPT__n1.txt',
+];
 
 export const k_tag_CHINESE_ONLY = "chinese_only";
 export const k_tag_JAPANESE_ONLY = "japanese_only";

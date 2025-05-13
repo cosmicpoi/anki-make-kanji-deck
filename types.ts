@@ -1,15 +1,9 @@
 import { k_GUESS_STRING } from "./consts";
 
 export enum CharacterType {
-    TraditionalChinese,
-    SimplifiedChinese,
-    Japanese
-};
-
-export type FileListEntry = {
-    path: string;
-    type: CharacterType;
-    tags?: string[];
+    TraditionalChinese = "TraditionalChinese",
+    SimplifiedChinese = "SimplifiedChinese",
+    Japanese = "Japanese",
 };
 
 // Basic type for KanjiCard. An array with a bool flag to mark if it's a guess,
@@ -95,6 +89,11 @@ export type KanjiCard = {
     simpChineseStrokeOrder: FuzzyArray;
     tradChineseStrokeOrder: FuzzyArray;
 
+    // difficulty and stroke count
+    strokeCount?: number;
+    japaneseDifficulty?: number;
+    simpChineseDifficulty?: number;
+
     // tags 
     tags: FuzzyArray; // never actually fuzzy, just for type convenience
 };
@@ -136,7 +135,20 @@ export function concatKanjiCards(c1: KanjiCard, c2: KanjiCard): KanjiCard {
     const res = get_default_kanji_card();
     let key: keyof KanjiCard;
     for (key in res) {
-        res[key] = concatFuzzyArray(c1[key], c2[key]);
+        if (key != 'strokeCount' && key != 'simpChineseDifficulty' && key != 'japaneseDifficulty') {
+            res[key] = concatFuzzyArray(c1[key], c2[key]);
+        }
+        else {
+            if (c1[key] == undefined && c2[key] != undefined) {
+                res[key] = c2[key];
+            }
+            else if (c1[key] != undefined && c1[key] == undefined) {
+                res[key] = c1[key];
+            }
+            else if (c1[key] != undefined && c2[key] != undefined) {
+                res[key] = Math.max(c1[key] || 0, c2[key] || 0);
+            }
+        }
     }
     return res;
 }
@@ -149,6 +161,12 @@ export const card_is_character = (card: KanjiCard, mychar: string): boolean =>
 
 export const common_elements = (a1: string[], a2: string[]) =>
     [...a1].filter(item => a2.includes(item));
+
+export const array_difference = (a1: string[], a2: string[]) =>
+    [...a1].filter(item => !a2.includes(item));
+
+export const isSameArray = (a1: string[], a2: string[]) => 
+    array_difference(a1, a2).length == 0 && a1.length == a2.length;
 // Get similarity between two cards based on pinyin and yomi. return [match, pct]
 // - if at least one pinyin doesn't match, return 0
 // - `match` - the number of common jp readings between the two as a uint
@@ -171,7 +189,7 @@ export function reading_similarity(c1: KanjiCard, c2: KanjiCard): [number, numbe
 }
 
 // combine lookups across `arr`
-export function apply_getter_to_arr(getter: (c: string) => string[], arr: FuzzyArray): FuzzyArray {
+export function apply_getter_to_arr_fuzzy(getter: (c: string) => string[], arr: FuzzyArray): FuzzyArray {
     let all_guesses: string[] = [];
     arr.v.forEach((baseChar: string) => {
         const guesses: string[] = getter(baseChar);
@@ -185,12 +203,33 @@ export function apply_getter_to_arr(getter: (c: string) => string[], arr: FuzzyA
     return res;
 }
 
+export function apply_getter_to_arr(getter: (c: string) => string[], arr: string[]): string[] {
+    let all_guesses: string[] = [];
+    arr.forEach((baseChar: string) => {
+        const guesses: string[] = getter(baseChar);
+        all_guesses.push(...guesses);
+    });
+
+    return  [...new Set(all_guesses)];
+}
+
+// Apply `apply_getter_to_arr` over multiple arrays
+export function apply_multi_getter(getter: (c: string) => string[], arrs: string[][]): string[] {
+    let all_guesses: string[] = []; 
+    arrs.forEach((baseArr: string[]) => {
+        const guesses: string[] = apply_getter_to_arr(getter, baseArr);
+        all_guesses.push(...guesses);
+    }); 
+
+    return all_guesses;
+}
+
 // combine the above lookup across multiple arrays
-export function apply_multi_getter(getter: (c: string) => string[], arrs: FuzzyArray[]): FuzzyArray {
+export function apply_multi_getter_fuzzy(getter: (c: string) => string[], arrs: FuzzyArray[]): FuzzyArray {
     let all_guesses: string[] = [];
     let isGuess: boolean = false;
     arrs.forEach((baseArr: FuzzyArray) => {
-        const guesses: FuzzyArray = apply_getter_to_arr(getter, baseArr);
+        const guesses: FuzzyArray = apply_getter_to_arr_fuzzy(getter, baseArr);
         all_guesses.push(...guesses.v);
         isGuess = isGuess || !!(baseArr.guess);
     });
@@ -254,3 +293,4 @@ function isKatakana(char: string) {
     const code = char.charCodeAt(0);
     return (code >= 0x30A0 && code <= 0x30FF) || (code >= 0x31F0 && code <= 0x31FF);
 }
+

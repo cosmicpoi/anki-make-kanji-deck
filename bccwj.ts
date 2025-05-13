@@ -23,6 +23,7 @@ export type BccwjEntry = {
 
 export class Bccwj {
     constructor() {
+        autoBind(this);
     }
 
     static async create(filePath: string, maxLines?: number): Promise<Bccwj> {

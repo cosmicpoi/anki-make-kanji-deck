@@ -322,7 +322,7 @@ export class Jmdict {
         }
     }
 
-    public getWords(): Iterator<string> {
+    public getWords(): Iterable<string> {
         return this.m_wordToSeq.keys();
     }
 
@@ -333,7 +333,7 @@ export class Jmdict {
         }
     }
 
-    public getSeq(): Iterator<number> {
+    public getSeq(): Iterable<number> {
         return this.m_entries.keys();
     }
 
@@ -344,7 +344,7 @@ export class Jmdict {
         }
     }
 
-    public getEntries(): Iterator<JmdictEntry> {
+    public getEntries(): Iterable<JmdictEntry> {
         return this.m_entries.values();
     }
 

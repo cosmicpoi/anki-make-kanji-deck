@@ -78,8 +78,11 @@ export class Unihan {
         const unihan = new Unihan();
 
         // load data from files
-        unihan.loadData(unihanDir, k_UNIHAN_FILENAMES.Unihan_Readings);
-        unihan.loadData(unihanDir, k_UNIHAN_FILENAMES.Unihan_Variants);
+
+        let key: keyof typeof k_UNIHAN_FILENAMES;
+        for (key in k_UNIHAN_FILENAMES) {
+            await unihan.loadData(unihanDir, k_UNIHAN_FILENAMES[key]);
+        }
 
         unihan.createCachedYomi();
 
@@ -177,22 +180,6 @@ export class Unihan {
         return this.m_entries.has(mychar);
     }
 
-    public hasLink(lhs: string, rhs: string): boolean {
-        return this.hasLinkOneWay(lhs, rhs) || this.hasLinkOneWay(rhs, lhs);
-    }
-
-    private hasLinkOneWay(lhs: string, rhs: string): boolean {
-        const res = this.m_entries.get(lhs);
-        if (!res) return false;
-        const hasSimplified = res.kSimplifiedVariant?.includes(rhs) || false
-        const hasTraditional = res.kTraditionalVariant?.includes(rhs) || false
-
-        const hasSemantic = res.kSemanticVariant?.includes(rhs) || false
-        const hasSpecializedSemantic = res.kSpecializedSemanticVariant?.includes(rhs) || false
-
-        return hasSimplified || hasTraditional || hasSemantic || hasSpecializedSemantic;
-    }
-
     // IRG getters
     public isJapanese(mychar: string): boolean {
         return !!(this.m_entries.get(mychar)?.kIRG_JSource)
@@ -218,13 +205,13 @@ export class Unihan {
         return this.m_entries.get(mychar)?.cachedJapaneseOn || [];
     }
 
+    public getEnglishDefinition(mychar: string): string[] {
+        return this.m_entries.get(mychar)?.kDefinition || [];
+    }
+
     // variant getters
     public getSimpChineseVariants(mychar: string): string[] {
         return this.m_entries.get(mychar)?.kSimplifiedVariant || [];
-    }
-
-    public getEnglishDefinition(mychar: string): string[] {
-        return this.m_entries.get(mychar)?.kDefinition || [];
     }
 
     public getTradChineseVariants(mychar: string): string[] {
@@ -235,6 +222,34 @@ export class Unihan {
         const semantic = this.m_entries.get(mychar)?.kSemanticVariant || [];
         const specialized = this.m_entries.get(mychar)?.kSpecializedSemanticVariant || [];
         return combine_without_duplicates(semantic, specialized);
+    }
+
+    public isSimplifiedVariant(lhs: string, rhs: string): boolean {
+        const res = this.m_entries.get(lhs);
+        if (!res) return false;
+        return res.kSimplifiedVariant?.includes(rhs) || false
+    }
+
+    public isTraditionalVariant(lhs: string, rhs: string): boolean {
+        const res = this.m_entries.get(lhs);
+        if (!res) return false;
+        return res.kTraditionalVariant?.includes(rhs) || false
+    }
+
+    public isSemanticOrSpecializedVariant(lhs: string, rhs: string): boolean {
+        const res = this.m_entries.get(lhs);
+        if (!res) return false;
+        return res.kTraditionalVariant?.includes(rhs) || false
+    }
+
+    public hasLink(lhs: string, rhs: string): boolean {
+        return this.hasLinkOneWay(lhs, rhs) || this.hasLinkOneWay(rhs, lhs);
+    }
+
+    private hasLinkOneWay(lhs: string, rhs: string): boolean {
+        return this.isSimplifiedVariant(lhs, rhs)
+            || this.isTraditionalVariant(lhs, rhs)
+            || this.isSemanticOrSpecializedVariant(lhs, rhs);
     }
 
     // Internal emplace helpers

@@ -71,6 +71,48 @@ async function buildKanji() {
     const kanji: KanjiMap = buildKanjiMapFromFileList(k_SOURCE_FILE_LIST, { unihan, kanjidic, cedict });
 
 
+    const n1_list = kanji.getCards().filter(card => card.tags.v.includes('JLPT::n1'))
+    const n2_list = kanji.getCards().filter(card => card.tags.v.includes('JLPT::n1::n2'))
+    const n3_list = kanji.getCards().filter(card => card.tags.v.includes('JLPT::n1::n2::n3'))
+    const n4_list = kanji.getCards().filter(card => card.tags.v.includes('JLPT::n1::n2::n3::n4'))
+    const n5_list = kanji.getCards().filter(card => card.tags.v.includes('JLPT::n1::n2::n3::n4::n5'))
+
+    const hsk6_list = kanji.getCards().filter(card => card.tags.v.includes('HSK::6'))
+    const hsk5_list = kanji.getCards().filter(card => card.tags.v.includes('HSK::6::5'))
+    const hsk4_list = kanji.getCards().filter(card => card.tags.v.includes('HSK::6::5::4'))
+    const hsk3_list = kanji.getCards().filter(card => card.tags.v.includes('HSK::6::5::4::3'))
+    const hsk2_list = kanji.getCards().filter(card => card.tags.v.includes('HSK::6::5::4::3::2'))
+    const hsk1_list = kanji.getCards().filter(card => card.tags.v.includes('HSK::6::5::4::3::2::1'));
+
+    const get_stroke_counts = (clist: KanjiCard[]): [number, number] => {
+        let max = 0;
+        let sum = 0;
+        let count = 0;
+        clist.forEach(card => {
+            if (fuzzy_empty(card.japaneseChar)) return;
+            const mychar = card.japaneseChar.v[0];
+            const strokeCount = unihan.getEntry(mychar)?.kTotalStrokes || 0;
+            sum += strokeCount;
+            max = Math.max(max, strokeCount);
+            count++;
+        })
+
+        return [sum / count, max];
+    }
+
+    console.log("n1 stroke count: ", get_stroke_counts(n1_list));
+    console.log("n2 stroke count: ", get_stroke_counts(n2_list));
+    console.log("n3 stroke count: ", get_stroke_counts(n3_list));
+    console.log("n4 stroke count: ", get_stroke_counts(n4_list));
+    console.log("n5 stroke count: ", get_stroke_counts(n5_list));
+
+    console.log("hsk1 stroke count: ", get_stroke_counts(hsk1_list));
+    console.log("hsk2 stroke count: ", get_stroke_counts(hsk2_list));
+    console.log("hsk3 stroke count: ", get_stroke_counts(hsk3_list));
+    console.log("hsk4 stroke count: ", get_stroke_counts(hsk4_list));
+    console.log("hsk5 stroke count: ", get_stroke_counts(hsk5_list));
+    console.log("hsk5 stroke count: ", get_stroke_counts(hsk6_list));
+
     return;
 
     // const jmdict: Jmdict = await Jmdict.create('test_xml.xml');
