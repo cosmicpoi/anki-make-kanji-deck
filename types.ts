@@ -162,10 +162,10 @@ export const card_is_character = (card: KanjiCard_Fuzzy, mychar: string): boolea
 export const common_elements = (a1: string[], a2: string[]) =>
     [...a1].filter(item => a2.includes(item));
 
-export const array_difference = (a1: string[], a2: string[]) =>
+const array_difference = (a1: string[], a2: string[]) =>
     [...a1].filter(item => !a2.includes(item));
 
-export const isSameArray = (a1: string[], a2: string[]) => 
+export const isSameArray = (a1: string[], a2: string[]) =>
     array_difference(a1, a2).length == 0 && a1.length == a2.length;
 // Get similarity between two cards based on pinyin and yomi. return [match, pct]
 // - if at least one pinyin doesn't match, return 0
@@ -210,16 +210,16 @@ export function apply_getter_to_arr(getter: (c: string) => string[], arr: string
         all_guesses.push(...guesses);
     });
 
-    return  [...new Set(all_guesses)];
+    return [...new Set(all_guesses)];
 }
 
 // Apply `apply_getter_to_arr` over multiple arrays
 export function apply_multi_getter(getter: (c: string) => string[], arrs: string[][]): string[] {
-    let all_guesses: string[] = []; 
+    let all_guesses: string[] = [];
     arrs.forEach((baseArr: string[]) => {
         const guesses: string[] = apply_getter_to_arr(getter, baseArr);
         all_guesses.push(...guesses);
-    }); 
+    });
 
     return all_guesses;
 }
@@ -284,13 +284,23 @@ export function isHanCharacter(char: string): boolean {
     return false;
 }
 
-function isHiragana(char: string) {
+export function isHiragana(char: string) {
     const code = char.charCodeAt(0);
     return code >= 0x3040 && code <= 0x309F;
 }
 
-function isKatakana(char: string) {
+export function isKatakana(char: string) {
     const code = char.charCodeAt(0);
     return (code >= 0x30A0 && code <= 0x30FF) || (code >= 0x31F0 && code <= 0x31FF);
 }
 
+export function pairsOf<T, S>(a1: Iterable<T>, a2: Iterable<S>): [T, S][] {
+    const pairs: [T, S][] = [];
+    for (const i1 of a1) {
+        for (const i2 of a2) {
+            pairs.push([i1, i2]);
+        }
+    }
+
+    return pairs;
+}

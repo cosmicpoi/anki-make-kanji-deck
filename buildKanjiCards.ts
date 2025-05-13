@@ -8,7 +8,7 @@ import { defaultKanjiCard, KanjiCard } from './KanjiCard';
 import { Bccwj } from './bccwj';
 import { Bclu } from './Bclu';
 
-export function buildKanjiCardsFromFileLists(
+export function buildKanjiCardsFromLists(
     props: {
         fileListDir: string,
         japaneseList: string[],
@@ -23,43 +23,32 @@ export function buildKanjiCardsFromFileLists(
     }
 ): KanjiCard[] {
     // Initialize resources
-    const { unihan, kanjidic, cedict, bccwj, bclu } = props.modules;
-
-    // Initialize tiers
-    const japaneseTiers = new TieredWordList(props.fileListDir, props.japaneseList);
-    const chineseTiers = new TieredWordList(props.fileListDir, props.simpChineseList);
+    const { modules: { unihan, kanjidic, cedict, bccwj, bclu }, japaneseList, simpChineseList } = props;
 
     // Emplace chars into Kanji Map
-    const variantMap = new VariantMap(unihan, japaneseTiers.getAllChars(), chineseTiers.getAllChars(), true);
+    const variantMap = new VariantMap(unihan, japaneseList, simpChineseList, true);
 
-    const getBestCandidate = (getFreq: (c: string) => number, candidates: string[]): [string, number] => {
-        let maxFreq = -1;
-        let bestCandidate = candidates[0];
-        for (const c of candidates) {
-            const strokeCountInv = (100 - unihan.getTotalStrokes(c));
-            // const freq = bccwj.getFrequency(c) + strokeCountInv / 100;
-            const freq = getFreq(c) + strokeCountInv / 100;
-            if (freq > maxFreq) {
-                maxFreq = freq;
-                bestCandidate = c;
-            }
-
-        }
-        return [bestCandidate, maxFreq]
+    const getFreqIdx = (getFreq: (c: string) => number, candidate: string): number => {
+        const strokeCountInv = (100 - unihan.getTotalStrokes(candidate));
+        return getFreq(candidate) + strokeCountInv / 100;
     }
 
     // Build deck using variant map as base
     const cards: KanjiCard[] = [];
     variantMap.forEachEntry(e => {
-        // If there is more than one character, use frequency list to pick a preferred one 
-        const bestOrEmpty = (getFreq: (c: string) => number, mychar: string[]): string[] => {
-            if (mychar.length == 0) return [];
-            const [char, _freq] = getBestCandidate(bccwj.getFrequency, mychar);
-            return [char];
-        }
-        const japaneseChar = bestOrEmpty(bccwj.getFrequency, e.japaneseChar);
-        const simpChineseChar = bestOrEmpty(bclu.getFrequency, e.simpChineseChar);
-        const tradChineseChar = bestOrEmpty(bclu.getFrequency, e.tradChineseChar);
+        // If there is more than one character, sort by frequency
+        const jpSorter = (a: string, b: string) =>
+            getFreqIdx(bccwj.getFrequency, b) - getFreqIdx(bccwj.getFrequency, a);
+        const cnSorter = (a: string, b: string) =>
+            getFreqIdx(bclu.getFrequency, b) - getFreqIdx(bclu.getFrequency, a);
+
+        const japaneseChar = e.japaneseChar;
+        const simpChineseChar = e.simpChineseChar;
+        const tradChineseChar = e.tradChineseChar;
+
+        japaneseChar.sort(jpSorter);
+        simpChineseChar.sort(cnSorter);
+        tradChineseChar.sort(cnSorter);
 
         const unihanDefs: string[] = unihan.getEnglishDefinition(japaneseChar[0]);
         const kanjidicDefs: string[] = kanjidic.getMeaning(japaneseChar[0]);
@@ -73,7 +62,7 @@ export function buildKanjiCardsFromFileLists(
         if (englishMeaning.length == 0) {
             englishMeaning = cedictDefs;
         }
-        
+
         const card: KanjiCard = {
             ...defaultKanjiCard(),
             // characters
@@ -91,6 +80,15 @@ export function buildKanjiCardsFromFileLists(
         };
         cards.push(card);
     });
+
+    const getSortKey = (c: KanjiCard) => {
+        const entries = [...c.japaneseChar, ...c.simpChineseChar, ...c.tradChineseChar];
+        entries.sort();
+        return entries.join(',');
+    }
+    cards.sort((c1, c2) =>
+        getSortKey(c1).localeCompare(getSortKey(c2))
+    );
 
     return cards;
 }

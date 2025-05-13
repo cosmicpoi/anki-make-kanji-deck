@@ -79,6 +79,21 @@ export class Hanzidb {
         return this.m_entries.get(char);
     }
 
+    public getHSKChars(): string[] {
+        const values: string[][] = [...this.m_hskToChar.values()];
+        return values.reduce((a1, a2) => [...a1, ...a2]);
+    }
+
+    public getNMostFrequent(n: number): string[] {
+        if (n > this.m_entries.size) {
+            console.error("N too large");
+            return [];
+        }
+        return Array(n).fill(0)
+            .map((_, i) => this.m_rankToChar.get(i + 1) || '')
+            .filter(s => s != '');
+    }
+
     public getFrequencyRank(char: string): number {
         return this.m_entries.get(char)?.frequency_rank || 0;
     }
@@ -88,11 +103,17 @@ export class Hanzidb {
     }
 
     private emplaceEntry(entry: HanzidbEntry): void {
-        if (!this.m_entries.has(entry.character)) {
-            this.m_entries.set(entry.character, entry);
+        this.m_entries.set(entry.character, entry);
+        this.m_rankToChar.set(entry.frequency_rank, entry.character);
+        if (entry.hsk_level != undefined) {
+            const res = this.m_hskToChar.get(entry.hsk_level);
+            if (!res) this.m_hskToChar.set(entry.hsk_level, [entry.character]);
+            else res.push(entry.character);
         }
     }
 
     // Map lemma to entry
+    private m_rankToChar: Map<number, string> = new Map();
+    private m_hskToChar: Map<number, string[]> = new Map();
     private m_entries: Map<string, HanzidbEntry> = new Map();
 }

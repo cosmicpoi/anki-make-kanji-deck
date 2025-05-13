@@ -1,29 +1,35 @@
 import * as fs from 'fs'
 import minimist from "minimist";
 import { Cedict } from "./cedict";
-import { k_BCCWJ_FILE_PATH, k_BCLU_FILE_PATH, k_CEDICT_FILE_PATH, k_CHARACTER_LIST_PATH, k_HSK_FILE_LIST, k_JLPT_FILE_LIST, k_JMDICT_FILE_PATH, k_KANJIDIC_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_tag_CHINESE_ONLY, k_tag_JAPANESE_ONLY, k_UNIHAN_DB_PATH } from "./consts";
+import { k_BCCWJ_FILE_PATH, k_BCLU_FILE_PATH, k_CEDICT_FILE_PATH, k_CHARACTER_LIST_PATH, k_HANZIDB_FILE_PATH, k_HSK_FILE_LIST, k_JLPT_FILE_LIST, k_JMDICT_FILE_PATH, k_KANJIDIC_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_tag_CHINESE_ONLY, k_tag_JAPANESE_ONLY, k_UNIHAN_DB_PATH } from "./consts";
 import { Kanjidic } from "./kanjidic";
 import { Unihan } from "./unihan";
-
-import { buildKanjiCardsFromFileLists } from "./buildKanjiCards";
+import { buildKanjiCardsFromLists } from "./buildKanjiCards";
 import { Bccwj } from "./bccwj";
 import { KanjiCard } from "./KanjiCard";
 import { Bclu } from "./Bclu";
+import { Hanzidb } from './Hanzidb';
+import { combine_without_duplicates } from './types';
 
 const args = minimist(process.argv.slice(2));
 
 async function buildKanji() {
     const unihan = await Unihan.create(k_UNIHAN_DB_PATH);
-    const kanjidic = new Kanjidic(k_KANJIDIC_FILE_PATH);
+    const kanjidic = await Kanjidic.create(k_KANJIDIC_FILE_PATH);
+    const hanzidb = await Hanzidb.create(k_HANZIDB_FILE_PATH);
     const cedict = new Cedict(k_CEDICT_FILE_PATH);
     const bccwj = await Bccwj.create(k_BCCWJ_FILE_PATH);
     const bclu = await Bclu.create(k_BCLU_FILE_PATH);
 
+    const simpChineseList = combine_without_duplicates(hanzidb.getHSKChars(), hanzidb.getNMostFrequent(3000));
+    const japaneseList = kanjidic.getJLPTChars();
+    console.log(simpChineseList.length, japaneseList.length);
+
     // Generate card list
-    const cards: KanjiCard[] = buildKanjiCardsFromFileLists({
+    const cards: KanjiCard[] = buildKanjiCardsFromLists({
         fileListDir: k_CHARACTER_LIST_PATH,
-        japaneseList: k_JLPT_FILE_LIST,
-        simpChineseList: k_HSK_FILE_LIST,
+        japaneseList,
+        simpChineseList,
         modules: { unihan, kanjidic, cedict, bccwj, bclu }
     });
 
@@ -84,14 +90,14 @@ async function buildKanji() {
             // tuple of key, delimiter
             let field_order: [keyof KanjiCard, string][] = jp_cn_field_order;
             let note_type = k_note_CN_JP;
-            // if (card.tags.includes(k_tag_CHINESE_ONLY)) {
-            //     field_order = cn_field_order;
-            //     note_type = k_note_CHINESE_ONLY;
-            // }
-            // else if (card.tags.includes(k_tag_JAPANESE_ONLY)) {
-            //     field_order = jp_field_order;
-            //     note_type = k_note_JAPANESE_ONLY;
-            // }
+            if (card.tags.includes(k_tag_CHINESE_ONLY)) {
+                field_order = cn_field_order;
+                note_type = k_note_CHINESE_ONLY;
+            }
+            else if (card.tags.includes(k_tag_JAPANESE_ONLY)) {
+                field_order = jp_field_order;
+                note_type = k_note_JAPANESE_ONLY;
+            }
 
             let fields: string[] = Array(col_count).fill('');
 

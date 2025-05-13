@@ -36,6 +36,13 @@ function getCleanChar(dbEntry: string): string {
     else return dbEntry;
 }
 
+export function areRadicalStrokesClose(rs1: string, rs2: string, margin: number = 1): boolean {
+    if (rs1 == '' || rs2 == '') return false;
+    const [r1, s1] = rs1.split('.').map(s => parseInt(s));
+    const [r2, s2] = rs2.split('.').map(s => parseInt(s));
+    return r1 == r2 && Math.abs(s1 - s2) <= margin + 0.1;
+}
+
 //------------------------------------------------------------------------------
 // Unihan library implementation
 //------------------------------------------------------------------------------
@@ -47,6 +54,7 @@ type UnihanEntry = {
     kIRG_HSource?: string;
     kIRG_JSource?: string;
     kTotalStrokes?: number;
+    kRSUnicode?: string;
     // readings
     kMandarin?: string[];
     kJapanese?: string[];
@@ -64,7 +72,7 @@ type UnihanEntry = {
     cachedJapaneseOn?: string[];
 };
 
-type UnihanIRG = 'kIRG_JSource' | 'kIRG_HSource' | 'kIRG_GSource' | 'kTotalStrokes';
+type UnihanIRG = 'kIRG_JSource' | 'kIRG_HSource' | 'kIRG_GSource' | 'kTotalStrokes' | 'kRSUnicode';
 type UnihanReading = 'kMandarin' | 'kJapanese' | 'kJapaneseKun' | 'kJapaneseOn' | 'kDefinition';
 type UnihanVariant = 'kSemanticVariant' | 'kSpecializedSemanticVariant' | 'kSimplifiedVariant' | 'kTraditionalVariant';
 
@@ -121,6 +129,9 @@ export class Unihan {
             }
             else if (action == 'kTotalStrokes') {
                 this.emplace_irg('kTotalStrokes', character, reading_line);
+            }
+            else if (action == 'kRSUnicode') {
+                this.emplace_irg('kRSUnicode', character, reading_line);
             }
             else if (action == 'kMandarin') {
                 this.emplace_readings('kMandarin', character, reading);
@@ -195,6 +206,10 @@ export class Unihan {
 
     public getTotalStrokes(mychar: string): number {
         return this.m_entries.get(mychar)?.kTotalStrokes || 0;
+    }
+
+    public getRadicalStrokeIdx(mychar: string): string {
+        return this.m_entries.get(mychar)?.kRSUnicode || ''; 
     }
 
     // reading getters

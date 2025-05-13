@@ -14,6 +14,7 @@ type KanjidicEntry = {
     ja_on: string[];
     jlpt?: number;
     freq?: number;
+    grade?: number;
 };
 
 const k_ENTRY_CHAR_INVALID = '';
@@ -34,6 +35,7 @@ export class Kanjidic {
     static async create(filePath: string): Promise<Kanjidic> {
         const kanjidic = new Kanjidic();
 
+        let i = 0;
         const onElement = (el: XMLElement) => {
             if (el.tagName != 'character') return;
             if (!el.children) return;
@@ -55,6 +57,9 @@ export class Kanjidic {
                         }
                         else if (subchild.tagName == 'freq' && subchild.children && typeof subchild.children[0] == 'string') {
                             entry.freq = parseInt(subchild.children[0]);
+                        }
+                        else if (subchild.tagName == 'grade' && subchild.children && typeof subchild.children[0] == 'string') {
+                            entry.grade = parseInt(subchild.children[0]);
                         }
                     }
                 }
@@ -88,7 +93,8 @@ export class Kanjidic {
             }
 
             if (entry.character != k_ENTRY_CHAR_INVALID) {
-                kanjidic.emplaceEntry(entry);
+                kanjidic.emplaceEntry(i, entry);
+                i++;
             }
         }
 
@@ -100,14 +106,24 @@ export class Kanjidic {
         return kanjidic;
     }
 
-
-
+    // Getters
     public getChars(): string[] {
         return [...this.m_entries.keys()];
     }
 
-    public isKanji(mychar: string): boolean {
-        return this.m_entries.has(mychar);
+    public getJLPTChars(): string[] {
+        const values: string[][] = [...this.m_jlptToChar.values()];
+        return values.reduce((a1, a2) => [...a1, ...a2]);
+    }
+
+    public getNMostFrequent(n: number): string[] {
+        if (n > this.m_entries.size) {
+            console.error("N too large");
+            return [];
+        }
+        return Array(n).fill(0)
+            .map((_, i) => this.m_freqRankToChar.get(i) || '')
+            .filter(s => s != '');
     }
 
     public getEntry(mychar: string): KanjidicEntry | undefined {
@@ -118,9 +134,27 @@ export class Kanjidic {
         return this.m_entries.get(mychar)?.meaning || [];
     }
 
-    private emplaceEntry(entry: KanjidicEntry): void {
+    // Set logic
+    private emplaceEntry(rank: number, entry: KanjidicEntry): void {
         this.m_entries.set(entry.character, entry);
+        this.m_freqRankToChar.set(rank, entry.character);
+
+        if (entry?.jlpt != undefined) {
+            const res = this.m_jlptToChar.get(entry.jlpt);
+            if (!res) this.m_jlptToChar.set(entry.jlpt, [entry.character]);
+            else res.push(entry.character);
+        }
+
+        if (entry?.grade != undefined) {
+            const res = this.m_gradeToChar.get(entry.grade);
+            if (!res) this.m_gradeToChar.set(entry.grade, [entry.character]);
+            else res.push(entry.character);
+        }
     }
 
+    // Fields
+    private m_freqRankToChar: Map<number, string> = new Map();
+    private m_gradeToChar: Map<number, string[]> = new Map();
+    private m_jlptToChar: Map<number, string[]> = new Map();
     private m_entries: Map<string, KanjidicEntry> = new Map();
 }
