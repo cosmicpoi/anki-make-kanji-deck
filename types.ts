@@ -59,7 +59,7 @@ export function fuzzy_join(arr: FuzzyArray, delimiter: string): string {
     return prefix + arr.v.join(delimiter);
 }
 
-export type KanjiCard = {
+export type KanjiCard_Fuzzy = {
     // characters
     japaneseChar: FuzzyArray;
     simpChineseChar: FuzzyArray;
@@ -98,7 +98,7 @@ export type KanjiCard = {
     tags: FuzzyArray; // never actually fuzzy, just for type convenience
 };
 
-export const get_default_kanji_card = (): KanjiCard => ({
+export const get_default_kanji_card = (): KanjiCard_Fuzzy => ({
     // characters
     japaneseChar: defaultFuzzyArray(),
     simpChineseChar: defaultFuzzyArray(),
@@ -131,9 +131,9 @@ export const get_default_kanji_card = (): KanjiCard => ({
     tags: defaultFuzzyArray()
 });
 
-export function concatKanjiCards(c1: KanjiCard, c2: KanjiCard): KanjiCard {
+export function concatKanjiCards(c1: KanjiCard_Fuzzy, c2: KanjiCard_Fuzzy): KanjiCard_Fuzzy {
     const res = get_default_kanji_card();
-    let key: keyof KanjiCard;
+    let key: keyof KanjiCard_Fuzzy;
     for (key in res) {
         if (key != 'strokeCount' && key != 'simpChineseDifficulty' && key != 'japaneseDifficulty') {
             res[key] = concatFuzzyArray(c1[key], c2[key]);
@@ -153,10 +153,10 @@ export function concatKanjiCards(c1: KanjiCard, c2: KanjiCard): KanjiCard {
     return res;
 }
 
-export const logCard = (prefix: string, card: KanjiCard) =>
+export const logCard = (prefix: string, card: KanjiCard_Fuzzy) =>
     console.log(prefix, card.japaneseChar, card.simpChineseChar, card.tradChineseChar, card.pinyin, card.kunyomi, card.onyomi);
 
-export const card_is_character = (card: KanjiCard, mychar: string): boolean =>
+export const card_is_character = (card: KanjiCard_Fuzzy, mychar: string): boolean =>
     card.japaneseChar.v.includes(mychar) || card.simpChineseChar.v.includes(mychar) || card.tradChineseChar.v.includes(mychar);
 
 export const common_elements = (a1: string[], a2: string[]) =>
@@ -171,14 +171,14 @@ export const isSameArray = (a1: string[], a2: string[]) =>
 // - if at least one pinyin doesn't match, return 0
 // - `match` - the number of common jp readings between the two as a uint
 // - `pct` - `match` divided by max(# of jp readings)
-export function reading_similarity(c1: KanjiCard, c2: KanjiCard): [number, number] {
+export function reading_similarity(c1: KanjiCard_Fuzzy, c2: KanjiCard_Fuzzy): [number, number] {
     // check pinyin match
     const common_pinyin: string[] = common_elements(c1.pinyin.v, c2.pinyin.v);
     if (common_pinyin.length == 0) {
         return [0, 0];
     }
 
-    const getReadings = (c: KanjiCard): Set<string> => new Set([...c.kunyomi.v, ...c.onyomi.v]);
+    const getReadings = (c: KanjiCard_Fuzzy): Set<string> => new Set([...c.kunyomi.v, ...c.onyomi.v]);
     const r1: Set<string> = getReadings(c1);
     const r2: Set<string> = getReadings(c2);
     const common = common_elements([...r1], [...r2]);

@@ -1,6 +1,6 @@
 import * as fs from 'fs'
 import autoBind from "auto-bind";
-import { CharacterType, concatKanjiCards, fuzzy_join, fuzzy_to_string, FuzzyArray, get_default_kanji_card, KanjiCard, try_emplace_fuzzy } from "./types";
+import { CharacterType, concatKanjiCards, fuzzy_join, fuzzy_to_string, FuzzyArray, get_default_kanji_card, KanjiCard_Fuzzy, try_emplace_fuzzy } from "./types";
 import { k_note_CN_JP, k_tag_CHINESE_ONLY, k_note_CHINESE_ONLY, k_tag_JAPANESE_ONLY, k_note_JAPANESE_ONLY } from './consts';
 
 // Represents character 'master list' that we build up through the db info we have.
@@ -15,13 +15,13 @@ export class KanjiMap {
         return Object.keys(this.kanji);
     }
 
-    public forEachCard(handler: (c: KanjiCard) => void) {
+    public forEachCard(handler: (c: KanjiCard_Fuzzy) => void) {
         for (const char in this.kanji) {
             handler(this.kanji[char]);
         }
     }
 
-    public getCards(): KanjiCard[] {
+    public getCards(): KanjiCard_Fuzzy[] {
         return Object.values(this.kanji);
     }
 
@@ -32,9 +32,9 @@ export class KanjiMap {
                 console.error("Could not find an entry for merge ", c1, c2);
             return;
         }
-        const card1: KanjiCard = this.at(c1, true);
-        const card2: KanjiCard = this.at(c2, true);
-        const newCard: KanjiCard = concatKanjiCards(card1, card2)
+        const card1: KanjiCard_Fuzzy = this.at(c1, true);
+        const card2: KanjiCard_Fuzzy = this.at(c2, true);
+        const newCard: KanjiCard_Fuzzy = concatKanjiCards(card1, card2)
 
         if (skipDoubles) {
             if (newCard.japaneseChar.v.length > 1
@@ -68,7 +68,7 @@ export class KanjiMap {
 
     // Get the entry corresponding to a specific character.
     // If `readonly` is false, create a default value in-place if one does not exist.
-    public at(mychar: string, readonly = false): KanjiCard {
+    public at(mychar: string, readonly = false): KanjiCard_Fuzzy {
         if (!readonly) this.ratify(mychar);
 
         return this.kanji[mychar];
@@ -86,7 +86,7 @@ export class KanjiMap {
     // Try to emplace `character` into the corresponding entry for `type`
     // If no entry exists, create it first
     public emplace_character(mychar: string, type: CharacterType, tags?: string[], baseDifficulty?: number): void {
-        const card: KanjiCard = this.at(mychar);
+        const card: KanjiCard_Fuzzy = this.at(mychar);
         if (type == CharacterType.Japanese) {
             try_emplace_fuzzy(card.japaneseChar, mychar);
         }
@@ -119,7 +119,7 @@ export class KanjiMap {
         });
 
         // No need to specify tags, it always goes at the end
-        const jp_cn_field_order: [keyof KanjiCard, string][] = [
+        const jp_cn_field_order: [keyof KanjiCard_Fuzzy, string][] = [
             ['japaneseChar', ','],
             ['simpChineseChar', ','],
             ['tradChineseChar', ','],
@@ -131,7 +131,7 @@ export class KanjiMap {
             ['englishMeaning', ','],
         ];
 
-        const jp_field_order: [keyof KanjiCard, string][] = [
+        const jp_field_order: [keyof KanjiCard_Fuzzy, string][] = [
             ['japaneseChar', ','],
             ['kunyomi', ','],
             ['onyomi', ','],
@@ -140,7 +140,7 @@ export class KanjiMap {
             ['japaneseOnVocab', ','],
         ];
 
-        const cn_field_order: [keyof KanjiCard, string][] = [
+        const cn_field_order: [keyof KanjiCard_Fuzzy, string][] = [
             ['simpChineseChar', ','],
             ['tradChineseChar', ','],
             ['pinyin', ','],
@@ -164,7 +164,7 @@ export class KanjiMap {
         const to_export = keys.map(c => this.at(c));
         to_export.forEach(card => {
             // tuple of key, delimiter
-            let field_order: [keyof KanjiCard, string][] = jp_cn_field_order;
+            let field_order: [keyof KanjiCard_Fuzzy, string][] = jp_cn_field_order;
             let note_type = k_note_CN_JP;
             if (card.tags.v.includes(k_tag_CHINESE_ONLY)) {
                 field_order = cn_field_order;
@@ -212,5 +212,5 @@ export class KanjiMap {
 
     // It would be nice to index these specifically by jp/trad/simp etc, but there's no guarantee
     // every char has all variants so we just tiebreak on sort order. 
-    private kanji: { [k: string]: KanjiCard } = {};
+    private kanji: { [k: string]: KanjiCard_Fuzzy } = {};
 }

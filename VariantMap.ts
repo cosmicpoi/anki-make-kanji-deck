@@ -71,7 +71,7 @@ export class VariantMap {
         this.forEachEntry((e) => this.populateSimpFromTrad(e));
         this.forEachEntry((e) => this.populateTradFromSimp(e));
 
-        log_v(verbose, "Entries left with empty characters: ", this.getEmpty());
+        log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
 
         log_v(verbose, "Merging identical direct variants");
         const idMerged = this.mergeDuplicatesForPred(this.isIdenticalChar);
@@ -82,7 +82,7 @@ export class VariantMap {
 
         log_v(verbose, 'Populating japanese semantic variants');
         this.forEachEntry((e) => this.populateJapSemantic(e));
-        log_v(verbose, "Entries left with empty characters: ", this.getEmpty());
+        log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
 
         log_v(verbose, "Merging japanese and simplified direct variants");
         const jpSimpMerged = this.mergeDuplicatesForPred(this.isJpSimpDirectVariant);
@@ -98,30 +98,24 @@ export class VariantMap {
 
         log_v(verbose, 'Guessing Japanese chars');
         this.forEachEntry((e) => this.populateGuessJapFromSimpTrad(e));
-        log_v(verbose, "Entries left with empty characters: ", this.getEmpty());
+        log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
 
         log_v(verbose, 'Guessing Chinese chars');
         this.forEachEntry((e) => this.populateGuessSimpTradFromJap(e));
-        log_v(verbose, "Entries left with empty characters: ", this.getEmpty());
+        log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
 
-        // log_v(verbose, "Entries left with more than one pinyin: ", this.getEmpty());
-        // this.forEachEntry(e => {
-        //     if (e.pinyin.length > 1) console.log(e);
-        // });
-
-
-        log_v(verbose, "Entries left with empty characters: ", this.getEmpty());
-        this.forEachEntry(e => {
-            if (missingChar(e)) console.log(e);
-        });
+        const jp_only = this.getEmpty().filter(e => e.simpChineseChar.length == 0).map(e => e.japaneseChar)
+        const cn_only = this.getEmpty().filter(e => e.japaneseChar.length == 0).map(e => [e.simpChineseChar, e.tradChineseChar]);
+        log_v(verbose, "Entries left with only japanese characters: ", jp_only);
+        log_v(verbose, "Entries left with only chinese characters: ", cn_only);
     }
 
-    private getEmpty(): number {
-        let count = 0;
+    private getEmpty(): VariantMapEntry[] {
+        const empty: VariantMapEntry[] = [];
         this.forEachEntry(e => {
-            if (missingChar(e)) count++;
+            if (missingChar(e)) empty.push(e);
         })
-        return count;
+        return empty;
     }
 
     /* Population functions */
@@ -239,7 +233,7 @@ export class VariantMap {
         const common = common_elements([...r1], [...r2]);
 
         const match = common.length; // # of jp readings
-        const max = Math.min(r1.size, r2.size); 
+        const max = Math.min(r1.size, r2.size);
         const pct = match / max; // # proportion matched
 
         if (match > 1) {

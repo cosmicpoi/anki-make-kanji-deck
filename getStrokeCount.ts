@@ -8,7 +8,7 @@ import { KanjiMap } from "./KanjiMap";
 import { Unihan } from "./unihan";
 import { getPreferredReading, Jmdict, JmdictEntry } from "./jmdict";
 import autoBind from "auto-bind";
-import { fuzzy_empty, isHanCharacter, KanjiCard } from "./types";
+import { fuzzy_empty, isHanCharacter, KanjiCard_Fuzzy } from "./types";
 import { Bccwj } from "./bccwj";
 
 const args = minimist(process.argv.slice(2));
@@ -84,7 +84,7 @@ async function buildKanji() {
     const hsk2_list = kanji.getCards().filter(card => card.tags.v.includes('HSK::6::5::4::3::2'))
     const hsk1_list = kanji.getCards().filter(card => card.tags.v.includes('HSK::6::5::4::3::2::1'));
 
-    const get_stroke_counts = (clist: KanjiCard[]): [number, number] => {
+    const get_stroke_counts = (clist: KanjiCard_Fuzzy[]): [number, number] => {
         let max = 0;
         let sum = 0;
         let count = 0;

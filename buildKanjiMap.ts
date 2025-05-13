@@ -7,6 +7,7 @@ import { k_CEDICT_FILE_PATH, k_CHARACTER_LIST_PATH, k_JLPT_FILE_LIST, k_note_CHI
 import * as OpenCC from 'opencc-js';
 import { TieredWordList } from './TieredWordList';
 import { VariantMap } from './VariantMap';
+import { KanjiCard_Fuzzy } from './types';
 
 export function buildKanjiMapFromFileLists(
     props: {
@@ -34,8 +35,11 @@ export function buildKanjiMapFromFileLists(
 
     // Emplace chars into Kanji Map
     const variantMap = new VariantMap(unihan, japaneseTiers.getAllChars(), chineseTiers.getAllChars(), true);
-    variantMap.writeToFile('variant.txt');
-    // Merge duplicate entries
+    
+    // Build deck using variant map as base
+    variantMap.forEachEntry(e => {
+
+    });
     
     return kanji;
 }

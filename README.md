@@ -78,3 +78,4 @@ It could also work in the other direction: you learn a single character, it prop
 * Sentence example generation
 * Vocab card generation
 * Integrate "usually_kana" and other tags
+* Generate / integrate radical data
