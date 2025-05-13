@@ -3,7 +3,7 @@ import { buffer } from 'stream/consumers';
 
 type XMLAttrKey = string; // enum-like
 type XMLTagName = string;
-type XMLAttrObj = Partial<Record<XMLAttrKey, string>>;
+export type XMLAttrObj = Partial<Record<XMLAttrKey, string>>;
 
 // Represents <?xml ?> declaration
 type XMLDeclaration = {
@@ -90,7 +90,7 @@ const as_xml_props = (
 }
 
 type XMLChild = XMLElement | string;
-type XMLElement = XMLTagProps & {
+export type XMLElement = XMLTagProps & {
     children?: XMLChild[]
 };
 

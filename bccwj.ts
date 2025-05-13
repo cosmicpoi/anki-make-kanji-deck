@@ -2,6 +2,7 @@ import * as fs from 'fs'
 import * as readline from 'readline';
 
 import autoBind from "auto-bind";
+import { log_v } from './logging';
 
 enum BccwjWordType {
     Kai = '外',  // Foreign Loanwords
@@ -26,7 +27,9 @@ export class Bccwj {
         autoBind(this);
     }
 
-    static async create(filePath: string, maxLines?: number): Promise<Bccwj> {
+    static async create(filePath: string, props?: { maxLines?: number, verbose?: boolean }): Promise<Bccwj> {
+        log_v(!!props?.verbose, "Initializing bccwj");
+
         const bccwj = new Bccwj();
         // Create filestream
         const fileStream = fs.createReadStream(filePath);
@@ -56,9 +59,9 @@ export class Bccwj {
             };
             bccwj.emplaceEntry(entry);
 
-            if (maxLines) {
+            if (props?.maxLines) {
                 count++;
-                if (count >= maxLines) break;
+                if (count >= props.maxLines) break;
             }
         }
 
@@ -68,6 +71,10 @@ export class Bccwj {
 
     public getEntry(word: string): BccwjEntry | undefined {
         return this.m_entries.get(word);
+    }
+
+    public getFrequency(word: string): number {
+        return this.m_entries.get(word)?.frequency || 0;
     }
 
     public forEachEntry(handler: (entry: BccwjEntry) => void): void {

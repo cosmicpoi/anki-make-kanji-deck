@@ -82,9 +82,9 @@ export class Cedict {
         return entry.reading.map(r => r.pinyin);
     }
 
-    public getDefinitions(mychar: string): string[] | undefined {
+    public getDefinitions(mychar: string): string[] {
         const entry = this.getEntry(mychar);
-        if (!entry) return undefined;
+        if (!entry) return [];
         return entry.reading.map(r => r.definition);
     }
 

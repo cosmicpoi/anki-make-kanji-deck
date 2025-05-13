@@ -1,5 +1,5 @@
 import minimist from "minimist";
-import { buildKanjiMapFromFileList } from "./buildKanjiMap";
+import { buildKanjiMapFromFileList } from "./buildKanjiCards";
 import { Cedict } from "./cedict";
 import { k_BCCWJ_FILE_PATH, k_CEDICT_FILE_PATH, k_JMDICT_FILE_PATH, k_KANJIDIC_FILE_PATH, k_UNIHAN_DB_PATH } from "./consts";
 import { k_SOURCE_FILE_LIST } from "./file_list";

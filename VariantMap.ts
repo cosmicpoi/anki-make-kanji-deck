@@ -96,13 +96,13 @@ export class VariantMap {
         const readMerged = this.mergeDuplicatesForPred(this.isReadingsSimilar);
         log_v(verbose, `Merged ${readMerged} entries. Down to`, this.m_entries.size);
 
-        log_v(verbose, 'Guessing Japanese chars');
-        this.forEachEntry((e) => this.populateGuessJapFromSimpTrad(e));
-        log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
+        // log_v(verbose, 'Guessing Japanese chars');
+        // this.forEachEntry((e) => this.populateGuessJapFromSimpTrad(e));
+        // log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
 
-        log_v(verbose, 'Guessing Chinese chars');
-        this.forEachEntry((e) => this.populateGuessSimpTradFromJap(e));
-        log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
+        // log_v(verbose, 'Guessing Chinese chars');
+        // this.forEachEntry((e) => this.populateGuessSimpTradFromJap(e));
+        // log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
 
         const jp_only = this.getEmpty().filter(e => e.simpChineseChar.length == 0).map(e => e.japaneseChar)
         const cn_only = this.getEmpty().filter(e => e.japaneseChar.length == 0).map(e => [e.simpChineseChar, e.tradChineseChar]);

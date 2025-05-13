@@ -1,29 +1,10 @@
-import * as fs from 'fs'
 import autoBind from "auto-bind";
-import * as xml_convert from 'xml-js'
+import * as xmlparser from './xmlparser';
+import { XMLElement } from './xmlparser';
 
-type XMLName = 'reading_meaning' | 'character' | 'literal' | 'reading' | 'meaning';
-type XMLAttributeObj = Partial<{
-    m_lang: string;
-    r_type: string;
-}>;
-
-type XMLElement = {
-    type: 'comment' | 'text' | 'element';
-    name: XMLName;
-    elements: XMLElement[];
-    attributes?: XMLAttributeObj;
-    text?: string;
-};
-
-const k_READING_ATTRS = {
-    pinyin: "pinyin",
-    korean_r: "korean_r",
-    korean_h: "korean_h",
-    vietnam: "vietnam",
-    ja_on: "ja_on",
-    ja_kun: "ja_kun",
-};
+//----------------------------------------------------------------------------------------------------------------------
+// Types
+//----------------------------------------------------------------------------------------------------------------------
 
 type KanjidicEntry = {
     character: string;
@@ -31,68 +12,95 @@ type KanjidicEntry = {
     pinyin: string[];
     ja_kun: string[];
     ja_on: string[];
+    jlpt?: number;
+    freq?: number;
 };
 
+const k_ENTRY_CHAR_INVALID = '';
+const defaultKanjidicEntry = (): KanjidicEntry => ({
+    character: k_ENTRY_CHAR_INVALID,
+    meaning: [],
+    pinyin: [],
+    ja_kun: [],
+    ja_on: [],
+});
+
+
 export class Kanjidic {
-    constructor(filePath: string) {
+    constructor() {
         autoBind(this);
-        this.loadData(filePath);
-
-        console.log("Loaded kanjidic entries: ", this.m_entries.size);
     }
-    private loadData(filePath: string): void {
-        const content = fs.readFileSync(filePath, 'utf-8');
-        const res = xml_convert.xml2js(content);
-        const elements = res.elements[res.elements.length - 1].elements;
-        elements.forEach((el: XMLElement) => {
-            // if (el.type = 'element' || el.name != 'character') return;
-            if (!(el.type == 'element' && el.name == 'character')) return;
-            let literal: string | undefined = undefined;
-            let pinyin: string[] = [];
-            let ja_kun: string[] = [];
-            let ja_on: string[] = [];
-            let meaning: string[] = [];
-            el.elements.forEach(subel => {
-                if (subel.name == 'literal') {
-                    literal = subel.elements[0].text;
+
+    static async create(filePath: string): Promise<Kanjidic> {
+        const kanjidic = new Kanjidic();
+
+        const onElement = (el: XMLElement) => {
+            if (el.tagName != 'character') return;
+            if (!el.children) return;
+
+            const entry: KanjidicEntry = defaultKanjidicEntry();
+            for (const child of el.children) {
+                if (typeof child != 'object') continue;
+                if (child.tagName == 'literal') {
+                    if (child.children && typeof child.children[0] == 'string') {
+                        entry.character = child.children[0];
+                    }
                 }
-                if (subel.name == 'reading_meaning') {
-                    subel.elements[0].elements.forEach((subsubel) => {
-                        if (subsubel.type != 'element') return;
-                        
-                        const name = subsubel.name;
-                        if (!['reading', 'meaning'].includes(name)) return;
-
-                        const r_type = subsubel.attributes?.r_type;
-                        const m_lang = subsubel.attributes?.m_lang;
-                        const text: string | undefined = subsubel.elements[0].text;;
-
-                        // console.log(name, r_type, text);
-
-                        if (name == 'reading') {
-                            if (r_type == k_READING_ATTRS.pinyin) {
-                                if (text) pinyin = [...pinyin, ...text.split(' ')];
+                else if (child.tagName == 'misc') {
+                    if (!child.children) continue;
+                    for (const subchild of child.children) {
+                        if (typeof subchild != 'object') continue;
+                        if (subchild.tagName == 'jlpt' && subchild.children && typeof subchild.children[0] == 'string') {
+                            entry.jlpt = parseInt(subchild.children[0]);
+                        }
+                        else if (subchild.tagName == 'freq' && subchild.children && typeof subchild.children[0] == 'string') {
+                            entry.freq = parseInt(subchild.children[0]);
+                        }
+                    }
+                }
+                else if (child.tagName == 'reading_meaning') {
+                    if (!child.children) continue;
+                    for (const schild of child.children) {
+                        if (typeof schild != 'object' || schild.tagName != 'rmgroup') continue;
+                        if (!schild.children) continue;
+                        for (const subchild of schild.children) {
+                            if (typeof subchild != 'object') continue;
+                            if (subchild.tagName == 'meaning' && subchild.children && typeof subchild.children[0] == 'string') {
+                                if (subchild.attributes?.['m_lang'] == undefined) {
+                                    entry.meaning.push(subchild.children[0]);
+                                }
                             }
-                            else if (r_type == k_READING_ATTRS.ja_kun) {
-                                if (text) ja_kun = [...ja_kun, ...text.split(' ')];
-                            }
-                            else if (r_type == k_READING_ATTRS.ja_on) {
-                                if (text) ja_on = [...ja_on, ...text.split(' ')];
+                            else if (subchild.tagName == 'reading' && subchild.children && typeof subchild.children[0] == 'string') {
+                                if (subchild.attributes?.['r_type'] == "pinyin") {
+                                    entry.pinyin.push(subchild.children[0]);
+                                }
+                                else if (subchild.attributes?.['r_type'] == "ja_on") {
+                                    entry.ja_on.push(subchild.children[0]);
+                                }
+                                else if (subchild.attributes?.['r_type'] == "ja_kun") {
+                                    entry.ja_kun.push(subchild.children[0]);
+                                }
                             }
                         }
-                        else if (name == 'meaning') {
-                            if (m_lang) return;
-                            if (text) meaning.push(text);
-                        }
-                    });
+                    }
                 }
-            })
 
-            if (!literal) return;
+            }
 
-            this.m_entries.set(literal, { character: literal, pinyin, ja_kun, ja_on, meaning });
-        });
+            if (entry.character != k_ENTRY_CHAR_INVALID) {
+                kanjidic.emplaceEntry(entry);
+            }
+        }
+
+        const handlers = {
+            skipRoot: false,
+            onElement,
+        };
+        await xmlparser.parseXML(filePath, handlers)
+        return kanjidic;
     }
+
+
 
     public getChars(): string[] {
         return [...this.m_entries.keys()];
@@ -104,6 +112,14 @@ export class Kanjidic {
 
     public getEntry(mychar: string): KanjidicEntry | undefined {
         return this.m_entries.get(mychar);
+    }
+
+    public getMeaning(mychar: string): string[] {
+        return this.m_entries.get(mychar)?.meaning || [];
+    }
+
+    private emplaceEntry(entry: KanjidicEntry): void {
+        this.m_entries.set(entry.character, entry);
     }
 
     private m_entries: Map<string, KanjidicEntry> = new Map();

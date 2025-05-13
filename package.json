@@ -15,8 +15,7 @@
     "opencc-js": "^1.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "wanakana": "^5.3.1",
-    "xml-js": "^1.6.11"
+    "wanakana": "^5.3.1"
   },
   "scripts": {
     "execute": "yarn ts-node main.ts",

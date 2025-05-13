@@ -42,7 +42,9 @@ yarn clean
 * [MBDG CC-CEDICT](https://www.mdbg.net/chinese/dictionary?page=cedict)
   * to provide simplfied-traditional conversion
 * The the [unihan](https://www.unicode.org/charts/unihan.html) database is used for chinese-japanese glyph conversion
-* Download: `https://www.unicode.org/Public/UCD/latest/ucd/`. (`ucd/UniHan.zip`)
+  * Download: `https://www.unicode.org/Public/UCD/latest/ucd/`. (`ucd/UniHan.zip`)
+* [BCLU Chinese Corpus](https://www.plecoforums.com/threads/word-frequency-list-based-on-a-15-billion-character-corpus-bcc-blcu-chinese-corpus.5859/)
+* [Hanzidb](https://github.com/ruddfawcett/hanziDB.csv/tree/master/data)
 
 
 ### Stroke order

@@ -193,6 +193,10 @@ export class Unihan {
         return !!(this.m_entries.get(mychar)?.kIRG_HSource)
     }
 
+    public getTotalStrokes(mychar: string): number {
+        return this.m_entries.get(mychar)?.kTotalStrokes || 0;
+    }
+
     // reading getters
     public getMandarinPinyin(mychar: string): string[] {
         return this.m_entries.get(mychar)?.kMandarin || [];
