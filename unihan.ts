@@ -192,7 +192,7 @@ export class Unihan {
                 emplace_variants('kSemanticVariant', character, reading);
             }
             else if (action == 'kSpecializedSemanticVariant') {
-                emplace_variants('kSpecializedSemanticVariant', character, reading);
+                // emplace_variants('kSpecializedSemanticVariant', character, reading);
             }
             else if (action == 'kSimplifiedVariant') {
                 emplace_variants('kSimplifiedVariant', character, reading);
