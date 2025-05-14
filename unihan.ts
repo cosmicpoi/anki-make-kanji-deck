@@ -95,7 +95,7 @@ export class Unihan {
         autoBind(this);
     }
 
-    static async create(unihanDir: string) {
+    static async create(unihanDir: string, props?: { validateLinks?: boolean }) {
         const unihan = new Unihan();
 
         // load data from files
@@ -105,28 +105,30 @@ export class Unihan {
             await unihan.loadData(unihanDir, k_UNIHAN_FILENAMES[key]);
         }
 
-        console.log("Verifying known links:")
-        const isSimilar = ([c1, c2]: [string, string]): boolean => {
-            const entry1 = unihan.getEntry(c1);
-            const entry2 = unihan.getEntry(c2);
-            if (!entry1 || !entry2) return false;
-            // Verify pinyin is identical
-            const p1 = unihan.getMandarinPinyin(c1);
-            const p2 = unihan.getMandarinPinyin(c2);
-            if (!isSameArray(p1, p2)) return false;
+        if (props?.validateLinks) {
+            console.log("Verifying known links:")
+            const isSimilar = ([c1, c2]: [string, string]): boolean => {
+                const entry1 = unihan.getEntry(c1);
+                const entry2 = unihan.getEntry(c2);
+                if (!entry1 || !entry2) return false;
+                // Verify pinyin is identical
+                const p1 = unihan.getMandarinPinyin(c1);
+                const p2 = unihan.getMandarinPinyin(c2);
+                if (!isSameArray(p1, p2)) return false;
 
-            const eng1 = unihan.getEnglishDefinition(c1);
-            const eng2 = unihan.getEnglishDefinition(c2);
-            if (eng1.length == 0 || eng2.length == 0) return false;
-            if (!areMeaningsSimilar(eng1[0], eng2[0], { logFails: true })) return false;
+                const eng1 = unihan.getEnglishDefinition(c1);
+                const eng2 = unihan.getEnglishDefinition(c2);
+                if (eng1.length == 0 || eng2.length == 0) return false;
+                if (!areMeaningsSimilar(eng1[0], eng2[0], { logFails: true })) return false;
 
-            return true;
-        };
-        KNOWN_LINKS.forEach(([c1, c2]) => {
-            if (!isSimilar([c1, c2])) {
-                console.error([c1, c2], "WARN: tuple does not match");
-            }
-        });
+                return true;
+            };
+            KNOWN_LINKS.forEach(([c1, c2]) => {
+                if (!isSimilar([c1, c2])) {
+                    console.error([c1, c2], "WARN: tuple does not match");
+                }
+            });
+        }
 
         KNOWN_LINKS.forEach(tup => unihan.m_bufferedLinks.push(tup));
         unihan.flushBufferedLinks();

@@ -2,15 +2,19 @@ import { Bccwj } from "./bccwj";
 import { Bclu } from "./Bclu";
 import { Unihan } from "./unihan";
 
+type FreqDb = {
+    getFrequency(char: string): number;
+    getMaxFrequency(): number;
+}
+
 // Max strokes in Unihan is 84, so denominator of 100 is reasonable
 const k_STROKE_DEN = 100;
 const getFreqIdx = (unihan: Unihan, getFreq: (c: string) => number, candidate: string): number => {
     let strokeSum = 0;
     for (const c of candidate) {
-        const strokeCountInv = (k_STROKE_DEN - unihan.getTotalStrokes(candidate));
-        strokeSum += strokeCountInv;
+        strokeSum += unihan.getTotalStrokes(candidate);
     }
-    return getFreq(candidate) + strokeSum / k_STROKE_DEN;
+    return getFreq(candidate) - strokeSum / k_STROKE_DEN;
 }
 
 type JapaneseFreqCharSorter = {
@@ -25,37 +29,37 @@ type ChineseFreqCharSorter = {
 
 type FreqCharSorter = JapaneseFreqCharSorter & ChineseFreqCharSorter;
 
-export function getCnSorter(modules: { unihan: Unihan, bclu: Bclu }): ChineseFreqCharSorter {
-    const { bclu, unihan } = modules;
+export function getCnSorter(modules: { unihan: Unihan, freq: FreqDb }): ChineseFreqCharSorter {
+    const { freq, unihan } = modules;
 
-    const getCnFreqIdx = (a: string): number => getFreqIdx(unihan, bclu.getFrequency, a);
+    const getCnFreqIdx = (a: string): number => getFreqIdx(unihan, freq.getFrequency, a);
     const cnSorter = (a: string, b: string) =>
         getCnFreqIdx(b) - getCnFreqIdx(a);
 
     return { getCnFreqIdx, cnSorter };
 }
 
-export function getJpSorter(modules: { unihan: Unihan, bccwj: Bccwj }): JapaneseFreqCharSorter {
-    const { bccwj, unihan } = modules;
+export function getJpSorter(modules: { unihan: Unihan, freq: FreqDb }): JapaneseFreqCharSorter {
+    const { freq, unihan } = modules;
 
-    const getJpFreqIdx = (a: string): number => getFreqIdx(unihan, bccwj.getFrequency, a);
+    const getJpFreqIdx = (a: string): number => getFreqIdx(unihan, freq.getFrequency, a);
     const jpSorter = (a: string, b: string) =>
         getJpFreqIdx(b) - getJpFreqIdx(a);
 
     return { getJpFreqIdx, jpSorter };
 }
 
-export function getSorter(modules: { unihan: Unihan, bccwj: Bccwj, bclu: Bclu }): FreqCharSorter {
-    const { bclu, bccwj, unihan } = modules;
+export function getSorter(modules: { unihan: Unihan, jpFreq: FreqDb, cnFreq: FreqDb }): FreqCharSorter {
+    const { jpFreq, cnFreq, unihan } = modules;
 
-    const cnMaxFreq = bclu.getMaxFrequency();
-    const jpMaxFreq = bccwj.getMaxFrequency();
+    const cnMaxFreq = cnFreq.getMaxFrequency();
+    const jpMaxFreq = jpFreq.getMaxFrequency();
 
     let cnFreqNorm = 2000000000 / cnMaxFreq;
     let jpFreqNorm = 2000000000 / jpMaxFreq;
 
-    const getCnFreqIdx = (a: string): number => getFreqIdx(unihan, bclu.getFrequency, a) * cnFreqNorm;
-    const getJpFreqIdx = (a: string): number => getFreqIdx(unihan, bccwj.getFrequency, a) * jpFreqNorm;
+    const getCnFreqIdx = (a: string): number => getFreqIdx(unihan, cnFreq.getFrequency, a) * cnFreqNorm;
+    const getJpFreqIdx = (a: string): number => getFreqIdx(unihan, jpFreq.getFrequency, a) * jpFreqNorm;
 
     const jpSorter = (a: string, b: string) =>
         getJpFreqIdx(b) - getJpFreqIdx(a);

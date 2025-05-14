@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import minimist from "minimist";
 import { Cedict } from "./cedict";
-import { k_BCCWJ_FILE_PATH, k_BCLU_FILE_PATH, k_CEDICT_FILE_PATH, k_CHARACTER_LIST_PATH, k_HANZIDB_FILE_PATH, k_HSK_FILE_LIST, k_JLPT_FILE_LIST, k_JMDICT_FILE_PATH, k_JOYO_FILE_PATH, k_KANJIDIC_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_tag_CHINESE_ONLY, k_tag_CHINESE_RARE, k_tag_JAPANESE_ONLY, k_tag_JAPANESE_RARE, k_tag_RADICAL, k_UNIHAN_DB_PATH } from "./consts";
+import { k_BCCWJ_FILE_PATH, k_BCLU_FILE_PATH, k_CEDICT_FILE_PATH, k_CHARACTER_LIST_PATH, k_HANZIDB_FILE_PATH, k_HSK_FILE_LIST, k_JLPT_FILE_LIST, k_JMDICT_FILE_PATH, k_JOYO_FILE_PATH, k_KANJIDIC_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_SUBTLEX_FILE_PATH, k_tag_CHINESE_ONLY, k_tag_CHINESE_RARE, k_tag_JAPANESE_ONLY, k_tag_JAPANESE_RARE, k_tag_RADICAL, k_UNIHAN_DB_PATH } from "./consts";
 import { Kanjidic } from "./kanjidic";
 import { Unihan } from "./unihan";
 import { buildKanjiCardsFromLists } from "./buildKanjiCards";
@@ -12,8 +12,7 @@ import { Hanzidb } from './Hanzidb';
 import { array_difference, combine_without_duplicates, hskTag, jlptTag } from './types';
 import { getJpSorter, getSorter } from './freqCharSort';
 import { getPreferredReading, getPreferredRele, Jmdict } from './jmdict';
-
-import { minSubstrLevenshtein } from './levenshtein';
+import { Subtlex } from './Subtlex';
 
 const args = minimist(process.argv.slice(2));
 
@@ -23,15 +22,15 @@ function getJoyo(): string[] {
 }
 
 async function buildKanji() {
-    const unihan = await Unihan.create(k_UNIHAN_DB_PATH);
+    const unihan = await Unihan.create(k_UNIHAN_DB_PATH, {validateLinks: true});
     const kanjidic = await Kanjidic.create(k_KANJIDIC_FILE_PATH);
     const hanzidb = await Hanzidb.create(k_HANZIDB_FILE_PATH);
-    const cedict = new Cedict(k_CEDICT_FILE_PATH);
+    const cedict = await Cedict.create(k_CEDICT_FILE_PATH);
     const bccwj = await Bccwj.create(k_BCCWJ_FILE_PATH);
-    const bclu = await Bclu.create(k_BCLU_FILE_PATH);
+    const subtlex = await Subtlex.create(k_SUBTLEX_FILE_PATH);
     const jmdict = await Jmdict.create(k_JMDICT_FILE_PATH);
 
-    const modules = { unihan, kanjidic, hanzidb, cedict, bccwj, bclu, jmdict };
+    const modules = { unihan, kanjidic, hanzidb, cedict, bccwj, subtlex, jmdict };
 
     const simpChineseList = combine_without_duplicates(hanzidb.getHSKChars(), hanzidb.getNMostFrequent(3000));
     const japaneseList = combine_without_duplicates(kanjidic.getJLPTChars(), getJoyo());
@@ -75,8 +74,8 @@ async function buildKanji() {
         return false;
     };
 
-    const { getJpFreqIdx, getCnFreqIdx } = getSorter({ unihan, bccwj, bclu });
-    const freq_threshold = 300;
+    // const { getJpFreqIdx, getCnFreqIdx } = getSorter({ unihan, jpFreq: bccwj, cnFreq: subltex });
+    // const freq_threshold = 300;
 
     let numRareJp = 0;
     let numRareCn = 0;
@@ -142,6 +141,8 @@ async function buildKanji() {
             ['onyomi', ','],
             ['japaneseKunVocab', ','],
             ['japaneseOnVocab', ','],
+            ['simpChineseVocab', ','],
+            ['tradChineseVocab', ','],
             ['englishMeaning', ','],
         ];
 

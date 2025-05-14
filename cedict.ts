@@ -6,18 +6,23 @@ type CedictReading = {
     definition: string;
 };
 
-type CedictEntry = {
+export type CedictEntry = {
     simplified: string;
     traditional: string;
     reading: CedictReading[];
 };
 
 export class Cedict {
-    constructor(filePath: string) {
+    constructor() {
         autoBind(this);
-        this.m_loadData(filePath);
     }
-    private m_loadData(filePath: string): void {
+    static async create(filePath: string): Promise<Cedict> {
+        const cedict = new Cedict();
+        await cedict.loadData(filePath);
+
+        return cedict;
+    }
+    private async loadData(filePath: string): Promise<void> {
         const content = fs.readFileSync(filePath, 'utf-8');
         const lines: string[] = content.split('\n');
 
@@ -31,49 +36,59 @@ export class Cedict {
             const pinyin = match[3];
             const definition = match[4];
 
-            this.m_emplaceEntry(traditional, simplified, { pinyin, definition });
+            this.emplaceEntry(traditional, simplified, { pinyin, definition });
         });
     }
 
-    private m_emplaceEntry(traditional: string, simplified: string, reading: CedictReading): void {
-        if (!this.m_simpToTrad.has(simplified)) {
-            this.m_simpToTrad.set(simplified, traditional);
-        }
-
-        if (!this.m_entries.has(traditional)) {
-            this.m_entries.set(traditional, { simplified, traditional, reading: [reading] });
+    private emplaceEntry(traditional: string, simplified: string, reading: CedictReading): void {
+        let id = this.m_wordToId.get(traditional);
+        if (id != undefined) {
+            const entry = this.m_entries.get(id);
+            if (!entry) {
+                console.error("No entry but found an id");
+                return;
+            }
+            entry.reading.push(reading);
         }
         else {
-            const res = this.m_entries.get(traditional);
-            if (!res) return;
-            res.reading.push(reading);
+            id = this.getId();
+            this.m_wordToId.set(simplified, id);
+            this.m_wordToId.set(traditional, id);
+            this.m_entries.set(id, { simplified, traditional, reading: [reading] })
+        }
+
+        this.emplaceWord(simplified, id);
+        this.emplaceWord(traditional, id);
+    }
+
+    private emplaceWord(word: string, id: number): void {
+        for (const c of word) {
+            const arr = this.m_charToId.get(c);
+            if (!arr) this.m_charToId.set(c, [id]);
+            else if (!arr.includes(id)) arr.push(id);
         }
     }
 
-    public isChinese(mychar: string): boolean {
-        return this.m_simpToTrad.has(mychar) || this.m_entries.has(mychar);
+    public isChinese(word: string): boolean {
+        return this.m_wordToId.has(word);
     }
 
-    public isSimplified(mychar: string): boolean {
-        return this.m_simpToTrad.has(mychar)
+    public isSimplified(word: string): boolean {
+        const id = this.m_wordToId.get(word);
+        if (id == undefined) return false;
+        return this.m_entries.get(id)?.simplified == word;
     }
 
-    public isTraditional(mychar: string): boolean {
-        return this.m_entries.has(mychar)
+    public isTraditional(word: string): boolean {
+        const id = this.m_wordToId.get(word);
+        if (id == undefined) return false;
+        return this.m_entries.get(id)?.traditional == word;
     }
 
-    public getEntry(mychar: string): CedictEntry | undefined {
-        let res = this.m_entries.get(mychar);
-
-        if (res) return res;
-
-        const tradChar = this.m_simpToTrad.get(mychar);
-        if (!tradChar) return undefined;
-        return this.m_entries.get(tradChar);
-    }
-
-    public getKeys(): string[] {
-        return [...this.m_simpToTrad.keys()];
+    public getEntry(word: string): CedictEntry | undefined {
+        let id = this.m_wordToId.get(word);
+        if (id == undefined) return undefined;
+        return this.m_entries.get(id);
     }
 
     public getPinyin(mychar: string): string[] | undefined {
@@ -88,8 +103,20 @@ export class Cedict {
         return entry.reading.map(r => r.definition);
     }
 
+    public getVocabEntriesForChar(mychar: string): CedictEntry[] {
+        const ids = this.m_charToId.get(mychar) || [];
+        return ids.map(e => this.m_entries.get(e)).filter(e => !!e);
+    }
+
+    private getId(): number {
+        return this.m_id++;
+    }
+
+    private m_id: number = 0;
+    // Vocab to id index
+    private m_charToId: Map<string, number[]> = new Map();
     // Map simplified to traditional
-    private m_simpToTrad: Map<string, string> = new Map();
+    private m_wordToId: Map<string, number> = new Map();
     // Dictionary entries indexed by traditional chinese
-    private m_entries: Map<string, CedictEntry> = new Map();
+    private m_entries: Map<number, CedictEntry> = new Map();
 }

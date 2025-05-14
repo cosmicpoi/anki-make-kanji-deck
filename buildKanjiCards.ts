@@ -1,29 +1,44 @@
 import { Unihan } from './unihan';
 import { Kanjidic } from './kanjidic';
-import { Cedict } from './cedict';
+import { Cedict, CedictEntry } from './cedict';
 import { getAllChars, VariantMap } from './VariantMap';
 import { defaultKanjiCard, KanjiCard } from './KanjiCard';
 import { Bccwj } from './bccwj';
 import { Bclu } from './Bclu';
 import * as OpenCC from 'opencc-js';
 import { apply_getter_to_arr, combine_without_duplicates, isHanCharacter } from './types';
-import { getJpSorter, getSorter } from './freqCharSort';
+import { getCnSorter, getJpSorter, getSorter } from './freqCharSort';
 import { Jmdict, getPreferredReading, getPreferredRele } from './jmdict';
 import * as wanakana from 'wanakana';
 import { minSubstrLevenshtein } from './levenshtein';
 import { JSDocParsingMode } from 'typescript';
 import { Hanzidb } from './Hanzidb';
+import { Subtlex } from './Subtlex';
+
+function getChineseVocab(
+    mychar: string,
+    modules: {
+        cedict: Cedict,
+    },
+): string[] {
+
+    const { cedict } = modules;
+
+    const entries = cedict.getVocabEntriesForChar(mychar);
+    const words = entries.map(e => e.simplified);
+    return words;
+}
 
 function getJapaneseVocab(
     mychar: string,
     charReadings: string[],
     modules: { jmdict: Jmdict, unihan: Unihan, bccwj: Bccwj },
 ): {
-    vocab: Record<string, string[]>,
-    furigana: Record<string, string>
+    vocab: Record<string, string[]>, // maps reading(on or kun) to lemmas
+    furigana: Record<string, string> // maps lemmas to hiragana readings
 } {
     const { jmdict, unihan, bccwj } = modules;
-    const { jpSorter } = getJpSorter({ unihan, bccwj });
+    const { jpSorter } = getJpSorter({ unihan, freq: bccwj });
 
     const entries = jmdict.getPreferredEntriesByChar(mychar);
     entries.sort((e1, e2) => jpSorter(getPreferredReading(e1), getPreferredReading(e2)));
@@ -78,20 +93,20 @@ export function buildKanjiCardsFromLists(
             kanjidic: Kanjidic,
             cedict: Cedict,
             bccwj: Bccwj,
-            bclu: Bclu,
+            subtlex: Subtlex,
             hanzidb: Hanzidb,
         }
     }
 ): KanjiCard[] {
     // Initialize resources
-    const { unihan, kanjidic, cedict, bccwj, bclu, jmdict, hanzidb } = props.modules;
+    const { unihan, kanjidic, cedict, bccwj, subtlex, jmdict, hanzidb } = props.modules;
     const { japaneseList, simpChineseList } = props;
     const converter_s2t = OpenCC.Converter({ from: 'cn', to: 'hk' });
 
     // Emplace chars into Kanji Map
     const variantMap = new VariantMap(japaneseList, simpChineseList, props.modules, true);
 
-    const { jpSorter, cnSorter } = getSorter({ unihan, bccwj, bclu });
+    const { jpSorter, cnSorter } = getSorter({ unihan, jpFreq: bccwj, cnFreq: subtlex });
 
     const firstOrEmpty = (a: string[]): string[] => a.length == 0 ? [] : [a[0]];
 
@@ -181,6 +196,18 @@ export function buildKanjiCardsFromLists(
         lemma: string;
         hiragana: string;
     }
+
+    // Populate chinese vocab
+    const CN_WORDS_PER_CARD = 4;
+    cards.forEach(e => {
+        if (e.simpChineseChar.length == 0) return;
+        let entries = cedict.getVocabEntriesForChar(e.simpChineseChar[0]);
+        entries = entries.filter(e => e.simplified.length != 1);
+        entries.sort((e1, e2) => cnSorter(e1.simplified, e2.simplified));
+        const cardEntries = entries.filter((_, i) => i < CN_WORDS_PER_CARD);
+        e.simpChineseVocab = cardEntries.map(e => `${e.simplified}[${e.reading[0].pinyin}]`);
+        e.tradChineseVocab = cardEntries.map(e => `${e.traditional}[${e.reading[0].pinyin}]`);
+    })
 
     // Populate japanese vocab
     // const WORDS_PER_CARD = 4;
