@@ -4,7 +4,7 @@ import { Cedict } from "./cedict";
 import { k_BCCWJ_FILE_PATH, k_BCLU_FILE_PATH, k_CEDICT_FILE_PATH, k_CHARACTER_LIST_PATH, k_HANZIDB_FILE_PATH, k_HSK_FILE_LIST, k_JLPT_FILE_LIST, k_JMDICT_FILE_PATH, k_KANJIDIC_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_tag_CHINESE_ONLY, k_tag_CHINESE_RARE, k_tag_JAPANESE_ONLY, k_tag_JAPANESE_RARE, k_tag_RADICAL, k_UNIHAN_DB_PATH } from "./consts";
 import { Kanjidic } from "./kanjidic";
 import { Unihan } from "./unihan";
-import { buildKanjiCardsFromLists } from "./buildKanjiCards";
+import { buildKanjiCardsFromLists, getSorter } from "./buildKanjiCards";
 import { Bccwj } from "./bccwj";
 import { KanjiCard } from "./KanjiCard";
 import { Bclu } from "./Bclu";
@@ -25,6 +25,8 @@ async function buildKanji() {
     const japaneseList = kanjidic.getJLPTChars();
     console.log(`Generating list from ${simpChineseList.length} chinese and ${japaneseList.length} japanese characters`);
 
+    const radicals: Set<string> = new Set(unihan.getAllKangxiRadicals().flat());
+
     // Generate card list
     const cards: KanjiCard[] = buildKanjiCardsFromLists({
         fileListDir: k_CHARACTER_LIST_PATH,
@@ -32,8 +34,6 @@ async function buildKanji() {
         simpChineseList,
         modules: { unihan, kanjidic, cedict, bccwj, bclu }
     });
-
-    const radicals: Set<string> =  new Set(unihan.getAllKangxiRadicals().flat());
 
     const simpChineseSet = new Set(simpChineseList);
     const japaneseSet = new Set(japaneseList);
@@ -48,6 +48,11 @@ async function buildKanji() {
         return false;
     };
 
+    const { getJpFreqIdx, getCnFreqIdx } = getSorter({ unihan, bccwj, bclu });
+    const freq_threshold = 300;
+
+    let numRareJp = 0;
+    let numRareCn = 0;
 
     // Add tags
     cards.forEach(card => {
@@ -63,13 +68,21 @@ async function buildKanji() {
             card.tags.push(k_tag_JAPANESE_ONLY);
         }
         // Add chinese-rare or japanese-rare tags
-        if (card.japaneseChar.length > 0 && !japaneseSet.has(card.japaneseChar[0])) {
+        const has_jp = card.japaneseChar.map(e => japaneseSet.has(e)).reduce((a, b) => a || b, false);
+        const has_cn = card.simpChineseChar.map(e => simpChineseSet.has(e)).reduce((a, b) => a || b, false);
+        // const jp_rare = card.japaneseChar.map(e => getJpFreqIdx(e)).reduce((a, b) => Math.max(a, b), 0) < freq_threshold;
+        // const cn_rare = card.simpChineseChar.map(e => getCnFreqIdx(e)).reduce((a, b) => Math.max(a, b), 0) < freq_threshold;
+        if (card.japaneseChar.length > 0 && !has_jp) {
             card.tags.push(k_tag_JAPANESE_RARE);
+            numRareJp++;
         }
-        if (card.simpChineseChar.length > 0 && !simpChineseSet.has(card.simpChineseChar[0])) {
+        if (card.simpChineseChar.length > 0 && !has_cn) {
             card.tags.push(k_tag_CHINESE_RARE);
+            numRareCn++;
         }
     });
+
+    console.log(numRareJp, numRareCn);
 
     // Populate JLPT / HSK levels
     cards.forEach(card => {

@@ -82,14 +82,20 @@ export class Bccwj {
     }
 
     private emplaceEntry(rank: number, entry: BccwjEntry): void {
-        if (!this.m_entries.has(entry.lemma)) {
-            
-        }
         this.m_entries.set(entry.lemma, entry);
         this.m_freqRankToWord.set(rank, entry.lemma);
+
+        if (entry.frequency > this.m_maxFrequency) {
+            this.m_maxFrequency = entry.frequency;
+        }
+    }
+
+    public getMaxFrequency(): number {
+        return this.m_maxFrequency;
     }
 
     // Map lemma to entry
+    private m_maxFrequency: number = 0;
     private m_freqRankToWord: Map<number, string> = new Map();
     private m_entries: Map<string, BccwjEntry> = new Map();
 }

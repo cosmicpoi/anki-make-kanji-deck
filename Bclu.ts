@@ -27,8 +27,12 @@ export class Bclu {
 
         for await (const line of rl) {
             const vals = line.split('\t');
+            const freq = parseInt(vals[1]);
 
-            bclu.m_entries.set(vals[0], parseInt(vals[1]));
+            bclu.m_entries.set(vals[0], freq);
+            if (freq > bclu.m_maxFrequency) {
+                bclu.m_maxFrequency = freq;
+            }
 
             if (props?.maxLines) {
                 count++;
@@ -43,7 +47,12 @@ export class Bclu {
         return this.m_entries.get(word) || 0;
     }
 
+    public getMaxFrequency(): number {
+        return this.m_maxFrequency;
+    }
+
 
     // Map lemma to entry
+    private m_maxFrequency: number = 0;
     private m_entries: Map<string, number> = new Map();
 }

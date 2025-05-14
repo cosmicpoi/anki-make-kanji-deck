@@ -2,8 +2,9 @@ import * as fs from 'fs'
 import * as wanakana from 'wanakana';
 
 import autoBind from "auto-bind";
-import { combine_without_duplicates, isHanCharacter, pairsOf } from './types';
+import { combine_without_duplicates, isHanCharacter, isSameArray, pairsOf } from './types';
 import { k_NUM_KANGXI_RADICALS } from './consts';
+import { KNOWN_LINKS } from './knownLinks';
 
 const k_UNIHAN_FILENAMES = {
     Unihan_Readings: "Unihan_Readings.txt",
@@ -38,7 +39,7 @@ function getCleanChar(dbEntry: string): string {
 }
 
 export function areRadicalStrokesClose(rsa1: string[], rsa2: string[], margin: number = 1): boolean {
-    if (rsa1.length == 1 || rsa2.length == 1) return false;
+    if (rsa1.length == 0 || rsa2.length == 0) return false;
     const compareRs = (rs1: string, rs2: string): boolean => {
         const [r1, s1] = rs1.split('.').map(s => parseInt(s));
         const [r2, s2] = rs2.split('.').map(s => parseInt(s));
@@ -86,6 +87,8 @@ type UnihanIRG = 'kIRG_JSource' | 'kIRG_HSource' | 'kIRG_GSource' | 'kTotalStrok
 type UnihanReading = 'kMandarin' | 'kJapanese' | 'kJapaneseKun' | 'kJapaneseOn' | 'kDefinition';
 type UnihanVariant = 'kSemanticVariant' | 'kSpecializedSemanticVariant' | 'kSimplifiedVariant' | 'kTraditionalVariant';
 
+const k_INVALID_CLUSTER_ID = 0;
+
 // Class to load and interact with the Unihan db
 export class Unihan {
     constructor() {
@@ -103,7 +106,9 @@ export class Unihan {
         }
 
         unihan.createCachedYomi();
-
+        KNOWN_LINKS.forEach(tup => unihan.m_bufferedLinks.push(tup));
+        unihan.flushBufferedLinks();
+        unihan.createClusterIndex();
         return unihan;
     }
 
@@ -196,6 +201,44 @@ export class Unihan {
         });
     }
 
+    private createClusterIndex(): void {
+        const allChars = new Set(this.m_entries.keys());
+        // const chars = this.
+        let visited: Set<string> = new Set();
+        const toVisit: Set<string> = new Set(allChars);
+        const dfs = (node: string): void => {
+            toVisit.delete(node);
+            visited.add(node);
+            const neighbors: string[] = this.m_links.get(node) || [];
+            const neighbor_links = neighbors;
+            for (const neighbor of neighbor_links) {
+                if (toVisit.has(neighbor)) {
+                    dfs(neighbor);
+                }
+            }
+        }
+
+        const clusters: string[][] = [];
+        while (toVisit.size != 0) {
+            visited = new Set();
+            for (const e of toVisit) {
+                dfs(e);
+                break;
+            }
+            clusters.push([...visited]);
+
+        }
+
+        let id = 1;
+        for (const cluster of clusters) {
+            this.m_clusters.set(id, cluster);
+            for (const el of cluster) {
+                this.m_charToClusterId.set(el, id);
+            }
+            id++;
+        }
+    }
+
     // Getters
     public isCharacter(mychar: string): boolean {
         return this.m_entries.has(mychar);
@@ -274,14 +317,16 @@ export class Unihan {
     }
 
     public hasLink(lhs: string, rhs: string): boolean {
-        return this.hasLinkOneWay(lhs, rhs) || this.hasLinkOneWay(rhs, lhs);
+        return this.m_links.get(lhs)?.includes(rhs) || false;
     }
 
-    private hasLinkOneWay(lhs: string, rhs: string): boolean {
-        return this.isSimplifiedVariant(lhs, rhs)
-            || this.isTraditionalVariant(lhs, rhs)
-            || this.isSemanticOrSpecializedVariant(lhs, rhs);
-    }
+
+    // private hasLinkOneWay(lhs: string, rhs: string): boolean {
+    //     if (!this.extraLinkConditions(lhs, rhs)) return false;
+    //     return this.isSimplifiedVariant(lhs, rhs)
+    //         || this.isTraditionalVariant(lhs, rhs)
+    //         || this.isSemanticOrSpecializedVariant(lhs, rhs);
+    // }
 
     // Internal emplace helpers
     private emplace_irg(key: UnihanIRG, lhs: string, rhs: string) {
@@ -299,7 +344,7 @@ export class Unihan {
         if (entry['kRSUnicode'] == undefined) entry['kRSUnicode'] = [];
         entry['kRSUnicode'] = [...entry['kRSUnicode'], ...rs];
 
-        
+
         for (const idx of rs) {
             const arr = this.m_rsToChar.get(idx);
             if (!arr) {
@@ -314,6 +359,45 @@ export class Unihan {
         const entry = this.at(lhs);
         if (!entry[key]) entry[key] = [];
         entry[key] = entry[key].concat(rhs);
+
+        for (const rr of rhs) {
+            for (const tup of [[lhs, rr], [rr, lhs]]) {
+                const [l, r] = tup
+                this.m_bufferedLinks.push([l, r]);
+                this.m_bufferedLinks.push([r, l]);
+            }
+        }
+    }
+
+    private extraLinkConditions(l: string, r: string): boolean {
+        const l_pinyin = this.getMandarinPinyin(l);
+        const r_pinyin = this.getMandarinPinyin(r);
+        if (l_pinyin.length == 0 || r_pinyin.length == 0) return false;
+        if (!isSameArray(l_pinyin, r_pinyin)) return false;
+        return true;
+    }
+
+    private flushBufferedLinks() {
+        const emplaceLink = (l: string, r: string) => {
+            // Emplace link
+            const neighbors = this.m_links.get(l);
+            if (neighbors == undefined) {
+                this.m_links.set(l, [r]);
+            }
+            else if (!neighbors.includes(r)) neighbors.push(r);
+        }
+
+        for (const link of this.m_bufferedLinks) {
+            const [l, r] = link
+            // Skip certain conditions
+            if (!this.extraLinkConditions(l, r)) continue;
+
+            // Emplace link
+            emplaceLink(l, r);
+            emplaceLink(r, l);
+        }
+
+        this.m_bufferedLinks = [];
     }
 
     private emplace_readings(key: UnihanReading, lhs: string, rhs: string[]) {
@@ -333,6 +417,16 @@ export class Unihan {
         return chars.map(c => this.m_entries.get(c)).filter(e => !!e)
     }
 
+    // 0 means there is no cluster
+    public getClusterId(char: string): number {
+        return this.m_charToClusterId.get(char) || k_INVALID_CLUSTER_ID;
+    }
+
+    public getClusterById(id: number): string[] {
+        if (id == k_INVALID_CLUSTER_ID) return [];
+        return this.m_clusters.get(id) || [];
+    }
+
     public getKangxiRadicals(radicalNum: number): UnihanEntry[] {
         if (radicalNum < 1 || radicalNum > k_NUM_KANGXI_RADICALS) {
             console.error("invalid radical number");
@@ -348,9 +442,9 @@ export class Unihan {
         const rads: string[][] = [[]];
         for (let i = 1; i <= k_NUM_KANGXI_RADICALS; i++) {
             const rad = this.getKangxiRadicals(i).map(c => c.glyph)
-            .filter(c => isHanCharacter(c) && (this.isJapanese(c) || this.isSimplified(c) || this.isTraditional(c)));
+                .filter(c => isHanCharacter(c) && (this.isJapanese(c) || this.isSimplified(c) || this.isTraditional(c)));
             rads.push(rad);
-        } 
+        }
 
         return rads;
     }
@@ -365,6 +459,12 @@ export class Unihan {
         return res;
     }
 
+    // Cluster index
+    private m_charToClusterId: Map<string, number> = new Map();
+    private m_clusters: Map<number, string[]> = new Map();
+    // Connectivity index
+    private m_bufferedLinks: [string, string][] = [];
+    private m_links: Map<string, string[]> = new Map();
     // Characters indexed by RS index
     private m_rsToChar: Map<string, string[]> = new Map();
     // Entries indexed by character (rather than code point)
