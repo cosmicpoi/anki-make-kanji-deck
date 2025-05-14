@@ -10,7 +10,10 @@ import { KanjiCard } from "./KanjiCard";
 import { Bclu } from "./Bclu";
 import { Hanzidb } from './Hanzidb';
 import { array_difference, combine_without_duplicates, hskTag, jlptTag } from './types';
-import { getSorter } from './freqCharSort';
+import { getJpSorter, getSorter } from './freqCharSort';
+import { getPreferredReading, getPreferredRele, Jmdict } from './jmdict';
+
+import { minSubstrLevenshtein } from './levenshtein';
 
 const args = minimist(process.argv.slice(2));
 
@@ -21,6 +24,9 @@ async function buildKanji() {
     const cedict = new Cedict(k_CEDICT_FILE_PATH);
     const bccwj = await Bccwj.create(k_BCCWJ_FILE_PATH);
     const bclu = await Bclu.create(k_BCLU_FILE_PATH);
+    const jmdict = await Jmdict.create(k_JMDICT_FILE_PATH);
+
+    const modules = { unihan, kanjidic, hanzidb, cedict, bccwj, bclu, jmdict };
 
     const simpChineseList = combine_without_duplicates(hanzidb.getHSKChars(), hanzidb.getNMostFrequent(3000));
     const japaneseList = kanjidic.getJLPTChars();
@@ -30,10 +36,9 @@ async function buildKanji() {
 
     // Generate card list
     const cards: KanjiCard[] = buildKanjiCardsFromLists({
-        fileListDir: k_CHARACTER_LIST_PATH,
         japaneseList,
         simpChineseList,
-        modules: { unihan, kanjidic, cedict, bccwj, bclu }
+        modules
     });
 
     const simpChineseSet = new Set(simpChineseList);
@@ -82,8 +87,6 @@ async function buildKanji() {
             numRareCn++;
         }
     });
-
-    console.log(numRareJp, numRareCn);
 
     // Populate JLPT / HSK levels
     cards.forEach(card => {

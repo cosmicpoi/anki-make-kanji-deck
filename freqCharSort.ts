@@ -35,14 +35,14 @@ export function getCnSorter(modules: { unihan: Unihan, bclu: Bclu }): ChineseFre
     return { getCnFreqIdx, cnSorter };
 }
 
-export function getJpSorter(modules: { unihan: Unihan, bccwj: Bccwj }): ChineseFreqCharSorter {
+export function getJpSorter(modules: { unihan: Unihan, bccwj: Bccwj }): JapaneseFreqCharSorter {
     const { bccwj, unihan } = modules;
 
-    const getCnFreqIdx = (a: string): number => getFreqIdx(unihan, bccwj.getFrequency, a);
-    const cnSorter = (a: string, b: string) =>
-        getCnFreqIdx(b) - getCnFreqIdx(a);
+    const getJpFreqIdx = (a: string): number => getFreqIdx(unihan, bccwj.getFrequency, a);
+    const jpSorter = (a: string, b: string) =>
+        getJpFreqIdx(b) - getJpFreqIdx(a);
 
-    return { getCnFreqIdx, cnSorter };
+    return { getJpFreqIdx, jpSorter };
 }
 
 export function getSorter(modules: { unihan: Unihan, bccwj: Bccwj, bclu: Bclu }): FreqCharSorter {

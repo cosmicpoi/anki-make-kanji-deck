@@ -1,23 +1,79 @@
-import * as fs from 'fs'
 import { Unihan } from './unihan';
 import { Kanjidic } from './kanjidic';
 import { Cedict } from './cedict';
-import { TieredWordList } from './TieredWordList';
 import { getAllChars, VariantMap } from './VariantMap';
 import { defaultKanjiCard, KanjiCard } from './KanjiCard';
 import { Bccwj } from './bccwj';
 import { Bclu } from './Bclu';
 import * as OpenCC from 'opencc-js';
-import { isHanCharacter } from './types';
-import { getSorter } from './freqCharSort';
+import { combine_without_duplicates, isHanCharacter } from './types';
+import { getJpSorter, getSorter } from './freqCharSort';
+import { Jmdict, getPreferredReading, getPreferredRele } from './jmdict';
+import * as wanakana from 'wanakana';
+import { minSubstrLevenshtein } from './levenshtein';
+import { JSDocParsingMode } from 'typescript';
+
+function getJapaneseVocab(
+    mychar: string,
+    charReadings: string[],
+    modules: { jmdict: Jmdict, unihan: Unihan, bccwj: Bccwj },
+): {
+    vocab: Record<string, string[]>,
+    furigana: Record<string, string>
+} {
+    const { jmdict, unihan, bccwj } = modules;
+    const { jpSorter } = getJpSorter({ unihan, bccwj });
+
+    const entries = jmdict.getPreferredEntriesByChar(mychar);
+    entries.sort((e1, e2) => jpSorter(getPreferredReading(e1), getPreferredReading(e2)));
+
+    // char reading to Kele
+    const vocabMap: Record<string, string[]> = {};
+    // kele to rele
+    const furiganaMap: Record<string, string> = {};
+
+    charReadings.forEach(r => { vocabMap[r] = []; })
+
+    for (const entry of entries) {
+        const entryReading = getPreferredReading(entry);
+        const entryHiragana = getPreferredRele(entry);
+        const entryRoma = wanakana.toRomaji(entryHiragana);
+        const readingScores: Record<string, number> = {};
+        charReadings.forEach(r => { readingScores[r] = Infinity; });
+        charReadings.forEach((charReading) => {
+            const charRoma = wanakana.toRomaji(charReading);
+            const dist = minSubstrLevenshtein(charRoma, entryRoma);
+            readingScores[charReading] = dist;
+        });
+
+        let minScore = Infinity;
+        let bestCharReading = charReadings[0];
+        charReadings.forEach((charReading) => {
+            if (readingScores[charReading] < minScore) {
+                minScore = readingScores[charReading];
+                bestCharReading = charReading;
+            }
+        });
+
+        if (!vocabMap[bestCharReading].includes(entryReading))
+            vocabMap[bestCharReading].push(entryReading);
+        if (furiganaMap[entryReading] == undefined) {
+            furiganaMap[entryReading] = entryHiragana;
+        }
+    }
+
+    // onVocab = onVocab.filter((_, i) => i < maxReadings);
+    // kunVocab = kunVocab.filter((_, i) => i < maxReadings);
+    return { vocab: vocabMap, furigana: furiganaMap };
+}
 
 export function buildKanjiCardsFromLists(
     props: {
-        fileListDir: string,
         japaneseList: string[],
         simpChineseList: string[],
         modules: {
             unihan: Unihan,
+            jmdict: Jmdict,
             kanjidic: Kanjidic,
             cedict: Cedict,
             bccwj: Bccwj,
@@ -26,7 +82,7 @@ export function buildKanjiCardsFromLists(
     }
 ): KanjiCard[] {
     // Initialize resources
-    const { modules: { unihan, kanjidic, cedict, bccwj, bclu }, japaneseList, simpChineseList } = props;
+    const { modules: { unihan, kanjidic, cedict, bccwj, bclu, jmdict }, japaneseList, simpChineseList } = props;
     const converter_s2t = OpenCC.Converter({ from: 'cn', to: 'hk' });
 
     // Emplace chars into Kanji Map
@@ -96,6 +152,48 @@ export function buildKanjiCardsFromLists(
         e.englishMeaning = englishMeaning;
     })
 
+    type VocabCard = {
+        lemma: string;
+        hiragana: string;
+    }
+
+    // Populate japanese vocab
+    const WORDS_PER_CARD = 4;
+    const WORDS_PER_READING = 2;
+    cards.forEach(e => {
+        if (e.japaneseChar.length == 0) return;
+        const charReadings: string[] = [...e.onyomi, ...e.kunyomi];
+        let { vocab, furigana } = getJapaneseVocab(e.japaneseChar[0], charReadings, { jmdict, unihan, bccwj });
+
+        let onVocabSet: Set<string> = new Set();
+        let kunVocabSet: Set<string> = new Set();
+
+        for (const r of charReadings) {
+            const vocablist = vocab[r];
+            for (let i = 0; i < WORDS_PER_READING; i++) {
+                const word = vocablist[i];
+                if (wanakana.isHiragana(r.at(0))) {
+                    kunVocabSet.add(word);
+                } else {
+                    onVocabSet.add(word);
+                }
+            }
+        };
+
+        let onVocab: string[] = [...onVocabSet];
+        let kunVocab: string[] = [...kunVocabSet];
+
+        onVocab.sort(jpSorter);;
+        kunVocab.sort(jpSorter);;
+
+        onVocab = onVocab.filter((_, i) => i < WORDS_PER_CARD);
+        kunVocab = kunVocab.filter((_, i) => i < WORDS_PER_CARD);
+
+        e.japaneseOnVocab = onVocab.map(c => `${c}[${furigana[c]}]`);
+        e.japaneseKunVocab = kunVocab.map(c => `${c}[${furigana[c]}]`);
+    });
+
+    // Sort and return
     const getSortKey = (c: KanjiCard) => {
         const entries = [...c.japaneseChar, ...c.simpChineseChar, ...c.tradChineseChar];
         entries.sort();
