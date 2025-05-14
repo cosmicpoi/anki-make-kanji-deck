@@ -4,12 +4,13 @@ import { Cedict } from "./cedict";
 import { k_BCCWJ_FILE_PATH, k_BCLU_FILE_PATH, k_CEDICT_FILE_PATH, k_CHARACTER_LIST_PATH, k_HANZIDB_FILE_PATH, k_HSK_FILE_LIST, k_JLPT_FILE_LIST, k_JMDICT_FILE_PATH, k_KANJIDIC_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_tag_CHINESE_ONLY, k_tag_CHINESE_RARE, k_tag_JAPANESE_ONLY, k_tag_JAPANESE_RARE, k_tag_RADICAL, k_UNIHAN_DB_PATH } from "./consts";
 import { Kanjidic } from "./kanjidic";
 import { Unihan } from "./unihan";
-import { buildKanjiCardsFromLists, getSorter } from "./buildKanjiCards";
+import { buildKanjiCardsFromLists } from "./buildKanjiCards";
 import { Bccwj } from "./bccwj";
 import { KanjiCard } from "./KanjiCard";
 import { Bclu } from "./Bclu";
 import { Hanzidb } from './Hanzidb';
 import { array_difference, combine_without_duplicates, hskTag, jlptTag } from './types';
+import { getSorter } from './freqCharSort';
 
 const args = minimist(process.argv.slice(2));
 

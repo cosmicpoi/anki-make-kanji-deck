@@ -1,6 +1,7 @@
 import autoBind from "auto-bind";
 import * as xmlparser from './xmlparser';
 import { ParamXMLElement, XMLDtdDecl, XMLParserProps } from "./xmlparser";
+import { isHanCharacter } from "./types";
 
 //----------------------------------------------------------------------------------------------------------------------
 // Types
@@ -41,6 +42,10 @@ export type JmdictEntry = {
     k_ele: JmdictKele[]; // k_ele
     r_ele: JmdictRele[]; // r_ele
     sense: JmdictSense[]; // sense
+
+    cachedPreferredReading: string;
+    cachedPreferredRele: string;
+    cachedPreferredKele: string;
 };
 
 const makeDefaultSense = (): JmdictSense =>
@@ -60,6 +65,9 @@ const makeDefaultEntry = (): JmdictEntry => ({
     k_ele: [],
     r_ele: [],
     sense: [],
+    cachedPreferredReading: '',
+    cachedPreferredRele: '',
+    cachedPreferredKele: '',
 });
 
 // XML Schema
@@ -83,6 +91,10 @@ type JmdictTagType = {
     xref: 'xref';
     misc: 'misc';
     s_inf: 's_inf';
+};
+
+enum JmdictMiscKeys {
+    usually_kana = "&uk;",
 };
 
 type JmdictElement = ParamXMLElement<keyof JmdictTagType, keyof JmdictAttrKey>;
@@ -148,6 +160,12 @@ type JME_Entry = JmdictElement & {
 // Helper functions
 //----------------------------------------------------------------------------------------------------------------------
 
+export function isUsuallyKana(entry: JmdictEntry): boolean {
+    const misc = entry.sense.map(s => s.misc)
+        .filter(misc => misc.includes(JmdictMiscKeys.usually_kana));
+    return misc.length > 0;
+}
+
 const k_SCORE_1 = 1;
 const k_SCORE_2 = 1 / 5;
 const k_SCORE_NF_DEN = 50;
@@ -170,7 +188,7 @@ const getScore = (pris: string[]): number => {
     return score;
 }
 
-export function getPreferredKele(entry: JmdictEntry): [string | undefined, number] {
+function getPreferredKeleWithScore(entry: JmdictEntry): [string | undefined, number] {
     if (entry.k_ele.length == 0) return [undefined, -1]
 
     let preferred: string | undefined = undefined;
@@ -191,7 +209,16 @@ export function getPreferredKele(entry: JmdictEntry): [string | undefined, numbe
     };
 }
 
-export function getPreferredRele(entry: JmdictEntry): [string | undefined, number] {
+export function getPreferredKele(entry: JmdictEntry): string {
+    if (entry.cachedPreferredKele != '') {
+        return entry.cachedPreferredKele;
+    }
+    const [val] = getPreferredKeleWithScore(entry);
+    entry.cachedPreferredKele = val || '';
+    return val || '';
+}
+
+function getPreferredReleWithScore(entry: JmdictEntry): [string | undefined, number] {
     if (entry.r_ele.length == 0) return [undefined, -1];
 
     let preferred: string | undefined = undefined;
@@ -213,23 +240,52 @@ export function getPreferredRele(entry: JmdictEntry): [string | undefined, numbe
     };
 }
 
+export function getPreferredRele(entry: JmdictEntry): string {
+    if (entry.cachedPreferredRele != '') {
+        return entry.cachedPreferredRele;
+    }
+    const [val] = getPreferredReleWithScore(entry);
+    entry.cachedPreferredRele = val || '';
+    return val || '';
+}
+
+// export function getPreferredReading(entry: JmdictEntry): string {
+
+// }
+
 // Scoring system:
 // - 1 point for each xx1 tag
 // - 1 / n+1 point for each xx2 tag (where n is number of possible tags)
 // - xx / 50 points for each nfxx tag (since they go up to 50)
-export function getPreferredReading(entry: JmdictEntry): [string, number] {
-    const [prefK, scoreK] = getPreferredKele(entry);
-    const [prefR, scoreR] = getPreferredRele(entry);
+function _getPreferredReading(entry: JmdictEntry): string {
+
+    const [prefK, scoreK] = getPreferredKeleWithScore(entry);
+    const [prefR, scoreR] = getPreferredReleWithScore(entry);
+
+    if (prefR && isUsuallyKana(entry)) {
+        return prefR;
+    }
 
     if ((scoreK > scoreR) && prefK) {
-        return [prefK, scoreK];
-    } else if ((scoreK < scoreR) && prefR) {
-        return [prefR, scoreR];
+        return prefK;
     }
+    else if ((scoreK < scoreR) && prefR) {
+        return prefR;
+    }
+    // Scores are equal
     else {
-        if (prefK) return [prefK, scoreK];
-        return [prefR as string, scoreR];
+        if (prefK) return prefK;
+        return prefR as string;
     }
+}
+
+export function getPreferredReading(entry: JmdictEntry): string {
+    if (entry.cachedPreferredReading != '') {
+        return entry.cachedPreferredReading;
+    }
+    const val = _getPreferredReading(entry);
+    entry.cachedPreferredReading = val;
+    return val;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -242,8 +298,11 @@ export class Jmdict {
     }
     static async create(filePath: string): Promise<Jmdict> {
         const jmdict = new Jmdict();
+        await jmdict.parse(filePath);
+        return jmdict;
+    }
 
-
+    async parse(filePath: string): Promise<void> {
         const serializeKele = (el: JME_Kele): JmdictKele => {
             const kele = makeDefaultKele();
             for (const child of el.children) {
@@ -295,13 +354,13 @@ export class Jmdict {
             if (el.tagName == 'entry') {
                 const entry: JmdictEntry = serializeEntry(el as JME_Entry)
                 // console.dir(entry, { depth: null, colors: true });
-                jmdict.emplaceEntry(entry);
+                this.emplaceEntry(entry);
             }
         };
 
         const onDtd = (e: XMLDtdDecl) => {
             if (e.tagName == '!ENTITY') {
-                jmdict.emplaceEntity(e.key, e.value);
+                this.emplaceEntity(e.key, e.value);
             }
         }
 
@@ -312,7 +371,6 @@ export class Jmdict {
         };
 
         await xmlparser.parseXML<keyof JmdictTagType, keyof JmdictAttrKey>(filePath, handlers);
-        return jmdict;
     }
 
     public forEachWord(handler: (word: string) => void) {
@@ -331,10 +389,6 @@ export class Jmdict {
             const [seq] = tup;
             handler(seq);
         }
-    }
-
-    public getSeq(): Iterable<number> {
-        return this.m_entries.keys();
     }
 
     public forEachEntry(handler: (entry: JmdictEntry) => void) {
@@ -368,40 +422,68 @@ export class Jmdict {
         this.m_entries.set(entry.ent_seq, entry);
 
         entry.k_ele.forEach(({ keb }) => {
-            // this.m_kEleToSeq.set(keb, entry.ent_seq);
-            this.m_wordToSeq.set(keb, entry.ent_seq);
+            this.emplaceWord(keb, entry.ent_seq);
         })
         entry.r_ele.forEach(({ reb }) => {
-            // this.m_rEleToSeq.set(reb, entry.ent_seq);
-            this.m_wordToSeq.set(reb, entry.ent_seq);
+            this.emplaceWord(reb, entry.ent_seq);
         })
-
     }
 
-    public getEntryByWord(text: string): JmdictEntry | undefined {
-        const seq = this.m_wordToSeq.get(text);
-        if (seq == undefined) return undefined;
-        return this.m_entries.get(seq);
+    public getSeqsByChar(char: string): number[] {
+        return this.m_charToSeqs.get(char) || [];
+    }
+
+    // Return a list of entries that have the given char in its preferred reading
+    public getPreferredEntriesByChar(char: string): JmdictEntry[] {
+        const seqs = this.getSeqsByChar(char);
+        const entries = seqs.map(el => this.getEntryBySeq(el)).filter(e => !!e);
+        return entries.filter(e => getPreferredReading(e).includes(char));
+    }
+
+    private emplaceWord(word: string, ent_seq: number) {
+        // Emplace words
+        const wordArr = this.m_wordToSeq.get(word);
+        if (!wordArr) this.m_wordToSeq.set(word, [ent_seq]);
+        else if (!wordArr.includes(ent_seq)) wordArr.push(ent_seq);
+
+        // Emplace characters
+
+        for (const char of word) {
+            if (!isHanCharacter(char)) continue;
+            const arr = this.m_charToSeqs.get(char);
+            if (!arr) {
+                this.m_charToSeqs.set(char, [ent_seq]);
+            }
+            else if (!arr.includes(ent_seq)) arr.push(ent_seq);
+        }
+    }
+
+    public getEntriesByWord(text: string): JmdictEntry[] {
+        const seqs = this.m_wordToSeq.get(text);
+        if (seqs == undefined) return [];
+        return seqs.map(seq => this.m_entries.get(seq)).filter(e => !!e);
     }
 
     public getEntryBySeq(seq: number): JmdictEntry | undefined {
         return this.m_entries.get(seq);
     }
 
-    
-
     public getAbbrevs(): Readonly<Record<string, string>> {
         return this.m_entityAbbrev;
     };
+
+    // Index of characters to dictionary words (by seq)
+    private m_charToSeqs: Map<string, number[]> = new Map();
+
     // Entity abbreviations
     private m_entityAbbrev: Record<string, string> = {};
 
     // Index of k_ele to ent seq
-    private m_kEleToSeq: Map<string, number> = new Map();
+    // private m_kEleToSeq: Map<string, number> = new Map();
     // Index of r_ele to ent seq
-    private m_rEleToSeq: Map<string, number> = new Map();
+    // private m_rEleToSeq: Map<string, number> = new Map();
     // Index of word to ent seq
-    private m_wordToSeq: Map<string, number> = new Map();
+    private m_wordToSeq: Map<string, number[]> = new Map();
     // Dictionary entries indexed by entry seq
     private m_entries: Map<number, JmdictEntry> = new Map();
 }

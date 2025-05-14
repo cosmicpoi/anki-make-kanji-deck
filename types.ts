@@ -326,6 +326,12 @@ export function isKatakana(char: string) {
     return (code >= 0x30A0 && code <= 0x30FF) || (code >= 0x31F0 && code <= 0x31FF);
 }
 
+export function katakanaToHiragana(input: string): string {
+    return input.replace(/[\u30A1-\u30F6]/g, function (char) {
+        return String.fromCharCode(char.charCodeAt(0) - 0x60);
+    });
+}
+
 export function pairsOf<T, S>(a1: Iterable<T>, a2: Iterable<S>): [T, S][] {
     const pairs: [T, S][] = [];
     for (const i1 of a1) {

@@ -109,6 +109,7 @@ export class Unihan {
         KNOWN_LINKS.forEach(tup => unihan.m_bufferedLinks.push(tup));
         unihan.flushBufferedLinks();
         unihan.createClusterIndex();
+
         return unihan;
     }
 

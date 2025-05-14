@@ -9,42 +9,7 @@ import { Bccwj } from './bccwj';
 import { Bclu } from './Bclu';
 import * as OpenCC from 'opencc-js';
 import { isHanCharacter } from './types';
-
-type FreqCharSorter = {
-    getCnFreqIdx: (a: string) => number;
-    getJpFreqIdx: (a: string) => number;
-    cnSorter: (a: string, b: string) => number;
-    jpSorter: (a: string, b: string) => number;
-};
-
-export function getSorter(modules: { unihan: Unihan, bccwj: Bccwj, bclu: Bclu }): FreqCharSorter {
-    const { bclu, bccwj, unihan } = modules;
-
-    const cnMaxFreq = bclu.getMaxFrequency();
-    const jpMaxFreq = bccwj.getMaxFrequency();
-
-    let cnFreqNorm = 2000000000 / cnMaxFreq;
-    let jpFreqNorm = 2000000000 / jpMaxFreq;
-
-    const getFreqIdx = (getFreq: (c: string) => number, candidate: string): number => {
-        const strokeCountInv = (100 - unihan.getTotalStrokes(candidate));
-        return getFreq(candidate) + strokeCountInv / 100;
-    }
-    // const getCnFreqIdx = (a: string) => {
-    //     console.log(_getCnFreqIdx(a));
-    //     return _getCnFreqIdx(a);
-    // }
-
-    const getCnFreqIdx = (a: string): number => getFreqIdx(bclu.getFrequency, a) * cnFreqNorm;
-    const getJpFreqIdx = (a: string): number => getFreqIdx(bccwj.getFrequency, a) * jpFreqNorm;
-
-    const jpSorter = (a: string, b: string) =>
-        getJpFreqIdx(b) - getJpFreqIdx(a);
-    const cnSorter = (a: string, b: string) =>
-        getCnFreqIdx(b) - getCnFreqIdx(a);
-
-    return { getCnFreqIdx, getJpFreqIdx, jpSorter, cnSorter };
-}
+import { getSorter } from './freqCharSort';
 
 export function buildKanjiCardsFromLists(
     props: {
@@ -100,8 +65,8 @@ export function buildKanjiCardsFromLists(
         e.simpChineseChar.sort(cnSorter);
 
         // Pick the best entry
-        e.japaneseChar = firstOrEmpty(e.japaneseChar),
-        e.simpChineseChar = firstOrEmpty(e.simpChineseChar),
+        e.japaneseChar = firstOrEmpty(e.japaneseChar);
+        e.simpChineseChar = firstOrEmpty(e.simpChineseChar);
 
         e.tradChineseChar = [...new Set(e.simpChineseChar.map(c => converter_s2t(c)))];
     });
