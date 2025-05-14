@@ -316,21 +316,6 @@ export function isHanCharacter(char: string): boolean {
 //     return false;
 // }
 
-export function isHiragana(char: string) {
-    const code = char.charCodeAt(0);
-    return code >= 0x3040 && code <= 0x309F;
-}
-
-export function isKatakana(char: string) {
-    const code = char.charCodeAt(0);
-    return (code >= 0x30A0 && code <= 0x30FF) || (code >= 0x31F0 && code <= 0x31FF);
-}
-
-export function katakanaToHiragana(input: string): string {
-    return input.replace(/[\u30A1-\u30F6]/g, function (char) {
-        return String.fromCharCode(char.charCodeAt(0) - 0x60);
-    });
-}
 
 export function pairsOf<T, S>(a1: Iterable<T>, a2: Iterable<S>): [T, S][] {
     const pairs: [T, S][] = [];
@@ -379,4 +364,69 @@ export function hskTag(n: number) {
         tag = tag + "::" + i;
     }
     return tag;
+}
+
+export function getMatchAndPct(l1: string[], l2: string[]): [number, number] {
+    const r1: Set<string> = new Set(l1);
+    const r2: Set<string> = new Set(l2);
+    const common = common_elements([...r1], [...r2]);
+
+    const match = common.length; // # of jp readings
+    const max = Math.min(r1.size, r2.size);
+    const pct = match / max; // # proportion matched 
+
+    return [match, pct];
+}
+
+export function areMeaningsSimilar(
+    m1: string,
+    m2: string,
+    props?: {
+        logFails?: boolean;
+        logAll?: boolean;
+    }
+): boolean {
+    const getWordList = (str: string): string[] =>
+        str.replace(/\(.+\)/, '')         // remove parenthesized 
+           .replace(/\[.+\]\)/, '')       // remove brackets 
+           .replace(/,|;/g, ' ')          // strip puncutation
+           .split(/\s+/)                  // split by whitespace
+           .filter(s => s != '')          // remove empty chars
+           .filter(s => s != 'rad.')      // remove annotations
+           .filter(s => !s.match(/\d+/)); // don't match numbers
+
+    const engWords1 = getWordList(m1);
+    const engWords2 = getWordList(m2);
+    engWords1.sort();
+    engWords2.sort();
+
+
+    let res = false;
+
+    const common_eng = common_elements(engWords1, engWords2);
+
+    // If it just matches a lot
+    if (common_eng.length >= 4) {
+        res = true;
+    }
+    // If the smaller one is a strict subset of the larger one
+    else if (common_eng.length >= 1 && Math.min(engWords1.length, engWords2.length) - common_eng.length == 0) {
+        res = true;
+    }
+    // If there's a decent number of matches and the total number of matches is a high proportion of the total string length
+    else if (common_eng.length >= 3 && Math.min(engWords1.length, engWords2.length) - common_eng.length <= 1) {
+        res = true;
+    }
+
+    // if (!res) 
+    if (!!props?.logAll || (props?.logFails && !res)) {
+        console.log("Comparing meanings:")
+        console.log(m1);
+        console.log(m2);
+        console.log(engWords1);
+        console.log(engWords2);
+        console.log(common_eng)
+    }
+
+    return res;
 }

@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as wanakana from 'wanakana';
 
 import autoBind from "auto-bind";
-import { combine_without_duplicates, isHanCharacter, isSameArray, pairsOf } from './types';
+import { areMeaningsSimilar, combine_without_duplicates, isHanCharacter, isSameArray, pairsOf } from './types';
 import { k_NUM_KANGXI_RADICALS } from './consts';
 import { KNOWN_LINKS } from './knownLinks';
 
@@ -105,10 +105,34 @@ export class Unihan {
             await unihan.loadData(unihanDir, k_UNIHAN_FILENAMES[key]);
         }
 
-        unihan.createCachedYomi();
+        console.log("Verifying known links:")
+        const isSimilar = ([c1, c2]: [string, string]): boolean => {
+            const entry1 = unihan.getEntry(c1);
+            const entry2 = unihan.getEntry(c2);
+            if (!entry1 || !entry2) return false;
+            // Verify pinyin is identical
+            const p1 = unihan.getMandarinPinyin(c1);
+            const p2 = unihan.getMandarinPinyin(c2);
+            if (!isSameArray(p1, p2)) return false;
+
+            const eng1 = unihan.getEnglishDefinition(c1);
+            const eng2 = unihan.getEnglishDefinition(c2);
+            if (eng1.length == 0 || eng2.length == 0) return false;
+            if (!areMeaningsSimilar(eng1[0], eng2[0], { logFails: true })) return false;
+
+            return true;
+        };
+        KNOWN_LINKS.forEach(([c1, c2]) => {
+            if (!isSimilar([c1, c2])) {
+                console.error([c1, c2], "WARN: tuple does not match");
+            }
+        });
+
         KNOWN_LINKS.forEach(tup => unihan.m_bufferedLinks.push(tup));
         unihan.flushBufferedLinks();
         unihan.createClusterIndex();
+
+        unihan.createCachedYomi();
 
         return unihan;
     }

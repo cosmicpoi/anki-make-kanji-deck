@@ -17,44 +17,44 @@ import { minSubstrLevenshtein } from './levenshtein';
 
 async function doThing() {
     const unihan = await Unihan.create(k_UNIHAN_DB_PATH);
-    const bccwj = await Bccwj.create(k_BCCWJ_FILE_PATH);
-    const bclu = await Bclu.create(k_BCLU_FILE_PATH);
+    // const bccwj = await Bccwj.create(k_BCCWJ_FILE_PATH);
+    // const bclu = await Bclu.create(k_BCLU_FILE_PATH);
 
-    const { cnSorter, jpSorter } = getSorter({ unihan, bclu, bccwj });
+    // const { cnSorter, jpSorter } = getSorter({ unihan, bclu, bccwj });
 
-    const myChar = '好';
+    // const myChar = '好';
 
-    const jmdict = await Jmdict.create(k_JMDICT_FILE_PATH);
-    const entries = jmdict.getPreferredEntriesByChar(myChar);
-    entries.sort((e1, e2) => jpSorter(getPreferredReading(e1), getPreferredReading(e2)));
+    // const jmdict = await Jmdict.create(k_JMDICT_FILE_PATH);
+    // const entries = jmdict.getPreferredEntriesByChar(myChar);
+    // entries.sort((e1, e2) => jpSorter(getPreferredReading(e1), getPreferredReading(e2)));
 
-    const unihanEntry = unihan.getEntry(myChar);
-    const charReadings: string[] = [...(unihanEntry?.cachedJapaneseKun || []), ...(unihanEntry?.cachedJapaneseOn || [])];
+    // const unihanEntry = unihan.getEntry(myChar);
+    // const charReadings: string[] = [...(unihanEntry?.cachedJapaneseKun || []), ...(unihanEntry?.cachedJapaneseOn || [])];
 
-    for (const entry of entries) {
-        const entryReading = getPreferredReading(entry);
-        const entryHiragana = getPreferredRele(entry);
-        const entryRoma = wanakana.toRomaji(entryHiragana);
-        const readingScores: Record<string, number> = {};
-        charReadings.forEach(r => { readingScores[r] = Infinity; });
-        charReadings.forEach((charReading) => {
-            const charRoma = wanakana.toRomaji(charReading);
-            const dist = minSubstrLevenshtein(charRoma, entryRoma);
-            readingScores[charReading] = dist;
-        });
+    // for (const entry of entries) {
+    //     const entryReading = getPreferredReading(entry);
+    //     const entryHiragana = getPreferredRele(entry);
+    //     const entryRoma = wanakana.toRomaji(entryHiragana);
+    //     const readingScores: Record<string, number> = {};
+    //     charReadings.forEach(r => { readingScores[r] = Infinity; });
+    //     charReadings.forEach((charReading) => {
+    //         const charRoma = wanakana.toRomaji(charReading);
+    //         const dist = minSubstrLevenshtein(charRoma, entryRoma);
+    //         readingScores[charReading] = dist;
+    //     });
 
-        let minScore = Infinity;
-        let bestReading = charReadings[0];
-        charReadings.forEach((charReading) => {
-            if (readingScores[charReading] < minScore) {
-                minScore = readingScores[charReading];
-                bestReading = charReading;
-            }
-        });
+    //     let minScore = Infinity;
+    //     let bestReading = charReadings[0];
+    //     charReadings.forEach((charReading) => {
+    //         if (readingScores[charReading] < minScore) {
+    //             minScore = readingScores[charReading];
+    //             bestReading = charReading;
+    //         }
+    //     });
 
-        const isOnyomi = wanakana.isKatakana(bestReading.at(0));
-        console.log(entryReading, entryHiragana, bestReading, isOnyomi ? "on" : "kun");
-    }
+    //     const isOnyomi = wanakana.isKatakana(bestReading.at(0));
+    //     console.log(entryReading, entryHiragana, bestReading, isOnyomi ? "on" : "kun");
+    // }
 
     // const e1 = jmdict.getEntriesByWord('あからさま');
     // const e2 = jmdict.getEntriesByWord('白地');

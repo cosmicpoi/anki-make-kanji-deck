@@ -6,12 +6,13 @@ import { defaultKanjiCard, KanjiCard } from './KanjiCard';
 import { Bccwj } from './bccwj';
 import { Bclu } from './Bclu';
 import * as OpenCC from 'opencc-js';
-import { combine_without_duplicates, isHanCharacter } from './types';
+import { apply_getter_to_arr, combine_without_duplicates, isHanCharacter } from './types';
 import { getJpSorter, getSorter } from './freqCharSort';
 import { Jmdict, getPreferredReading, getPreferredRele } from './jmdict';
 import * as wanakana from 'wanakana';
 import { minSubstrLevenshtein } from './levenshtein';
 import { JSDocParsingMode } from 'typescript';
+import { Hanzidb } from './Hanzidb';
 
 function getJapaneseVocab(
     mychar: string,
@@ -78,15 +79,17 @@ export function buildKanjiCardsFromLists(
             cedict: Cedict,
             bccwj: Bccwj,
             bclu: Bclu,
+            hanzidb: Hanzidb,
         }
     }
 ): KanjiCard[] {
     // Initialize resources
-    const { modules: { unihan, kanjidic, cedict, bccwj, bclu, jmdict }, japaneseList, simpChineseList } = props;
+    const { unihan, kanjidic, cedict, bccwj, bclu, jmdict, hanzidb } = props.modules;
+    const { japaneseList, simpChineseList } = props;
     const converter_s2t = OpenCC.Converter({ from: 'cn', to: 'hk' });
 
     // Emplace chars into Kanji Map
-    const variantMap = new VariantMap(unihan, japaneseList, simpChineseList, true);
+    const variantMap = new VariantMap(japaneseList, simpChineseList, props.modules, true);
 
     const { jpSorter, cnSorter } = getSorter({ unihan, bccwj, bclu });
 
@@ -110,6 +113,19 @@ export function buildKanjiCardsFromLists(
         cards.push(card);
     });
 
+    // Guess empty characters
+    cards.forEach(e => {
+        // Fill in empty chinese variants only
+        if (e.simpChineseChar.length == 0 && e.japaneseChar.length != 0) {
+            const jpChar = e.japaneseChar[0];
+            const cid = unihan.getClusterId(jpChar);
+            const clusterChars = unihan.getClusterById(cid);
+
+            e.simpChineseChar = clusterChars.filter(c => hanzidb.getEntry(c) != undefined);
+            e.tradChineseChar = [...new Set(e.simpChineseChar.map(c => converter_s2t(c)))];
+        }
+    });
+
     // Clean up readings
     cards.forEach(e => {
         // Filter out stuff that's unreadable
@@ -130,7 +146,16 @@ export function buildKanjiCardsFromLists(
 
     // Populate readings
     cards.forEach(e => {
-        variantMap.populateReadings(e);
+        e.pinyin = apply_getter_to_arr(unihan.getMandarinPinyin, e.simpChineseChar);
+        if (e.pinyin.length == 0) {
+            e.pinyin = apply_getter_to_arr(unihan.getMandarinPinyin, e.japaneseChar);
+        }
+        e.onyomi = apply_getter_to_arr(unihan.getJapaneseOn, e.japaneseChar);
+        e.kunyomi = apply_getter_to_arr(unihan.getJapaneseKun, e.japaneseChar);
+        if (e.onyomi.length == 0 && e.kunyomi.length == 0) {
+            e.onyomi = apply_getter_to_arr(unihan.getJapaneseOn, e.simpChineseChar);
+            e.kunyomi = apply_getter_to_arr(unihan.getJapaneseKun, e.simpChineseChar);
+        }
 
         const unihanDefsJp: string[] = unihan.getEnglishDefinition(e.japaneseChar[0]);
         const unihanDefsCn: string[] = unihan.getEnglishDefinition(e.simpChineseChar[0]);
@@ -158,50 +183,43 @@ export function buildKanjiCardsFromLists(
     }
 
     // Populate japanese vocab
-    const WORDS_PER_CARD = 4;
-    const WORDS_PER_READING = 2;
-    cards.forEach(e => {
-        if (e.japaneseChar.length == 0) return;
-        const charReadings: string[] = [...e.onyomi, ...e.kunyomi];
-        let { vocab, furigana } = getJapaneseVocab(e.japaneseChar[0], charReadings, { jmdict, unihan, bccwj });
+    // const WORDS_PER_CARD = 4;
+    // const WORDS_PER_READING = 2;
+    // cards.forEach(e => {
+    //     if (e.japaneseChar.length == 0) return;
+    //     const charReadings: string[] = [...e.onyomi, ...e.kunyomi];
+    //     let { vocab, furigana } = getJapaneseVocab(e.japaneseChar[0], charReadings, { jmdict, unihan, bccwj });
 
-        let onVocabSet: Set<string> = new Set();
-        let kunVocabSet: Set<string> = new Set();
+    //     let onVocabSet: Set<string> = new Set();
+    //     let kunVocabSet: Set<string> = new Set();
 
-        for (const r of charReadings) {
-            const vocablist = vocab[r];
-            for (let i = 0; i < WORDS_PER_READING; i++) {
-                const word = vocablist[i];
-                if (wanakana.isHiragana(r.at(0))) {
-                    kunVocabSet.add(word);
-                } else {
-                    onVocabSet.add(word);
-                }
-            }
-        };
+    //     for (const r of charReadings) {
+    //         const vocablist = vocab[r];
+    //         let count = 0;
+    //         for (const word of vocablist) {
+    //             if (count == WORDS_PER_READING) break;
+    //             if (wanakana.isHiragana(r.at(0))) {
+    //                 kunVocabSet.add(word);
+    //             } else {
+    //                 onVocabSet.add(word);
+    //             }
+    //             count++;
+    //         }
+    //     };
 
-        let onVocab: string[] = [...onVocabSet];
-        let kunVocab: string[] = [...kunVocabSet];
+    //     let onVocab: string[] = [...onVocabSet];
+    //     let kunVocab: string[] = [...kunVocabSet];
 
-        onVocab.sort(jpSorter);;
-        kunVocab.sort(jpSorter);;
+    //     onVocab.sort(jpSorter);
+    //     kunVocab.sort(jpSorter);
 
-        onVocab = onVocab.filter((_, i) => i < WORDS_PER_CARD);
-        kunVocab = kunVocab.filter((_, i) => i < WORDS_PER_CARD);
+    //     onVocab = onVocab.filter((_, i) => i < WORDS_PER_CARD);
+    //     kunVocab = kunVocab.filter((_, i) => i < WORDS_PER_CARD);
 
-        e.japaneseOnVocab = onVocab.map(c => `${c}[${furigana[c]}]`);
-        e.japaneseKunVocab = kunVocab.map(c => `${c}[${furigana[c]}]`);
-    });
+    //     e.japaneseOnVocab = onVocab.map(c => `${c}[${furigana[c]}]`);
+    //     e.japaneseKunVocab = kunVocab.map(c => `${c}[${furigana[c]}]`);
+    // });
 
-    // Sort and return
-    const getSortKey = (c: KanjiCard) => {
-        const entries = [...c.japaneseChar, ...c.simpChineseChar, ...c.tradChineseChar];
-        entries.sort();
-        return entries.join(',');
-    }
-    cards.sort((c1, c2) =>
-        getSortKey(c1).localeCompare(getSortKey(c2))
-    );
 
     return cards;
 }

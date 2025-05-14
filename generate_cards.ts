@@ -35,17 +35,33 @@ async function buildKanji() {
     const radicals: Set<string> = new Set(unihan.getAllKangxiRadicals().flat());
 
     // Generate card list
-    const cards: KanjiCard[] = buildKanjiCardsFromLists({
-        japaneseList,
-        simpChineseList,
-        modules
+    const cards: KanjiCard[] = buildKanjiCardsFromLists({ japaneseList, simpChineseList, modules });
+
+    const getAllChars = (entry: KanjiCard): string[] =>
+        combine_without_duplicates(entry.japaneseChar, entry.simpChineseChar, entry.tradChineseChar);
+
+    // Sort and return
+    const getSortKey = (c: KanjiCard) => {
+        const entries = [...c.pinyin];
+        entries.sort();
+        return entries.join(',');
+    }
+    const getSortKey2 = (c: KanjiCard) => {
+        const chars = getAllChars(c);
+        chars.sort();
+        return chars.join(',');
+    }
+    cards.sort((c1, c2) => {
+        const c = getSortKey(c1).localeCompare(getSortKey(c2));
+        if (c == 0) {
+            return getSortKey2(c1).localeCompare(getSortKey2(c2));
+        }
+        else return c;
     });
 
     const simpChineseSet = new Set(simpChineseList);
     const japaneseSet = new Set(japaneseList);
 
-    const getAllChars = (entry: KanjiCard): string[] =>
-        combine_without_duplicates(entry.japaneseChar, entry.simpChineseChar, entry.tradChineseChar);
     const isRadical = (c: KanjiCard): boolean => {
         const allChars = getAllChars(c);
         for (const c of allChars) {
@@ -126,6 +142,7 @@ async function buildKanji() {
 
         const jp_field_order: [keyof KanjiCard, string][] = [
             ['japaneseChar', ','],
+            ['pinyin', ','],
             ['kunyomi', ','],
             ['onyomi', ','],
             ['englishMeaning', ','],
@@ -150,14 +167,14 @@ async function buildKanji() {
             // tuple of key, delimiter
             let field_order: [keyof KanjiCard, string][] = jp_cn_field_order;
             let note_type = k_note_CN_JP;
-            if (card.tags.includes(k_tag_CHINESE_ONLY)) {
-                field_order = cn_field_order;
-                note_type = k_note_CHINESE_ONLY;
-            }
-            else if (card.tags.includes(k_tag_JAPANESE_ONLY)) {
-                field_order = jp_field_order;
-                note_type = k_note_JAPANESE_ONLY;
-            }
+            // if (card.tags.includes(k_tag_CHINESE_ONLY)) {
+            //     field_order = cn_field_order;
+            //     note_type = k_note_CHINESE_ONLY;
+            // }
+            // else if (card.tags.includes(k_tag_JAPANESE_ONLY)) {
+            //     field_order = jp_field_order;
+            //     note_type = k_note_JAPANESE_ONLY;
+            // }
 
             let fields: string[] = Array(col_count).fill('');
 
