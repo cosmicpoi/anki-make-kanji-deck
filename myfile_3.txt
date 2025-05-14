@@ -6,7 +6,7 @@ Character Sino-Japanese		啊	啊	a	こえ	ア			exclamatory particle	chinese_onl
 Character Sino-Japanese	阿	阿	阿	ā	くま,おもねる,お	ア,アク,アチ,オク			prefix for people's names; used in transliteration	JLPT::n1 HSK::6::5::4::3
 Character Sino-Japanese		癌	癌	ái	がん	ガン			cancer; marmoset	chinese_only HSK::6
 Character Sino-Japanese	愛	爱	愛	ài	めでる,おしむ,いとしい,かなしい	アイ,エ			love, be fond of, like	JLPT::n1::n2 HSK::6::5::4::3::2::1
-Character Sino-Japanese		暧	曖	ài					obscure, dim, ambiguous, vague	chinese_only HSK::6
+Character Sino-Japanese	曖	暧	曖	ài	くらい	アイ			obscure, dim, ambiguous, vague	HSK::6
 Character Sino-Japanese		碍	礙	ài	さまたげる	ガイ,ゲ,ギ			obstruct, hinder, block, deter	chinese_only HSK::6::5
 Character Sino-Japanese		艾	艾	ài	よもぎ,もぐさ,かる,おさめる	ガイ,ゲイ,ゲ			artemisia, mugwort	chinese_only
 Character Sino-Japanese		隘	隘	ài	せまい	アイ,ヤク,ア,アク			narrow, confined; a strategic pass	chinese_only HSK::6
@@ -16,17 +16,18 @@ Character Sino-Japanese	哀	哀	哀	āi	あわれ,あわれむ,かなしい	ア�
 Character Sino-Japanese		哎	哎	āi		ガイ,アイ			interjection of surprise	chinese_only HSK::6::5
 Character Sino-Japanese		唉	唉	āi	ああ,ああおお,いやいやこたえる,あくび,おくび	カイ,キ,アイ,イ			alas, exclamation of surprise or pain	chinese_only HSK::6::5
 Character Sino-Japanese		埃	埃	āi	ちり,ほこり	アイ,チ,ジ			fine dust, dirt	chinese_only
-Character Sino-Japanese		挨	挨	āi	ひらく	アイ			near, close by, next to, towards, against; to wait; to lean on	chinese_only HSK::6
+Character Sino-Japanese	挨	挨	挨	āi	ひらく	アイ			near, close by, next to, towards, against; to wait; to lean on	HSK::6
 Character Sino-Japanese	岸	岸	岸	àn	きし	ガン			bank, shore; beach, coast	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese		按	按	àn	おさえる,しらべる	アン,アツ,アチ			put hand on, press down with hand	chinese_only HSK::6::5::4
 Character Sino-Japanese	暗	暗	暗	àn	くらい,やみ	アン,オン			dark; obscure; in secret, covert	JLPT::n1::n2::n3 HSK::6::5
 Character Sino-Japanese	案	案	案	àn	つくえ,かんがえる,あんず	アン			table, bench; legal case	JLPT::n1::n2 HSK::6::5::4
+Character Sino-Japanese	闇	闇	闇	àn	とじる,くらい,やみ	アン,オン,イン			close, shut; dark, dismal	chinese_rare
 Character Sino-Japanese		黯	黯	àn	くろい,くらい	アン,オン			dark, black; sullen, dreary	chinese_only
-Character Sino-Japanese		俺	俺	ǎn	おれ	エン,ヨウ,アン			personal pronoun, I	chinese_only
+Character Sino-Japanese	俺	俺	俺	ǎn	おれ	エン,ヨウ,アン			personal pronoun, I	
 Character Sino-Japanese	安	安	安	ān	やすい,やすんじる,いずくんそ,いずくに,いずくにか,いずくんぞ	アン			peaceful, tranquil, quiet	JLPT::n1::n2::n3::n4 HSK::6::5::4::3
 Character Sino-Japanese	昂	昂	昂	áng	あがる,たかい	コウ,ゴウ,ギョウ			rise, raise; proud, bold; upright	JLPT::n1 HSK::6
 Character Sino-Japanese		熬	熬	áo	いる	ゴウ			cook down, to boil; endure	chinese_only HSK::6::5
-Character Sino-Japanese		傲	傲	ào	おごる,あなどる	ゴウ			proud, haughty, overbearing	chinese_only HSK::6::5::4
+Character Sino-Japanese	傲	傲	傲	ào	おごる,あなどる	ゴウ			proud, haughty, overbearing	HSK::6::5::4
 Character Sino-Japanese	奥	奥	奧	ào	おく,くま	オウ,イク,ユウ,サン,オク			mysterious, obscure, profound	JLPT::n1::n2 HSK::6
 Character Sino-Japanese		澳	澳	ào	くま,おき	イク,オク,オウ			inlet, bay; dock, bank	chinese_only
 Character Sino-Japanese	凹	凹	凹	āo	くぼむ,くぼみ,へこむ,ぼこ	オウ,ヨウ			concave, hollow, depressed; a pass, valley	JLPT::n1 HSK::6
@@ -56,10 +57,11 @@ Character Sino-Japanese		扮	扮	bàn	よそおう	フン,ハン,ヘン,ケ,ブ�
 Character Sino-Japanese		拌	拌	bàn	すてる,わる,かきまぜる	ハン,バン			mix	chinese_only HSK::6
 Character Sino-Japanese		瓣	瓣	bàn	はなびら,さね,かんむり	ベン,ハン,ヘン			petal; segment; valves	chinese_only HSK::6
 Character Sino-Japanese	坂	坂	坂	bǎn	さか	ハン,ヘン,ホン,ベン			hillside, inconvenient places	chinese_rare JLPT::n1::n2
+Character Sino-Japanese	阪	坂	坂	bǎn	さか	ハン,ホン,バン			hillside farmland; slope	chinese_rare
 Character Sino-Japanese	板	板	板	bǎn	いた	ハン,バン,ベン			plank, board; iron or tin plate	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	版	版	版	bǎn	いた,ふだ	ハン,ヘン,バン			printing blocks; edition	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	搬	搬	搬	bān	うつす,はこぶ	ハン,ソク			transfer, move, remove, shift	JLPT::n1 HSK::6::5::4::3
-Character Sino-Japanese		斑	斑	bān	まだら	ハン			mottled, striped, freckle	chinese_only HSK::6
+Character Sino-Japanese	斑	斑	斑	bān	まだら	ハン			mottled, striped, freckle	HSK::6
 Character Sino-Japanese	班	班	班	bān	わける	ハン			class, group, grade; squad; job	JLPT::n1 HSK::6::5::4::3::2
 Character Sino-Japanese	般	般	般	bān	めぐる	ハン,バン,ハツ			sort, manner, kind, category	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	頒	颁	頒	bān	わける,しく	ハン,フン,ヘン,ブン			confer, bestow; publish, promulgate	JLPT::n1 HSK::6
@@ -119,10 +121,11 @@ Character Sino-Japanese	弊	弊	弊	bì	つかれる,くるしむ,やぶれる,�
 Character Sino-Japanese	必	必	必	bì	かならず	ヒツ,ヘツ,ヘチ,ヒチ			surely, most certainly; must	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese		毙	斃	bì					kill; die violent death	chinese_only
 Character Sino-Japanese		毕	畢	bì					end, finish, conclude; completed	chinese_only HSK::6::5::4
+Character Sino-Japanese	璧	璧	璧	bì	たま	ヘキ,ヒャク			piece of jade with hole in it	chinese_rare
 Character Sino-Japanese		痹	痹	bì	しびれる,しびれ	ヒ			paralysis, numbness	chinese_only HSK::6
 Character Sino-Japanese	碧	碧	碧	bì	みどり,あお	ヘキ,ヒャク			jade; green, blue	JLPT::n1
 Character Sino-Japanese		臂	臂	bì	ひじ	ヒ			arm	chinese_only HSK::6
-Character Sino-Japanese		蔽	蔽	bì	おおう,おおい	ヘイ			cover, hide, conceal; shelter	chinese_only HSK::6
+Character Sino-Japanese	蔽	蔽	蔽	bì	おおう,おおい	ヘイ			cover, hide, conceal; shelter	HSK::6
 Character Sino-Japanese	避	避	避	bì	さける	ヒ,ビ			avoid; turn aside; escape; hide	JLPT::n1 HSK::6::5
 Character Sino-Japanese	閉	闭	閉	bì	とじる,しめる,とざす,しまる	ヘイ,ヘツ,ヘチ			shut, close; obstruct, block up	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	陛	陛	陛	bì	きざはし	ヘイ,ベイ,ヒ,ビ			steps leading throne; throne	JLPT::n1
@@ -162,11 +165,11 @@ Character Sino-Japanese	丙	丙	丙	bǐng	ひのえ	ヘイ,ヒョウ			third; 3r
 Character Sino-Japanese	柄	柄	柄	bǐng	え,がら,つか	ヘイ,ヒョウ			handle, lever, knob; authority	JLPT::n1
 Character Sino-Japanese		禀	稟	bǐng	こめぐら,あたえる,うける	リン,ヒン			report to, petition	chinese_only
 Character Sino-Japanese		秉	秉	bǐng	とる	ヘイ,ヒョウ,ヒン			grasp, hold; bundle; authority	chinese_only
-Character Sino-Japanese		饼	餅	bǐng					rice-cakes, biscuits	chinese_only HSK::6::5::4
+Character Sino-Japanese	餅	饼	餅	bǐng	もち	ヘイ,ヒョウ			rice-cakes, biscuits	HSK::6::5::4
 Character Sino-Japanese	兵	兵	兵	bīng	つわもの,いくさ	ヘイ,ヒョウ			soldier, troops	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	氷	冰	冰	bīng	こおり,ひ,こおる	ヒョウ,ギョウ			ice, frost, icicles; cold	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	伯	伯	伯	bó	おさ,はたがしら,かみ	ハク,ハ,バク			older brother; father's elder brother; senior male 'sire'; feudal rank 'count'	JLPT::n1 HSK::6
-Character Sino-Japanese		勃	勃	bó	にわかに,おこる	ボツ,ホツ,ボチ			suddenly, sudden, quick	chinese_only HSK::6
+Character Sino-Japanese	勃	勃	勃	bó	にわかに,おこる	ボツ,ホツ,ボチ			suddenly, sudden, quick	HSK::6
 Character Sino-Japanese	博	博	博	bó	ひろい,ひろめる	ハク,バク			gamble, play games; wide, broad	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese		搏	搏	bó	うつ,とる	ハク,フ,ホ,ブ			seize; spring upon; strike	chinese_only HSK::6
 Character Sino-Japanese		脖	脖	bó	うなじ	ホツ,ボチ,ボツ			neck	chinese_only HSK::6::5
@@ -174,7 +177,7 @@ Character Sino-Japanese		膊	膊	bó	ほじし,あばく,さかい	ハク,レツ
 Character Sino-Japanese	舶	舶	舶	bó	おうぶね,おおぶね	ハク,ビャク			large, ocean-going vessel	JLPT::n1 HSK::6
 Character Sino-Japanese		驳	駁	bó					varicolored, variegated; mixed	chinese_only HSK::6
 Character Sino-Japanese		簸	簸	bǒ	ひる,ひ	ハ			winnower	chinese_only HSK::6
-Character Sino-Japanese		剥	剝	bō	はぐ,むく,はげる,はがれる,さく	ハク			peel	chinese_only HSK::6
+Character Sino-Japanese	剥	剥	剝	bō	はぐ,むく,はげる,はがれる,さく	ハク			peel	HSK::6
 Character Sino-Japanese		拨	撥	bō					move; dispel; distribute	chinese_only HSK::6
 Character Sino-Japanese		播	播	bō	まく	ハ,ハン,バン			sow, spread; broadcast; cast away, reject	chinese_only HSK::6::5::4
 Character Sino-Japanese	波	波	波	bō	なみ	ハ,ヒ			waves, breakers; undulations	JLPT::n1::n2 HSK::6
@@ -185,10 +188,11 @@ Character Sino-Japanese		卜	卜	bo,bǔ	うらなう,うらない,ぼくのと	�
 Character Sino-Japanese	不	不	不	bù	せず,にあらず,いなや	フ,ブ,フツ,ヒ,フウ,ホツ,ホチ,ブチ			no, not; un-; negative prefix	JLPT::n1::n2::n3 HSK::6::5::4::3::2::1
 Character Sino-Japanese	布	布	布	bù	ぬの,しく	フ,ホ			cotton cloth, textiles, linen	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	怖	怖	怖	bù	こわい,おそれる,おじる	フ,ホ			terror, fear; frighten; terrified	JLPT::n1::n2 HSK::6
+Character Sino-Japanese	捗			bù	はかどる	ホ,チョク,ブ,チキ			make progress	japanese_only
 Character Sino-Japanese	歩	步	步	bù	あるく,あゆむ,あゆみ	ホ,ブ,フ			step	JLPT::n1::n2::n3 HSK::6::5::4::3::2
 Character Sino-Japanese	簿	簿	簿	bù	ちょうめん,しゃく	ボ,ハク,ホ			register, account book, notebook	JLPT::n1
 Character Sino-Japanese	部	部	部	bù	わける,すべる,つかさ,べ	ブ,ホ,ホウ			part, division, section	JLPT::n1::n2 HSK::6::5::4
-Character Sino-Japanese		哺	哺	bǔ	ふくむ,はぐくむ	ホ,ブ,フ			chew food; feed	chinese_only HSK::6
+Character Sino-Japanese	哺	哺	哺	bǔ	ふくむ,はぐくむ	ホ,ブ,フ			chew food; feed	HSK::6
 Character Sino-Japanese	捕	捕	捕	bǔ	とらえる,とる,つかまえる,とらわれる,つかまる	ホ,フ,ブ			arrest, catch, seize	JLPT::n1::n2 HSK::6
 Character Sino-Japanese	補	补	補	bǔ	おぎなう	ホ,フ			mend, patch, fix, repair, restore	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	擦	擦	擦	cā	する,さする,すれる	サツ,セチ			wipe, scrub, rub, scour; brush	JLPT::n1 HSK::6::5::4
@@ -230,6 +234,7 @@ Character Sino-Japanese	測	测	測	cè	はかる	ソク,ショク,シキ			meas
 Character Sino-Japanese	策	策	策	cè	むち,つえ,かずとり,はかりごと,ふだ,むちうつ	サク,シャク			scheme, plan; to whip; urge	JLPT::n1 HSK::6
 Character Sino-Japanese	層	层	層	céng	かさなる,かさ	ソウ			story, layer, floor, stratum	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese		曾	曾	céng	かって,すなわち,かつて,なんぞ	ソ,ソウ,ゾウ,ゾ			already; sign of past	chinese_only HSK::6::5
+Character Sino-Japanese	曽			cēng	かって,すなわち,かつて	ゾ,ソウ,ソ			already; sign of past	japanese_only
 Character Sino-Japanese	察	察	察	chá	しる,みる,あきらか,さっする	サツ,セチ			examine, investigate; notice	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese		查	查	chá	しらべる	サ			investigate, examine, seek into	chinese_only HSK::6::5::4::3
 Character Sino-Japanese	茶	茶	茶	chá	ちゃ	チャ,サ,タ			tea	JLPT::n1::n2::n3 HSK::6::5::4::3::2::1
@@ -259,7 +264,7 @@ Character Sino-Japanese	場	场	場	chǎng	ば	ジョウ,チョウ,ショウ			o
 Character Sino-Japanese		敞	敞	chǎng	たかい,ほがらか	ショウ,チョウ,ジョウ,トウ,ヘイ			roomy, spacious, open, broad	chinese_only HSK::6
 Character Sino-Japanese	昌	昌	昌	chāng	さかん	ショウ			light of sun; good, proper	JLPT::n1 HSK::6
 Character Sino-Japanese	菖	菖	菖	chāng	しょうぶ	ショウ			iris, sweet flag, calamus	chinese_rare JLPT::n1
-Character Sino-Japanese		嘲	嘲	cháo	あざける	トウ,チョウ			ridicule, deride, scorn, jeer at	chinese_only HSK::6
+Character Sino-Japanese	嘲	嘲	嘲	cháo	あざける	トウ,チョウ			ridicule, deride, scorn, jeer at	HSK::6
 Character Sino-Japanese	巣	巢	巢	cháo	す,すくう	ソウ			nest, living quarter in tree	JLPT::n1 HSK::6
 Character Sino-Japanese	朝	朝	朝	cháo	あさ,あした,あつまる	チョウ,チュ			dynasty; morning	JLPT::n1::n2::n3 HSK::6::5
 Character Sino-Japanese	潮	潮	潮	cháo	しお,うしお	チョウ			tide; moist, wet, damp; flow	JLPT::n1 HSK::6::5
@@ -302,6 +307,7 @@ Character Sino-Japanese	池	池	池	chí	いけ	チ,タ,ダ,テツ,デチ			pool
 Character Sino-Japanese	遅	迟	遲	chí	おそい,おくれる,まつ,おくらす	チ			late, tardy; slow; delay	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese		驰	馳	chí					go quickly or swiftly; hurry	chinese_only HSK::6
 Character Sino-Japanese	勅	敕	敕	chì	いましめる,みことのり	チョク,チキ			imperial decree; Daoist magic	chinese_rare JLPT::n1
+Character Sino-Japanese	叱	叱	叱	chì	しかる	シツ,シチ,カ,ケ			scold, shout at, bawl out	chinese_rare
 Character Sino-Japanese	斥	斥	斥	chì	しりぞける,さす,しりぞく	セキ,シャク,タク,チャク,シャ			to scold, upbraid, accuse, reproach	JLPT::n1 HSK::6
 Character Sino-Japanese		翅	翅	chì	つばさ,ただ	シ,ギ,キ			wings; fin	chinese_only HSK::6::5
 Character Sino-Japanese	赤	赤	赤	chì	あか,あかい,あからむ,あからめる	セキ,シャク			red; bare; Kangxi radical 155	radical JLPT::n1::n2::n3 HSK::6
@@ -345,7 +351,7 @@ Character Sino-Japanese	出	出	出	chū	でる,だす	シュツ,スイ,シュ�
 Character Sino-Japanese	初	初	初	chū	はじめ,はつ,うい,はじめて,そめる,うぶ	ショ,ソ			beginning, initial, primary	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese		传	傳	chuán					summon; propagate, transmit	chinese_only HSK::6::5::4
 Character Sino-Japanese	船	船	船	chuán	ふね,ふな	セン,エン,ゼン			ship, boat, vessel	JLPT::n1::n2 HSK::6::5::4::3
-Character Sino-Japanese		串	串	chuàn	くし,つらぬく	セン,カン,ガン			string; relatives; conspire	chinese_only HSK::6
+Character Sino-Japanese	串	串	串	chuàn	くし,つらぬく	セン,カン,ガン			string; relatives; conspire	HSK::6
 Character Sino-Japanese		喘	喘	chuǎn	あえぐ,せき	ゼン,セン			pant, gasp, breathe heavily	chinese_only HSK::6
 Character Sino-Japanese	川	川	川	chuān	かわ	セン			stream, river; flow; boil	radical JLPT::n1::n2::n3::n4 HSK::6
 Character Sino-Japanese		穿	穿	chuān	うがつ	セン,エン,オン			penetrate, pierce, drill; wear	chinese_only HSK::6::5::4::3::2
@@ -370,7 +376,7 @@ Character Sino-Japanese		戳	戳	chuō	さす,つく	タク			prick, stab; stamp
 Character Sino-Japanese	慈	慈	慈	cí	いつくしむ,いつくしみ	ジ			kind, charitable, benevolent	JLPT::n1 HSK::6
 Character Sino-Japanese		瓷	瓷	cí	かめ	シ,ジ			crockery, porcelain, chinaware	chinese_only HSK::6
 Character Sino-Japanese	磁	磁	磁	cí	じしゃく,やきもの	ジ,シ			magnetic; magnetism; porcelain	JLPT::n1 HSK::6
-Character Sino-Japanese		茨	茨	cí	いばら,くさぶき,かや	シ,ジ			thatching; caltrop, Tribulus terrestris	chinese_only
+Character Sino-Japanese	茨	茨	茨	cí	いばら,くさぶき,かや	シ,ジ			thatching; caltrop, Tribulus terrestris	
 Character Sino-Japanese	詞	词	詞	cí	ことば	シ,ジ			words; phrase, expression	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	辞	辞	辭	cí	やめる,ことば,ことわる	ジ,シ			words, speech, expression, phrase	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	雌	雌	雌	cí	めす,め	シ,セイ,サイ			female; feminine; gentle, soft	JLPT::n1 HSK::6
@@ -387,6 +393,7 @@ Character Sino-Japanese		葱	葱	cōng	ねぎ	ソウ			scallions, leeks, green o
 Character Sino-Japanese		凑	湊	còu	みなと,あつまる	ソウ			piece together, assemble	chinese_only HSK::6
 Character Sino-Japanese	促	促	促	cù	うながす,せまる	ソク,ショク,サク			urge, press, hurry; close	JLPT::n1 HSK::6::5
 Character Sino-Japanese		簇	簇	cù	むらがる,やじり	ソウ,ゾク,ソク,サク,シュ			swarm, crowd together, cluster	chinese_only
+Character Sino-Japanese	蹴	蹴	蹴	cù	ける	シュウ,シュク			kick; tread on; leap; solemn	chinese_rare
 Character Sino-Japanese		醋	醋	cù	す	サク,ザク,ソ			vinegar; jealousy, envy	chinese_only HSK::6::5
 Character Sino-Japanese	粗	粗	粗	cū	あらい,ほぼ	ソ,ゾ			rough, thick, course; rude	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese		窜	竄	cuàn					run away; revise, edit; expel	chinese_only HSK::6
@@ -401,7 +408,7 @@ Character Sino-Japanese	寸	寸	寸	cùn	はかる,とき,き	スン,ソン			in
 Character Sino-Japanese		忖	忖	cǔn	はかる	ソン			guess, suppose, conjecture	chinese_only
 Character Sino-Japanese	村	村	村	cūn	むら	ソン			village, hamlet; uncouth, vulgar	JLPT::n1::n2::n3 HSK::6::5
 Character Sino-Japanese	嵯	嵯	嵯	cuó	けわしい,たかい	サ,シ			high, towering; irregular, rugged	chinese_rare JLPT::n1
-Character Sino-Japanese		挫	挫	cuò	くじく,くじける	ザ,サ,シャ			push down; chop down; grind	chinese_only HSK::6
+Character Sino-Japanese	挫	挫	挫	cuò	くじく,くじける	ザ,サ,シャ			push down; chop down; grind	HSK::6
 Character Sino-Japanese	措	措	措	cuò	おく	ソ,サク,シャク,セキ			place; collect, arrange; employ	JLPT::n1 HSK::6::5
 Character Sino-Japanese	錯	错	錯	cuò	まじる,たがう,おく,まじわる	サク,ソ,シャク,セキ			error, blunder, mistake, wrong	JLPT::n1 HSK::6::5::4::3::2
 Character Sino-Japanese		搓	搓	cuō	よる	サ,サイ			to rub or roll between the hands	chinese_only HSK::6
@@ -418,7 +425,7 @@ Character Sino-Japanese	代	代	代	dài	かわる,よ,しろ,かえる	ダイ,�
 Character Sino-Japanese	帯	带	帶	dài	おび,おびる,たらし	タイ			belt	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	待	待	待	dài	まつ	タイ,ダイ			treat, entertain, receive; wait	JLPT::n1::n2::n3 HSK::6::5
 Character Sino-Japanese	怠	怠	怠	dài	おこたる,なまける,おこたり	タイ,ダイ,イ			idle, remiss, negligent; neglect	JLPT::n1 HSK::6
-Character Sino-Japanese		戴	戴	dài	いただく	タイ,テ,サイ,セ			wear on top; support	chinese_only HSK::6::5::4
+Character Sino-Japanese	戴	戴	戴	dài	いただく	タイ,テ,サイ,セ			wear on top; support	HSK::6::5::4
 Character Sino-Japanese	袋	袋	袋	dài	ふくろ	タイ,ダイ			pocket, bag, sack, pouch	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	貸	贷	貸	dài	かす,かりる	タイ,トク			lend; borrow; pardon	JLPT::n1::n2::n3 HSK::6::5
 Character Sino-Japanese	黛	黛	黛	dài	まゆずみ	タイ			blacken eyebrows; black	JLPT::n1
@@ -476,6 +483,7 @@ Character Sino-Japanese	弟	弟	弟	dì	おとうと	テイ,ダイ,デ,テキ,�
 Character Sino-Japanese	第	第	第	dì	ついで,やしき,ただ	ダイ,テイ			sequence, number; grade, degree	JLPT::n1::n2 HSK::6::5::4::3::2
 Character Sino-Japanese	締	缔	締	dì	しまる,むすぶ,しめる	テイ,チ,ダイ,ジ			tie, join, connect; connection	JLPT::n1 HSK::6
 Character Sino-Japanese		蒂	蒂	dì	へた	テイ,タイ			peduncle or stem of plants	chinese_only HSK::6
+Character Sino-Japanese	諦	谛	諦	dì	つまびらか,まこと,あきらめる	テイ,タイ,ダイ			careful, attentive	chinese_rare
 Character Sino-Japanese	逓	递	遞	dì	たがいに,かわる	テイ			hand over, deliver; substitute	JLPT::n1 HSK::6::5
 Character Sino-Japanese	底	底	底	dǐ	そこ,なんぞ	テイ,タイ			bottom, underneath, underside	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	抵	抵	抵	dǐ	あたる,あてる	テイ,タイ,ダ,シ			resist, oppose; deny; off-set	JLPT::n1 HSK::6
@@ -545,7 +553,7 @@ Character Sino-Japanese	都	都	都	dōu,dū	みやこ,すべて	ト,ツ,チョ	
 Character Sino-Japanese	毒	毒	毒	dú	そこなう,わるい,どくする	ドク,トク,ダイ,タイ			poison, venom; poisonous	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	独	独	獨	dú	ひとり	ドク,トク			alone, single, solitary, only	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	読	读	讀	dú	よむ,よみ	トク,トウ,ドク			read, study; pronounce	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2::1
-Character Sino-Japanese		妒	妒	dù	ねたむ,そねむ,つもる,ふさぐ	ト,ツ			jealous, envious	chinese_only HSK::6
+Character Sino-Japanese	妬	妒	妒	dù	ねたむ	ト,ツ,セキ,シャク			jealous, envious	HSK::6
 Character Sino-Japanese	度	度	度	dù	たび,はかる,めもり,のり,わたる,たし	タク,ド,ト,ズ,ダク			degree, system; manner; to consider	JLPT::n1::n2::n3 HSK::6::5::4
 Character Sino-Japanese	杜	杜	杜	dù	やまなし,ふさぐ,もり	ド,ト,ズ			stop, prevent; restrict; surname	JLPT::n1 HSK::6
 Character Sino-Japanese	渡	渡	渡	dù	わたる,わたす,わたし	ト,ズ			cross, ferry over; ferry	JLPT::n1::n2 HSK::6
@@ -553,7 +561,7 @@ Character Sino-Japanese		肚	肚	dù	はら	ト,ズ			belly; abdomen; bowels	chi
 Character Sino-Japanese		堵	堵	dǔ	かき	ト,ツ,ジャ,シャ			wall; stop, prevent; stop up	chinese_only HSK::6::5::4
 Character Sino-Japanese		睹	睹	dǔ	みる	ト,ツ			look at, gaze at; observe	chinese_only HSK::6
 Character Sino-Japanese	篤	笃	篤	dǔ	あつい	トク			deep, true, sincere, genuine	chinese_rare JLPT::n1
-Character Sino-Japanese		赌	賭	dǔ					bet, gamble, wager; compete	chinese_only HSK::6
+Character Sino-Japanese	賭	赌	賭	dǔ	かける,かけ	ト,ツ			bet, gamble, wager; compete	HSK::6
 Character Sino-Japanese		嘟	嘟	dū		ト,ズ			sound of horn tooting	chinese_only
 Character Sino-Japanese	督	督	督	dū	みる,うながす,ひきいる,かみ	トク			supervise, oversee, direct	JLPT::n1 HSK::6
 Character Sino-Japanese	断	断	斷	duàn	たつ,ことわる,さだめる	ダン,タン			sever, cut off; interrupt	JLPT::n1::n2 HSK::6::5::4
@@ -564,10 +572,10 @@ Character Sino-Japanese	端	端	端	duān	はし,は,はた,ただしい,はじ�
 Character Sino-Japanese		兑	兑	duì	よろこぶ	ダ,タイ,エイ,エツ			cash; exchange	chinese_only HSK::6::5
 Character Sino-Japanese	対	对	對	duì	むかう,ならぶ,あいて,こたえる,そろい	タイ,ツイ			correct, right; facing, opposed	JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese	隊	队	隊	duì	くみ	タイ,ツイ,スイ			team, group; army unit	JLPT::n1 HSK::6::5::4
-Character Sino-Japanese		堆	堆	duī	うずたかい	タイ,ツイ,テ			heap, pile, crowd; pile up	chinese_only HSK::6::5
+Character Sino-Japanese	堆	堆	堆	duī	うずたかい	タイ,ツイ,テ			heap, pile, crowd; pile up	HSK::6::5
 Character Sino-Japanese	盾	盾	盾	dùn	たて	ジュン,トン,シュン,イン,ドン			shield, shield-shaped object; currency sign for Dutch guilder	JLPT::n1 HSK::6::5
 Character Sino-Japanese	鈍	钝	鈍	dùn	にぶい,にぶる	ドン,トン			blunt, obtuse; dull; flat; dull-witted	JLPT::n1::n2 HSK::6
-Character Sino-Japanese		顿	頓	dùn					pause, stop; bow, kowtow; arrange	chinese_only HSK::6::5
+Character Sino-Japanese	頓	顿	頓	dùn	ぬかずく,つまずく,とみに	トン,トツ,ドン,トチ			pause, stop; bow, kowtow; arrange	HSK::6::5
 Character Sino-Japanese		吨	噸	dūn		トン,ドン			metric ton; (Cant.) to babble, gibberish	chinese_only HSK::6::5
 Character Sino-Japanese	惇	敦	敦	dūn	あつい,まこと	トン,ジュン,シュン			be kind, cordial, sincere	JLPT::n1
 Character Sino-Japanese	敦	敦	敦	dūn	あつい	トン,ダン,チョウ,ドウ,ジュ,シュン,タイ,トウ			esteem; honest, candid, sincere	JLPT::n1
@@ -589,6 +597,7 @@ Character Sino-Japanese		愕	愕	è	おどろく	ガク,ゴ			startled, alarmed,
 Character Sino-Japanese		扼	扼	è	おさえる	アク,ヤク			grasp, clutch; choke, strangle	chinese_only
 Character Sino-Japanese		遏	遏	è	とどめる,とめる	アツ,アチ,カツ,カチ			stop, suppress, curb, check; a bar	chinese_only HSK::6
 Character Sino-Japanese		鄂	鄂	è	かぎり,おどろく	ガク			Hubei province; startled	chinese_only
+Character Sino-Japanese	顎	颚	顎	è	あご	ガク			jaw	chinese_rare
 Character Sino-Japanese	餓	饿	餓	è	うえる	ガ			hungry; greedy for; hunger	JLPT::n1 HSK::6::5::4::3
 Character Sino-Japanese	恩	恩	恩	ēn	めぐむ,いつくしむ	オン			kindness, mercy, charity	JLPT::n1 HSK::6
 Character Sino-Japanese		嗯	嗯	ǹg,en					final particle	chinese_only HSK::6::5
@@ -598,6 +607,7 @@ Character Sino-Japanese	二	二	二	èr	ふたつ,ふたたび,ふた	ニ,ジ			
 Character Sino-Japanese	弐			èr	ふたつ,すけ	ニ,ジ			number two	japanese_only JLPT::n1
 Character Sino-Japanese	爾	尔	爾	ěr	なんじ,その,しかり,のみ	ジ,ニ,デイ,ナイ			you; that, those; final particle	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	耳	耳	耳	ěr	みみ,のみ	ジ,ジョウ,ニ,ニョウ			ear; merely, only; handle; Kangxi radical 128	radical JLPT::n1::n2::n3::n4 HSK::6::5::4::3
+Character Sino-Japanese	餌	饵	餌	ěr	もち,え,えさ	ジ			bait; bait, entice; dumplings	chinese_rare
 Character Sino-Japanese	乏	乏	乏	fá	とぼしい	ボウ,ホウ			lack; poor	JLPT::n1 HSK::6::5
 Character Sino-Japanese	伐	伐	伐	fá	きる,うつ,ほこる	バツ,ハツ			cut down, subjugate, attack	JLPT::n1 HSK::6
 Character Sino-Japanese	罰	罚	罰	fá	つみ,とがめ,しおき	バツ,バチ,ハツ,ボチ			penalty, fine; punish, penalize	JLPT::n1 HSK::6::5
@@ -608,7 +618,7 @@ Character Sino-Japanese	髪	髪	髪	fà,fǎ	かみ	ハツ,ハイ			hair	chinese_
 Character Sino-Japanese	凡	凡	凡	fán	すべて,およそ	ボン,ハン			all, any, every; ordinary, common	JLPT::n1 HSK::6
 Character Sino-Japanese	煩	烦	煩	fán	わずらう,わずらわす,わずらわし,わずらわしい	ハン,ボン			bother, vex, trouble; troublesome	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	繁	繁	繁	fán	しげし,しげる	ハン,ハ			complicated, complex, difficult	JLPT::n1 HSK::6::5
-Character Sino-Japanese		泛	泛	fàn	うかぶ	ハン,ホウ,ホン,フ,ボウ			to drift, float; careless, reckless	chinese_only HSK::6::5
+Character Sino-Japanese	汎	泛	泛	fàn	ただよう,ひろい,あまねし,うかぶ	ハン,フウ,ホウ,ホン,ブ,ボウ			float, drift; afloat; careless	HSK::6::5
 Character Sino-Japanese	犯	犯	犯	fàn	おかす	ハン,ボン			commit crime, violate; criminal	JLPT::n1::n2 HSK::6
 Character Sino-Japanese	範	范	範	fàn	のり	ハン,バン			pattern, model, rule, law	JLPT::n1 HSK::6::5
 Character Sino-Japanese	販	贩	販	fàn	あきなう,ひさぐ	ハン,ホン			peddler, hawker, street merchant	JLPT::n1::n2 HSK::6
@@ -621,6 +631,7 @@ Character Sino-Japanese	番	番	番	fān	つがい,つがう,つがえる	バン
 Character Sino-Japanese	翻	翻	翻	fān	ひるがえる,とる,ひるがえす,とぶ	ホン,ハン,ヘン			flip over, upset, capsize	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	藩	藩	藩	fān	まがき	ハン			fence; boundary; outlying border	JLPT::n1
 Character Sino-Japanese	帆	帆	帆	fān,fán	ほ	ハン,ボン			sail; boat	JLPT::n1 HSK::6
+Character Sino-Japanese	氾			fán,fàn	ひろがる	ハン,ホン,ボン			overflow, flood, inundate	japanese_only
 Character Sino-Japanese	妨	妨	妨	fáng	さまたげる	ボウ,ホウ			interfere with, impede, obstruct	JLPT::n1 HSK::6::5
 Character Sino-Japanese	房	房	房	fáng	ふさ,へや	ボウ,ホウ			house, building; room; 4th lunar mansion, determinative star π Scorpii	JLPT::n1 HSK::6::5::4::3::2
 Character Sino-Japanese	肪	肪	肪	fáng	こえる,あぶら	ボウ,ホウ			animal fat	JLPT::n1 HSK::6
@@ -671,7 +682,7 @@ Character Sino-Japanese	封	封	封	fēng	さかい,とじる,ぽんど	フウ,�
 Character Sino-Japanese	峰	峰	峯	fēng	みね	ホウ,フ			peak, summit; hump of camel	JLPT::n1 HSK::6
 Character Sino-Japanese	楓	枫	楓	fēng	かえで	フウ,フ,ヘン,ハン,ホン			maple tree	chinese_rare JLPT::n1
 Character Sino-Japanese		疯	瘋	fēng					crazy, insane, mentally ill	chinese_only HSK::6::5
-Character Sino-Japanese		蜂	蜂	fēng	はち	ホウ,フ,ブ			bee, wasp, hornet	chinese_only HSK::6::5
+Character Sino-Japanese	蜂	蜂	蜂	fēng	はち	ホウ,フ,ブ			bee, wasp, hornet	HSK::6::5
 Character Sino-Japanese		锋	鋒	fēng					point of spear, sharp point	chinese_only HSK::6
 Character Sino-Japanese	風	风	風	fēng	かぜ,かざ	フウ,フ,ハン,ホン			wind; air; manners, atmosphere; Kangxi radical 182	radical JLPT::n1::n2::n3 HSK::6::5::4::3
 Character Sino-Japanese		讽	諷	fěng,fèng					recite, incant; satirize	chinese_only HSK::6::5
@@ -704,9 +715,11 @@ Character Sino-Japanese	復	覆	覆	fù	かえる,かえす,また	フク,フウ
 Character Sino-Japanese	父	父	父	fù	ちち	フ,ホ,ブ			father; Kangxi radical 88	radical JLPT::n1::n2::n3::n4 HSK::6::5::4
 Character Sino-Japanese	縛	缚	縛	fù	しばる	バク,ハク,ハ			to tie	JLPT::n1 HSK::6
 Character Sino-Japanese	腹	腹	腹	fù	はら,いだく	フク			stomach, belly, abdomen; inside	JLPT::n1::n2 HSK::6
+Character Sino-Japanese	訃	讣	訃	fù	しらせ	フ			obituary; give notice of death	chinese_rare
 Character Sino-Japanese	負	负	負	fù	おう,まける,たのむ,まかす,そむく,まけ	フ,ブ			load, burden; carry, bear	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	賦	赋	賦	fù	みつぎ	フ			tax; give; endow; army; diffuse	JLPT::n1 HSK::6
 Character Sino-Japanese	赴	赴	赴	fù	おもむく	フ			go to; attend, be present	JLPT::n1 HSK::6
+Character Sino-Japanese	阜	阜	阜	fù	おか,こざと,ぎふのふ	フ,フウ,ブ			mound; abundant, ample, numerous; Kangxi radical 170	radical chinese_rare
 Character Sino-Japanese	附	附	附	fù	つく	フ,ホウ,ブ			adhere to, append; rely on near to	JLPT::n1 HSK::6::5::4::3
 Character Sino-Japanese		俯	俯	fǔ	ふせる	フ			bow down, face down, look down	chinese_only HSK::6
 Character Sino-Japanese	府	府	府	fǔ	やくしょ,みやこ	フ			prefecture; prefect; government	JLPT::n1::n2 HSK::6::5
@@ -715,6 +728,7 @@ Character Sino-Japanese		斧	斧	fǔ	おの	フ			axe, hatchet; chop, hew	chines
 Character Sino-Japanese	甫	甫	甫	fǔ	はじめ,すけ	ホ,フ			begin; man, father; great; a distance of ten li	JLPT::n1
 Character Sino-Japanese	腐	腐	腐	fǔ	くさる,くされる,くさらす,くたす	フ			rot, decay, spoil; rotten	JLPT::n1 HSK::6::5
 Character Sino-Japanese	輔	辅	輔	fǔ	たすける,たすけ,すけ	フ,ブ,ホ			cheek bone; protective; assist	JLPT::n1 HSK::6::5
+Character Sino-Japanese	釜	釜	釜	fǔ	かま	フ			cauldron, pot, kettle	chinese_rare
 Character Sino-Japanese	夫	夫	夫	fū	おっと,おとこ,それ,かな,かれ	フ,フウ,ブ			man, male adult, husband; those	JLPT::n1::n2 HSK::6::5::4::3::2
 Character Sino-Japanese	敷	敷	敷	fū	しく,しき	フ			spread, diffuse; apply, paint	JLPT::n1 HSK::6
 Character Sino-Japanese	膚	肤	膚	fū	はだ	フ,リョ,ロ			skin; superficial, shallow	JLPT::n1::n2 HSK::6::5::4
@@ -723,7 +737,7 @@ Character Sino-Japanese		嘎	嘎	gā		カツ,ケチ			sound of laughter; bad, ma
 Character Sino-Japanese		丐	丐	gài	こう	カイ,カツ,カチ			beggar; beg; give	chinese_only HSK::6
 Character Sino-Japanese	概	概	概	gài	とかき,おおむね,おもむき	ガイ,カイ,キ,コツ			generally, approximately	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese		溉	溉	gài	そそぐ,すすぐ	ガイ,カイ			water, irrigate, flood; wash	chinese_only HSK::6
-Character Sino-Japanese		盖	蓋	gài	かさ,ふた,おおう	ガイ,カイ,コウ			cover, hide, protect	chinese_only HSK::6::5
+Character Sino-Japanese	蓋	盖	蓋	gài	かさ,ふた,おおう,けだし	ガイ,コウ,カイ,カツ,ゴウ,カチ			cover, hide, protect	HSK::6::5
 Character Sino-Japanese		钙	鈣	gài					calcium (element 20, Ca)	chinese_only HSK::6
 Character Sino-Japanese	改	改	改	gǎi	あらためる,あらため,あらたまる	カイ,キ			change, alter; improve, remodel	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	該	该	該	gāi	かねる,その	ガイ,カイ			should, ought to, need to	JLPT::n1 HSK::6::5::4::3
@@ -742,7 +756,7 @@ Character Sino-Japanese	乾	乾	乾	qián,gān	かわく,かわかす,いぬい	
 Character Sino-Japanese		杠	槓	gàng	てこ,ちぎ	コウ,ク			lever, pole, crowbar; sharpen	chinese_only HSK::6
 Character Sino-Japanese		岗	崗	gǎng					post; position	chinese_only HSK::6
 Character Sino-Japanese	港	港	港	gǎng	みなと	コウ			port, harbor; small stream; bay	JLPT::n1::n2 HSK::6
-Character Sino-Japanese		冈	岡	gāng		モウ			ridge or crest of hill	chinese_only
+Character Sino-Japanese	岡	冈	岡	gāng	おか	コウ			ridge or crest of hill	
 Character Sino-Japanese	剛	刚	剛	gāng	つよい,こわい	ゴウ			hard, tough, rigid, strong	JLPT::n1 HSK::6::5::4::3
 Character Sino-Japanese	綱	纲	綱	gāng	つな	コウ			heavy rope, hawser; main points	JLPT::n1 HSK::6::5
 Character Sino-Japanese		缸	缸	gāng	かめ,もたい	コウ,ゴウ			earthenware jug, crock; cistern	chinese_only
@@ -755,7 +769,7 @@ Character Sino-Japanese		糕	糕	gāo	こなもち	コウ			cakes, pastry	chines
 Character Sino-Japanese		膏	膏	gāo	あぶら,こえる	コウ			grease, fat; paste, ointment	chinese_only HSK::6::5::4
 Character Sino-Japanese	高	高	高	gāo	たかい,たかまる,たかさ,たか,たかめる	コウ			high, tall; lofty, elevated; Kangxi radical 189	radical JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2::1
 Character Sino-Japanese	格	格	格	gé	ただす,いたる	コウ,カク,キャク,ラク			pattern, standard, form; style	JLPT::n1::n2 HSK::6::5::4
-Character Sino-Japanese		葛	葛	gé	くず,つずら,つづら,かずら	カツ,カチ			edible bean; surname	chinese_only
+Character Sino-Japanese	葛	葛	葛	gé	くず,つずら,つづら,かずら	カツ,カチ			edible bean; surname	
 Character Sino-Japanese	閣	阁	閣	gé	かんぬき,たな,たかどの	カク			chamber, pavilion; cabinet	JLPT::n1
 Character Sino-Japanese	隔	隔	隔	gé	へだてる,へだたる,へだたり	カク,ケキ,キャク			separate, partition	JLPT::n1 HSK::6::5
 Character Sino-Japanese	革	革	革	gé	かわ,あらたまる,あらためる	カク,キョク			leather, animal hides; Kangxi radical 177; hexagram ䷰	radical JLPT::n1::n2 HSK::6::5
@@ -776,7 +790,7 @@ Character Sino-Japanese	亘	亘	亙	gèn	もとめる,わたり,わたる	セン
 Character Sino-Japanese	根	根	根	gēn	ね,ねざす	コン			root, base(d on); foundation	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese		跟	跟	gēn	くびす	コン			heel; to follow, accompany; with	chinese_only HSK::6::5::4::3
 Character Sino-Japanese	更	更	更	gèng	さら,ふける,あらためる,ふかす,かえる,かわる,こもごも,さらに	コウ,キョウ			more, still further, much more; to change, alter	JLPT::n1::n2 HSK::6::5::4::3
-Character Sino-Japanese		梗	梗	gěng	やまにれ	コウ,キョウ			stem of flower, branch of plant	chinese_only
+Character Sino-Japanese	梗	梗	梗	gěng	やまにれ	コウ,キョウ			stem of flower, branch of plant	
 Character Sino-Japanese		耿	耿	gěng	ひかり	コウ,キョウ,ケイ			bright, shining; have guts	chinese_only
 Character Sino-Japanese	耕	耕	耕	gēng	たがやす	コウ			plow, cultivate	JLPT::n1::n2 HSK::6
 Character Sino-Japanese	共	共	共	gòng	とも,ともに,ども,ともにする	キョウ,コウ,ク,グ			together with, all, total; to share	JLPT::n1::n2 HSK::6::5::4::3::2
@@ -797,16 +811,17 @@ Character Sino-Japanese	構	构	構	gòu	かまえる,かまえ,かまう	コウ
 Character Sino-Japanese	購	购	購	gòu	あがなう	コウ			buy, purchase; hire	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese		狗	狗	gǒu	いぬ	コウ,ク			dog, Canis familiaris	chinese_only HSK::6::5::4::3::2::1
 Character Sino-Japanese		苟	苟	gǒu	いやしくも,かりそめ	コウ,ク			careless, frivolous; illicit; grammatical particle: if, but, if only; surname; grass name	chinese_only HSK::6
-Character Sino-Japanese		勾	勾	gōu	のぞく,まがる,かぎ	コウ,ク			hook, join, connect; entice	chinese_only HSK::6
+Character Sino-Japanese	勾	勾	勾	gōu	のぞく,まがる,かぎ	コウ,ク			hook, join, connect; entice	HSK::6
 Character Sino-Japanese	溝	沟	溝	gōu	みぞ	コウ			ditch, drain, narrow waterway	JLPT::n1 HSK::6::5
 Character Sino-Japanese		钩	鈎	gōu					hook, barb; sickle; stroke with	chinese_only HSK::6
 Character Sino-Japanese	雇	雇	僱	gù	やとう,やとい	コ,ゴ			employ, to hire	JLPT::n1::n2 HSK::6
 Character Sino-Japanese	固	固	固	gù	かためる,かため,かたい,かたまる,もとより	コ,ク			to become solid, solidify; strength	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	故	故	故	gù	ゆえ,こと,ことさらに,ふるい,もと,もとより,ゆえに,わざと	コ,ク			ancient, old; reason, because	JLPT::n1::n2 HSK::6::5::4::3
+Character Sino-Japanese	錮	锢	錮	gù	ふさぐ	コ			run metal into cracks; confine	chinese_rare
 Character Sino-Japanese	顧	顾	顧	gù	かえりみる	コ			look back; look at; look after	JLPT::n1 HSK::6::5::4::3
 Character Sino-Japanese	古	古	古	gǔ	ふるい,いにしえ,ふるす	コ,ク			old, classic, ancient	JLPT::n1::n2::n3::n4 HSK::6::5
 Character Sino-Japanese	穀	谷	谷	gǔ	たなつもつ,たなつもの	コク,コウ,ドウ,ヌ			corn, grain, cereal; lucky	radical JLPT::n1 HSK::6
-Character Sino-Japanese		股	股	gǔ	また,もも	コ,ク			thighs, haunches, rump; share	chinese_only HSK::6::5
+Character Sino-Japanese	股	股	股	gǔ	また,もも	コ,ク			thighs, haunches, rump; share	HSK::6::5
 Character Sino-Japanese	谷	谷	谷	gǔ	たに,きわまる,きわきる	コク,ヨク,ロク			valley, gorge, ravine; Kangxi radical 150	radical JLPT::n1::n2 HSK::6
 Character Sino-Japanese	骨	骨	骨	gǔ	ほね	コツ,クチ			bone; skeleton; frame, framework; Kangxi radical 188	radical JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	鼓	鼓	鼓	gǔ	つずみ,つづみ,うつ,つづみうつ	コ,ク			drum; beat, top, strike; Kangxi radical 207	radical JLPT::n1 HSK::6::5::4
@@ -859,11 +874,11 @@ Character Sino-Japanese	果	果	果	guǒ	はたす,くだもの,はて,はてる
 Character Sino-Japanese	菓	果	果	guǒ	くだもの,かし	カ			fruits, nuts, berries	JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese		裹	裹	guǒ	つつむ,つつみ,たから	カ			wrap, bind; encircle, confine	chinese_only HSK::6::5
 Character Sino-Japanese	郭	郭	郭	guō	くるわ	カク			outer part (of a city); surname	JLPT::n1
-Character Sino-Japanese		锅	鍋	guō					cooking-pot, saucepan	chinese_only HSK::6::5
+Character Sino-Japanese	鍋	锅	鍋	guō	なべ	カ			cooking-pot, saucepan	HSK::6::5
 Character Sino-Japanese		哈	哈	hā	のむ,すする,くう	ゴウ,ソウ,コウ,ハ,トウ,カ			sound of laughter	chinese_only HSK::6::5
 Character Sino-Japanese		孩	孩	hái	ちのみご	カイ,ガイ			baby, child; children	chinese_only HSK::6::5::4::3::2
 Character Sino-Japanese	還	还	還	hái	かえる,また,めぐる,かえす	カン,セン,ゲン			still, yet, also, besides	JLPT::n1 HSK::6::5::4::3::2
-Character Sino-Japanese		骸	骸	hái	むくろ	カイ,ガイ			skeleton, body; leg bone	chinese_only
+Character Sino-Japanese	骸	骸	骸	hái	むくろ	カイ,ガイ			skeleton, body; leg bone	
 Character Sino-Japanese	亥	亥	亥	hài	い	ガイ,カイ			twelfth earthly branch	chinese_rare JLPT::n1
 Character Sino-Japanese	害	害	害	hài	そこなう,わざわい,なんぞ	ガイ,カツ,カイ			injure, harm; destroy, kill	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese		骇	駭	hài					terrify, frighten, scare; shock	chinese_only
@@ -874,7 +889,7 @@ Character Sino-Japanese		函	函	hán	いれる,はこ	カン,ゴン,ゲン			co
 Character Sino-Japanese	含	含	含	hán	ふくむ,ふくめる	ガン,カン,ゴン			hold in mouth; cherish; contain	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	寒	寒	寒	hán	さむい,さむさ	カン			cold, wintry, chilly	JLPT::n1::n2::n3 HSK::6::5::4
 Character Sino-Japanese		涵	涵	hán	ひたす,うるおす	カン,ゲン,ゴン			soak, wet; tolerate, be lenient	chinese_only HSK::6
-Character Sino-Japanese		韩	韓	hán					fence; surname; Korea	chinese_only
+Character Sino-Japanese	韓	韩	韓	hán	いげた,から	カン,ガン			fence; surname; Korea	
 Character Sino-Japanese	憾	憾	憾	hàn	うらむ,うらみ	カン,ゴン,タン,ドン			to regret, remorse; dissatisfied	JLPT::n1 HSK::6::5
 Character Sino-Japanese		捍	捍	hàn	ふせぐ	カン,ガン,ゲン			ward off, guard against, defend	chinese_only HSK::6
 Character Sino-Japanese		撼	撼	hàn	うごかす,うごく	カン,ゴン			move, shake; (Cant.) to fight	chinese_only HSK::6
@@ -910,11 +925,12 @@ Character Sino-Japanese		呵	呵	hē	しかる,わらう	カ,ガ,ア			scold; la
 Character Sino-Japanese	喝	喝	喝	hē	しかる	カツ,アイ			drink; shout, call out	JLPT::n1 HSK::6::5::4::3::2::1
 Character Sino-Japanese		嘿	嘿	hēi	しずか,だまる,あぎむく	ボク,モク,コク			be silent, be quiet	chinese_only HSK::6
 Character Sino-Japanese	黒	黑	黑	hēi	くろい,くろ	コク			black; dark; evil	radical JLPT::n1::n2::n3 HSK::6::5::4::3::2
-Character Sino-Japanese		痕	痕	hén	あと	コン,ギン,ゴン			scar; mark; trace	chinese_only HSK::6
+Character Sino-Japanese	痕	痕	痕	hén	あと	コン,ギン,ゴン			scar; mark; trace	HSK::6
 Character Sino-Japanese	恨	恨	恨	hèn	うらむ,うらめしい,うらみ,うらむらくは	コン,ゴン			hatred, dislike; resent, hate	JLPT::n1 HSK::6::5
 Character Sino-Japanese		很	很	hěn	もとる	コン,ゴン			very, quite, much	chinese_only HSK::6::5::4::3::2::1
 Character Sino-Japanese		狠	狠	hěn	もとる	ガン,コン,ゲン,ギン,ゴン			vicious, cruel; severely, extreme	chinese_only HSK::6
 Character Sino-Japanese	恒	恒	恆	héng	つね,つねに	コウ,ゴウ			constant, regular, persistent	JLPT::n1 HSK::6
+Character Sino-Japanese	桁	桁	桁	héng	けた	コウ,ギョウ,ゴウ			cross-beams of roof	chinese_rare
 Character Sino-Japanese	横	横	橫	héng	よこ,よこたわる,よこたえる,よこぎる	オウ,コウ			across	JLPT::n1::n2 HSK::6
 Character Sino-Japanese	衡	衡	衡	héng	はかり,はかる	コウ,ギョウ,オウ			measure, weigh, judge, consider	JLPT::n1 HSK::6::5
 Character Sino-Japanese	亨	亨	亨	hēng	たてまつる,とおる	キョウ,コウ,ホウ,ヒョウ			smoothly, progressing, no trouble	JLPT::n1
@@ -930,7 +946,7 @@ Character Sino-Japanese		哄	哄	hōng	こえ,たぶらかす	コウ,キョウ,�
 Character Sino-Japanese		烘	烘	hōng	かがりび	コウ,グ,キョウ,ク			bake, roast; dry by fire	chinese_only HSK::6
 Character Sino-Japanese		轰	轟	hōng					rumble, explosion, blast	chinese_only HSK::6
 Character Sino-Japanese	侯	侯	侯	hóu	まと,きみ	コウ,ゴ			marquis, lord; target in archery	JLPT::n1
-Character Sino-Japanese		喉	喉	hóu	のど	コウ,ゴ			throat, gullet, larynx; guttural	chinese_only HSK::6
+Character Sino-Japanese	喉	喉	喉	hóu	のど	コウ,ゴ			throat, gullet, larynx; guttural	HSK::6
 Character Sino-Japanese		猴	猴	hóu	さる	コウ,ゴ			monkey, ape; monkey-like	chinese_only HSK::6::5
 Character Sino-Japanese	候	候	候	hòu	そうろう,うかがう,さぶらう,まつ	コウ,ゴ			wait; expect; visit; greet	JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese	厚	厚	厚	hòu	あつい	コウ,グ			thick; substantial; greatly	JLPT::n1::n2 HSK::6::5::4
@@ -994,7 +1010,7 @@ Character Sino-Japanese	慌	慌	慌	huāng	あわてる,あわただし,くら�
 Character Sino-Japanese	荒	荒	荒	huāng	あれる,あらい,あらす,すさむ,あれ	コウ			wasteland, desert; uncultivated	JLPT::n1::n2 HSK::6
 Character Sino-Japanese	回	回	回	huí	まわす,まわる,かえる,たがう	カイ,エ,ウイ			return, turn around; a time	JLPT::n1::n2::n3 HSK::6::5::4::3::2::1
 Character Sino-Japanese	会	会	會	huì	あう,あつまる,え	カイ,エ,カツ			assemble, meet together; meeting	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2::1
-Character Sino-Japanese		汇	匯	huì					concourse; flow together, gather	chinese_only HSK::6::5
+Character Sino-Japanese	彙	汇	匯	huì	はりねずみ,あつまる,たぐい	イ			collect, compile, assemble; hedgehog	HSK::6::5
 Character Sino-Japanese	彗	彗	彗	huì	ほうき	スイ,ケイ,エ,セイ,エイ,ゼ,セ,イ,ズイ			broomstick; comet	chinese_rare JLPT::n1
 Character Sino-Japanese	恵	惠	惠	huì	めぐむ,めぐみ	ケイ,エ			favor, benefit, confer kindness	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	慧	慧	慧	huì	さとい	ケイ,エ			bright, intelligent; intelligence	JLPT::n1 HSK::6::5
@@ -1002,7 +1018,7 @@ Character Sino-Japanese	絵	绘	繪	huì	え	カイ,エ			draw, sketch, paint	JL
 Character Sino-Japanese		讳	諱	huì					conceal; shun; regard as taboo	chinese_only HSK::6
 Character Sino-Japanese	賄	贿	賄	huì	まかなう,まいなう,まかない,まいない	ワイ,カイ			bribe; riches, wealth	JLPT::n1 HSK::6
 Character Sino-Japanese	悔	悔	悔	huǐ	くいる,くやむ,くやしい,くやみ	カイ			repent, show remorse, regret	JLPT::n1 HSK::6::5::4
-Character Sino-Japanese		毁	毀	huǐ	こぼつ,そしる,やせる	キ			destroy	chinese_only HSK::6
+Character Sino-Japanese	毀	毁	毀	huǐ	こぼつ,そしる,やせる,やぶる	キ			destroy, ruin, injure; slander	HSK::6
 Character Sino-Japanese		徽	徽	huī	よい,しるし	キ			a badge, insignia	chinese_only
 Character Sino-Japanese		恢	恢	huī	ひろい	カイ,キ,ケ			restore; big, great, immense, vast	chinese_only HSK::6::5
 Character Sino-Japanese	揮	挥	揮	huī	ふるう	キ,クン,コン,ゴン			direct; wipe away; squander	JLPT::n1 HSK::6::5
@@ -1029,7 +1045,7 @@ Character Sino-Japanese		豁	豁	huō	ひらける,ひろい	カツ,カチ			ope
 Character Sino-Japanese	即	即	即	jí	つく,すなわち,もし	ソク,ショク			promptly, quickly, immediately	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	及	及	及	jí	およぶ,および,およぼす	キュウ			extend; reach; come up to; and	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	吉	吉	吉	jí	よい	キチ,キツ			lucky, propitious, good	JLPT::n1 HSK::6
-Character Sino-Japanese		嫉	嫉	jí	ねたむ,にくむ	シツ,ジチ,ジ,シ			jealousy; be jealous of	chinese_only HSK::6
+Character Sino-Japanese	嫉	嫉	嫉	jí	ねたむ,にくむ	シツ,ジチ,ジ,シ			jealousy; be jealous of	HSK::6
 Character Sino-Japanese	急	急	急	jí	いそぐ,きびしい	キュウ,コウ			quick, quickly; urgent, pressing	JLPT::n1::n2::n3 HSK::6::5::4::3
 Character Sino-Japanese	極	极	極	jí	きわめる,むね,きわまる,きわみ,きわめて,きまる,きめる	ゴク,キョク,ゴキ,ケキ,キャク			extreme, utmost, furthest, final	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese		棘	棘	jí	いばら,とげ	キョク,コキ,キ			jujube tree; thorns, brambles	chinese_only
@@ -1061,7 +1077,7 @@ Character Sino-Japanese	際	际	際	jì	きわ,まじわる,あい	サイ,セイ
 Character Sino-Japanese	幾	几	幾	jǐ	いく,きざし,ちかい,ほとんど	キ,ケ,ゲ			how many? how much?; a few, some	radical JLPT::n1 HSK::6::5::4::3::2::1
 Character Sino-Japanese	己	己	己	jǐ	おのれ,つちのと,すでに,やむ,のみ	キ,コ,イ			self, oneself; personal, private; 6th heavenly stem	radical JLPT::n1 HSK::6::5::4::3
 Character Sino-Japanese		挤	擠	jǐ					crowd, squeeze, push against	chinese_only HSK::6::5
-Character Sino-Japanese		脊	脊	jǐ	せ,せい	セキ,シャク			spine, backbone; ridge	chinese_only
+Character Sino-Japanese	脊	脊	脊	jǐ	せ,せい	セキ,シャク			spine, backbone; ridge	
 Character Sino-Japanese	撃	击	擊	jī	うつ	ゲキ,ケキ			strike, hit, beat; attack, fight	JLPT::n1 HSK::6::5
 Character Sino-Japanese		圾	圾	jī	あやうい	ギュウ,ゴウ,ショク,セイ			garbage, rubbish; shaking; danger	chinese_only HSK::6::5::4
 Character Sino-Japanese	基	基	基	jī	もとい,もと,もとずく,もとづく	キ			foundation, base	JLPT::n1::n2 HSK::6::5::4
@@ -1070,15 +1086,16 @@ Character Sino-Japanese	機	机	機	jī	はた,からくり,おり,きざし,は
 Character Sino-Japanese	机	机	機	jī	つくえ	キ,ガイ			desk; machine; moment	JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese	激	激	激	jī	はげしい,はげしく,はげます	ゲキ,ケキ,キョウ,キャク			arouse, excite, incite; quickly	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese		玑	璣	jī					pearl that is not quite round	chinese_only
+Character Sino-Japanese	畿	畿	畿	jī	みやこ	キ,ゲ			imperial domain; area near capital	chinese_rare
 Character Sino-Japanese	磯	矶	磯	jī	いそ	キ,ゲ,カイ,ケ			jetty; submerged rock; eddy	chinese_rare JLPT::n1
 Character Sino-Japanese	積	积	積	jī	つむ,つもる	セキ,シ,シャク			accumulate, store up, amass	JLPT::n1::n2 HSK::6::5::4
-Character Sino-Japanese		稽	稽	jī	とどめる,かんがえる	ケイ			examine, investigate; delay	chinese_only
+Character Sino-Japanese	稽	稽	稽	jī	とどめる,かんがえる	ケイ			examine, investigate; delay	
 Character Sino-Japanese		缉	緝	jī					to sew in close stitches	chinese_only HSK::6
 Character Sino-Japanese	肌	肌	肌	jī	はだ	キ,ケ			muscle tissue; meat on bones	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese		讥	譏	jī					ridicule, jeer, mock; inspect	chinese_only HSK::6
 Character Sino-Japanese	鶏	鸡	雞	jī	にわとり,とり	ケイ			chicken	JLPT::n1 HSK::6::5::4::3::2
 Character Sino-Japanese	飢	饥	飢	jī	うえる	キ			hunger, starving; hungry; a famine	JLPT::n1 HSK::6
-Character Sino-Japanese		颊	頰	jiá					cheeks, jaw	chinese_only
+Character Sino-Japanese	頰	颊	頰	jiá	ほお	キョウ			cheeks, jaw	
 Character Sino-Japanese		价	價	jià	よい,おおきい,つかい	カイ			price, value	chinese_only HSK::6::5::4
 Character Sino-Japanese	嫁	嫁	嫁	jià	とつぐ,よめ	カ,ケ			to marry, give a daughter in marriage	JLPT::n1 HSK::6::5
 Character Sino-Japanese	架	架	架	jià	かける,たな,かかる	カ,ケ			rack, stand, prop; prop up	JLPT::n1 HSK::6::5
@@ -1110,7 +1127,7 @@ Character Sino-Japanese	見	见	見	jiàn	みる,みえる,まみえる,みせ�
 Character Sino-Japanese		贱	賤	jiàn					mean, low; cheap, worthless	chinese_only
 Character Sino-Japanese	践	践	踐	jiàn	ふむ	セン			trample, tread upon, walk on	JLPT::n1 HSK::6::5
 Character Sino-Japanese	鑑	鉴	鑑	jiàn	かがみ,かんがみる	カン,ケン,ガン			mirror, looking glass; reflect	JLPT::n1 HSK::6
-Character Sino-Japanese		键	鍵	jiàn					door bolt, lock bolt; key	chinese_only HSK::6::5::4
+Character Sino-Japanese	鍵	键	鍵	jiàn	かぎ	ケン,コン,ゲン,ゴン			door bolt, lock bolt; key	HSK::6::5::4
 Character Sino-Japanese	倹	俭	儉	jiǎn	つずまやか,つづまやか,つましい	ケン			temperate, frugal, economical	JLPT::n1 HSK::6
 Character Sino-Japanese	減	减	減	jiǎn	へる,へらす	ゲン,カン			decrease, subtract, diminish	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese		剪	剪	jiǎn	きる,たつ	セン			scissors; cut, divide, separate	chinese_only HSK::6::5
@@ -1126,8 +1143,9 @@ Character Sino-Japanese	堅	坚	堅	jiān	かたい,かたく	ケン			hard, str
 Character Sino-Japanese		奸	奸	jiān	おかす	カン,ケン			crafty, villainous, false	chinese_only
 Character Sino-Japanese		尖	尖	jiān	とがる,するどい,さき	セン			sharp, pointed, acute, keen	chinese_only HSK::6
 Character Sino-Japanese		歼	殲	jiān					annihilate, wipe out, kill off	chinese_only
-Character Sino-Japanese		煎	煎	jiān	いる,にる	セン			fry in fat or oil; boil in water	chinese_only HSK::6
+Character Sino-Japanese	煎	煎	煎	jiān	いる,にる	セン			fry in fat or oil; boil in water	HSK::6
 Character Sino-Japanese	監	监	監	jiān	みる	カン			supervise, control, direct	JLPT::n1 HSK::6
+Character Sino-Japanese	箋	笺	箋	jiān	ふだ	セン			note, memo; stationery; comments	chinese_rare
 Character Sino-Japanese	肩	肩	肩	jiān	かた	ケン,カン,コン			shoulders; to shoulder; bear	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese		艰	艱	jiān					difficult, hard; distressing	chinese_only HSK::6::5
 Character Sino-Japanese	間	间	間	jiān	あいだ,ま,しずか,ひそかに,へだてる	カン,ケン,カツ,ゲツ			interval, space; place, between	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2
@@ -1198,14 +1216,14 @@ Character Sino-Japanese	浸	浸	浸	jìn	ひたす,ひたる,やや	シン			soa
 Character Sino-Japanese	禁	禁	禁	jìn	とどめる,たえる	キン,コン,ゴン			restrict, prohibit, forbid	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	近	近	近	jìn	ちかい,ちかづく	キン,コン,ゴン			near, close; approach; intimate	JLPT::n1::n2::n3 HSK::6::5::4::3::2
 Character Sino-Japanese	進	进	進	jìn	すすむ,すすめる,じょう	シン,ジン			advance, make progress, enter	JLPT::n1::n2::n3 HSK::6::5::4::3::2
-Character Sino-Japanese		仅	僅	jǐn		フ,ド			only, merely, solely, just	chinese_only HSK::6::5::4
+Character Sino-Japanese	僅	仅	僅	jǐn	わずかに,わずか	キン,ギン			only, merely, solely, just	HSK::6::5::4
 Character Sino-Japanese	菫	堇	堇	jǐn	すみれ	キン			celery, aconite	chinese_rare JLPT::n1
 Character Sino-Japanese	尽	尽	盡	jǐn	つくす,つきる,ことごとく,つかす	ジン			exhaust, use up; deplete	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	緊	紧	緊	jǐn	ちじむ,きびしい	キン			tense, tight, taut; firm, secure	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	謹	谨	謹	jǐn	つつしむ	キン,コン,ゴン			prudent, cautious; attentive	JLPT::n1 HSK::6::5
 Character Sino-Japanese	錦	锦	錦	jǐn	にしき	キン,コン			brocade, tapestry; embroidered	JLPT::n1 HSK::6
 Character Sino-Japanese	今	今	今	jīn	いま	コン,キン			now, today, modern era	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2::1
-Character Sino-Japanese		巾	巾	jīn	ふきん,おおい,はば,きれ,ちきり	キン,コン			kerchief; towel; turban; Kangxi radical 50	radical chinese_only HSK::6::5::4
+Character Sino-Japanese	巾	巾	巾	jīn	ふきん,おおい,はば,きれ,ちきり	キン,コン			kerchief; towel; turban; Kangxi radical 50	radical HSK::6::5::4
 Character Sino-Japanese	斤	斤	斤	jīn	おの	キン,コン			a catty (approximately 600 g); an axe; keen, shrewd; Kangxi radical 69	radical JLPT::n1 HSK::6::5::4::3
 Character Sino-Japanese	津	津	津	jīn	つ	シン			ferry; saliva; ford	JLPT::n1 HSK::6
 Character Sino-Japanese	筋	筋	筋	jīn	すじ	キン,コン,ケン,ゲン,ゴン			muscles; tendons	JLPT::n1 HSK::6
@@ -1222,7 +1240,9 @@ Character Sino-Japanese	鏡	镜	鏡	jìng	かがみ	キョウ,ケイ			mirror; l
 Character Sino-Japanese	靖	靖	靖	jìng	やすい,やすんじる,やす	セイ,ジョウ			pacify; appease; calm, peaceful	JLPT::n1
 Character Sino-Japanese	静	静	靜	jìng	しずか,しずめる,しずまる,しず	セイ,ジョウ			quiet, still, motionless; gentle	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese		竟	竟	jìng	おわる,わたる,ついに	ケイ,キョウ			finally, after all, at last	chinese_only HSK::6::5::4
+Character Sino-Japanese	丼	井	井	jǐng	どんぶり,どん	セイ,タン,ショウ,トン			bowl of food; well	HSK::6
 Character Sino-Japanese	井	井	井	jǐng	い,いど	セイ,ショウ			well, mine shaft, pit; surname; 22nd lunar mansion, determinative star μ Geminorum (Tejat); hexagram ䷯	JLPT::n1 HSK::6
+Character Sino-Japanese	憬	憬	憬	jǐng	さとる	ケイ,キョウ			rouse, awaken; become conscious	chinese_rare
 Character Sino-Japanese	景	景	景	jǐng	けしき,かげ,ひかり	ケイ,エイ,キョウ,ヨウ			scenery, view; conditions	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	警	警	警	jǐng	いましめる,いましめ	ケイ,キョウ			guard, watch; alert, alarm	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese		阱	阱	jǐng	あな,おとしあな	セイ,ジョウ			pitfall, trap, snare	chinese_only HSK::6
@@ -1243,6 +1263,7 @@ Character Sino-Japanese	就	就	就	jiù	つく,つける,なす,なる,つい�
 Character Sino-Japanese	救	救	救	jiù	すくう,すくい	キュウ,グ,ク			save, rescue, relieve; help, aid	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	旧	旧	舊	jiù	ふるい,もと	キュウ,グ			old, ancient; former, past	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	柾			jiù	まさ	キュウ			straight grain	japanese_only JLPT::n1
+Character Sino-Japanese	臼	臼	臼	jiù	うす	キュウ,グ,ホウ,ブ			mortar; bone joint socket; Kangzi radical 134	radical chinese_rare
 Character Sino-Japanese		舅	舅	jiù	しゅうと	キュウ,グ			mother's brother, uncle	chinese_only HSK::6::5
 Character Sino-Japanese	久	久	久	jiǔ	ひさしい	キュウ,ク			long time (ago); time passage, grow late	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	九	玖	玖	jiǔ	ここのつ,ここの	キュウ,ク,グ			nine	chinese_rare JLPT::n1::n2::n3::n4
@@ -1260,7 +1281,7 @@ Character Sino-Japanese	具	具	具	jù	そなえる,そなえ,つぶさに,そ�
 Character Sino-Japanese	劇	剧	劇	jù	はげしい	ゲキ,ケキ,ギャク			theatrical plays, opera, drama	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	句	句	句	jù		ク,コウ,グ,キュウ			sentence	JLPT::n1 HSK::6::5::4::3
 Character Sino-Japanese	巨	巨	巨	jù	おおきい	キョ,ゴ,コ			large, great, enormous; chief	JLPT::n1::n2 HSK::6::5
-Character Sino-Japanese		惧	懼	jù	おそれる	ク,グ			fear, be afraid of, dread	chinese_only HSK::6
+Character Sino-Japanese	惧	惧	懼	jù	おそれる	ク,グ			fear, be afraid of, dread	HSK::6
 Character Sino-Japanese	拒	拒	拒	jù	こばむ,ふせぐ	キョ,ク,ゴ			ward off with hand, defend	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	拠			jù	よる,よんどころ	キョ,コ			to occupy, take possession of; a base, position	japanese_only JLPT::n1
 Character Sino-Japanese	据	据	據	jù	すえる,すえ,すわる,よる	キョ,コ			to occupy, take possession of; a base, position	JLPT::n1 HSK::6::5::4::3
@@ -1272,6 +1293,8 @@ Character Sino-Japanese		沮	沮	jǔ	はばむ	ショ,ソ,セン,ゾ			stop, pre
 Character Sino-Japanese	矩	矩	矩	jǔ	さしがね,かねざし,のり,かね	ク			carpenter's square, ruler, rule	JLPT::n1 HSK::6::5
 Character Sino-Japanese	居	居	居	jū	いる,おる,おく,いながら	キョ,キ,コ			live, dwell, reside, sit	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	拘	拘	拘	jū	とどめる,とらえる,かかわる,とらわれる	コウ,ク,キョ,ゴ,キョク,コク			restrain, seize, detain	JLPT::n1 HSK::6
+Character Sino-Japanese	狙	狙	狙	jū	ねらう	ショ,ソ			an ape, monkey; to spy, watch for; to lie	chinese_rare
+Character Sino-Japanese	裾	裾	裾	jū	すそ	キョ,コ,ゴ			lapel, border of garment; skirt	chinese_rare
 Character Sino-Japanese	鞠	鞠	鞠	jū	まり	キク,キョウ,コク,キュウ,ク			bow, bend; rear, raise, nourish	JLPT::n1 HSK::6
 Character Sino-Japanese	駒	驹	駒	jū	こま	ク			colt; fleet, swift; sun; surname	chinese_rare JLPT::n1
 Character Sino-Japanese		倦	倦	juàn	つかれる,うむ	ケン,ゲン			be tired of, weary	chinese_only HSK::6
@@ -1305,6 +1328,7 @@ Character Sino-Japanese		咖	咖	kā		カ			coffee; a phonetic	chinese_only HSK:
 Character Sino-Japanese		喀	喀	kā	はく	カク,キャク			vomit; used in transliterations	chinese_only
 Character Sino-Japanese	凱	凯	凱	kǎi	かちどき,やわらぐ	ガイ,カイ			triumphant; triumph, victory	JLPT::n1
 Character Sino-Japanese	慨	慨	慨	kǎi	なげく	ガイ,カイ			sigh, regret; generous	JLPT::n1 HSK::6
+Character Sino-Japanese	楷	楷	楷	kǎi	かた,のっとる,ただしい	カイ			model style of Chinese writing	chinese_rare
 Character Sino-Japanese	開	开	開	kāi	ひらく,あく,ひらける,あける	カイ,ケン			open; initiate, begin, start	JLPT::n1::n2::n3 HSK::6::5::4::3::2::1
 Character Sino-Japanese	看	看	看	kàn	みる	カン			look, see; examine, scrutinize	JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese	侃	侃	侃	kǎn	つよい	カン			upright and strong; amiable	JLPT::n1 HSK::6
@@ -1323,6 +1347,7 @@ Character Sino-Japanese		靠	靠	kào	たがう,よる	コウ,コク			lean on, 
 Character Sino-Japanese	拷	拷	拷	kǎo	うつ	ゴウ,コウ			torture and interrogate; hit	chinese_rare JLPT::n1
 Character Sino-Japanese		烤	烤	kǎo	あぶる	コウ			bake, roast, toast, cook	chinese_only HSK::6::5::4
 Character Sino-Japanese	考	考	考	kǎo	かんがえる,かんがえ	コウ			examine, test; investigate	radical JLPT::n1::n2::n3 HSK::6::5::4::3::2
+Character Sino-Japanese	尻	尻	尻	kāo	しり	コウ			end of spine; buttocks, sacrum	chinese_rare
 Character Sino-Japanese		壳	殼	ké	から	カク			casing, shell, husk	chinese_only HSK::6
 Character Sino-Japanese	克	克	克	kè	かつ,よい,よく,よくする	コク			gram; overcome; transliteration	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	刻	刻	刻	kè	きざむ,きざみ,とき	コク			carve, engrave; quarter hour	JLPT::n1::n2 HSK::6::5::4::3
@@ -1334,6 +1359,7 @@ Character Sino-Japanese		柯	柯	kē	え	カ			axe-handle; stalk, bough; surname
 Character Sino-Japanese		棵	棵	kē	きぎれ	カン,カ,ガン			numerary adjunct for trees	chinese_only HSK::6::5::4
 Character Sino-Japanese		磕	磕	kē		カイ,コウ,カツ,カチ			hit; collide, knock into; sound	chinese_only HSK::6
 Character Sino-Japanese	科	科	科	kē	しな,とが	カ			section, department, science	JLPT::n1::n2 HSK::6::5::4
+Character Sino-Japanese	苛	苛	苛	kē	こまかい,からい,いらだつ,いじめる	カ,ガ,ケ			small, petty; harsh, rigorous	chinese_rare
 Character Sino-Japanese		颗	顆	kē					grain, kernel	chinese_only HSK::6::5
 Character Sino-Japanese		啃	啃	kěn		シュウ			gnaw, chew, bite	chinese_only HSK::6
 Character Sino-Japanese	墾	垦	墾	kěn	ひらく	コン,ゴン			cultivate, reclaim, to farm land	chinese_rare JLPT::n1
@@ -1353,8 +1379,9 @@ Character Sino-Japanese		裤	褲	kù					trousers, pants	chinese_only HSK::6::5:
 Character Sino-Japanese	酷	酷	酷	kù	きびしい,はなはだし,むごい,はなはだ,はなはだしい	コク,カク			strong, stimulating; very	JLPT::n1 HSK::6
 Character Sino-Japanese	苦	苦	苦	kǔ	にがい,くるしい,くるしむ,くるしめる,にがる,くるしみ,はなはだ	ク			bitter; hardship, suffering	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese		哭	哭	kū	なく	コク			weep, cry, wail	chinese_only HSK::6::5::4::3
-Character Sino-Japanese	堀	窟	窟	kū	ほり,ほる,あな	クツ,コツ,クチ			cave, hole	JLPT::n1
+Character Sino-Japanese	堀	堀	堀	kū	ほり,ほる,あな	クツ,コツ,クチ			cave, hole	chinese_rare JLPT::n1
 Character Sino-Japanese	枯	枯	枯	kū	かれる,からす	コ,ク,ゴ			dried out, withered, decayed	JLPT::n1::n2 HSK::6
+Character Sino-Japanese	窟	窟	窟	kū	いわや	クツ,コツ,クチ			hole, cave; cellar; underground	
 Character Sino-Japanese		挎	挎	kuà		コ,ク,コウ			carry	chinese_only HSK::6
 Character Sino-Japanese		跨	跨	kuà	またぐ,またがる	コ,カ,ケ,ク,カイ			straddle, bestride, ride; carry	chinese_only HSK::6
 Character Sino-Japanese		垮	垮	kuǎ					be defeated, fail, collapse	chinese_only
@@ -1376,7 +1403,7 @@ Character Sino-Japanese	奎	奎	奎	kuí	また	ケイ,キ,ケ			stride of man; 
 Character Sino-Japanese	葵	葵	葵	kuí	あおい	キ,ギ			sunflower; measure	chinese_rare JLPT::n1
 Character Sino-Japanese	魁	魁	魁	kuí	かしら,さきがけ	カイ			chief; leader; best; monstrous	JLPT::n1
 Character Sino-Japanese		愧	愧	kuì	はじる,はじ	キ			ashamed, conscience-stricken	chinese_only HSK::6::5
-Character Sino-Japanese		溃	潰	kuì					flooding river; militarily defeat	chinese_only HSK::6
+Character Sino-Japanese	潰	溃	潰	kuì	ついえる,つぶれ,つぶす,つぶれる	カイ,エ,ゴチ,コツ			flooding river; militarily defeat	HSK::6
 Character Sino-Japanese		馈	饋	kuì					offer food superior; send gift	chinese_only HSK::6
 Character Sino-Japanese		亏	虧	kuī	かける,ここに	ウ			lose, fail; damage; deficient	chinese_only HSK::6::5
 Character Sino-Japanese		窥	窺	kuī					peep, watch, spy on, pry	chinese_only
@@ -1392,10 +1419,10 @@ Character Sino-Japanese	適	适	適	shì,kuò	ゆく,かなう,まさに,たま�
 Character Sino-Japanese		啦	啦	la		ラフ,ロウ			final particle of assertion	chinese_only HSK::6
 Character Sino-Japanese		腊	臘	là	ほじし,きびしい,はなはだしい,ひもの	セキ,シャク,ロウ,ラク			year-end sacrifice; dried meat	chinese_only
 Character Sino-Japanese		蜡	蠟	là	うじむし	ショ,ワ,ジャ,セキ,シャク,サ,タ,ダ			wax; candle; waxy, glazed; maggot; (same as 䄍) meaning imperial harvest	chinese_only HSK::6
-Character Sino-Japanese		辣	辣	là	からい,きびしい,むごい	ラツ			peppery, pungent, hot; cruel	chinese_only HSK::6::5::4
+Character Sino-Japanese	辣	辣	辣	là	からい,きびしい,むごい	ラツ			peppery, pungent, hot; cruel	HSK::6::5::4
 Character Sino-Japanese		喇	喇	lǎ	ものいう	ラツ,ラ,ラチ			horn, bugle; lama; final particle	chinese_only HSK::6
 Character Sino-Japanese		垃	垃	lā		ラツ,ラ			garbage, refuse, waste	chinese_only HSK::6::5::4
-Character Sino-Japanese		拉	拉	lā	くだく,ひしぐ	ラツ,ロウ,ラ			pull, drag; seize, hold; lengthen	chinese_only HSK::6::5::4
+Character Sino-Japanese	拉	拉	拉	lā	くだく,ひしぐ	ラツ,ロウ,ラ			pull, drag; seize, hold; lengthen	HSK::6::5::4
 Character Sino-Japanese	来	来	來	lái	くる,きたる,きたす	ライ			come, coming; return, returning	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2::1
 Character Sino-Japanese		莱	萊	lái	あかざ,あわち,こうがい	ライ,リ			goosefoot, weed; fallow field	chinese_only
 Character Sino-Japanese	瀬			lài	せ	ライ			swift current; rapids	japanese_only JLPT::n1
@@ -1454,8 +1481,10 @@ Character Sino-Japanese	励	励	勵	lì	はげむ,はげます	レイ			strive; 
 Character Sino-Japanese	歴	历	歷	lì	へる	レキ,リャク			take place, past, history	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese		厉	厲	lì	はげしい	レイ			whetstone; grind, sharpen; whet	chinese_only HSK::6::5::4
 Character Sino-Japanese	吏	吏	吏	lì	つかさ	リ			government official, magistrate	JLPT::n1
+Character Sino-Japanese	慄	栗	慄	lì	おそれる,おののく	リツ,リチ			shiver, shudder, tremble; tremble	
 Character Sino-Japanese	栗	栗	慄	lì	くり,おののく	リツ,リチ,レツ,レチ			chestnut tree, chestnuts; surname	JLPT::n1
 Character Sino-Japanese	暦			lì	こよみ	レキ,リャク			calendar, era	japanese_only JLPT::n1
+Character Sino-Japanese	栃			lì	とち				type of oak; stable	japanese_only
 Character Sino-Japanese	痢	痢	痢	lì	はらくだり	リ			dysentery	chinese_rare JLPT::n1
 Character Sino-Japanese	立	立	立	lì	たつ,たてる,たちどころ	リツ,リュウ,イ,リットル			stand; let stand; establish, set	radical JLPT::n1::n2::n3::n4 HSK::6::5
 Character Sino-Japanese	粒	粒	粒	lì	つぶ	リュウ			grain; small particle	JLPT::n1::n2 HSK::6
@@ -1552,7 +1581,7 @@ Character Sino-Japanese		咙	嚨	lóng					throat	chinese_only HSK::6
 Character Sino-Japanese		胧	朧	lóng					condition or appearance of moon	chinese_only
 Character Sino-Japanese	滝			lóng	たき	ソウ,ロウ,リョウ			onomatopoeic for the sound of falling rain; an ancient name for Wu Shui; a place in Guangdong	japanese_only JLPT::n1
 Character Sino-Japanese	竜	龙	龍	lóng	たつ	リュウ,リョウ,ロウ,ボウ			dragon; symbolic of emperor	radical JLPT::n1 HSK::6::5
-Character Sino-Japanese		笼	籠	lóng					cage; cage-like basket	chinese_only HSK::6
+Character Sino-Japanese	籠	笼	籠	lóng	かご,こめる,こもる	ロウ,ル,リョウ,リュ			cage; cage-like basket	HSK::6
 Character Sino-Japanese		聋	聾	lóng					deaf	chinese_only HSK::6
 Character Sino-Japanese	隆	隆	隆	lóng	なかだか,たかい	リュウ			prosperous, plentiful, abundant	JLPT::n1 HSK::6
 Character Sino-Japanese		垄	壟	lǒng					grave, mound; ridge in field	chinese_only HSK::6
@@ -1570,11 +1599,12 @@ Character Sino-Japanese	録	录	錄	lù	しるす,さかん	ロク,リョ,リョ
 Character Sino-Japanese		碌	碌	lù		ロク,ラク,リョク			rough, uneven, rocky; mediocre	chinese_only HSK::6
 Character Sino-Japanese	禄	禄	祿	lù	ふち,さいわい	ロク,リョク			blessing, happiness, prosperity	JLPT::n1
 Character Sino-Japanese	蕗	蕗	蕗	lù	ふき	ロ			genus Leucaena; butterbur; Petasites japonicus	chinese_rare JLPT::n1
-Character Sino-Japanese		赂	賂	lù					bribe; give present	chinese_only HSK::6
+Character Sino-Japanese	賂	赂	賂	lù	まいなう,まいない	ロ,ル			bribe; give present	HSK::6
 Character Sino-Japanese	路	路	路	lù	じ,みち	ロ,ラク			road, path, street; journey	JLPT::n1::n2 HSK::6::5::4::3::2
 Character Sino-Japanese	陸	陆	陸	lù	おか,くが	リク,ロク			land, continental; army	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	露	露	露	lù	つゆ,あらわれる,あらわ	ロ,ロウ			dew; bare, open, exposed	JLPT::n1 HSK::6
 Character Sino-Japanese	鹿	鹿	鹿	lù	しか,か,しし	ロク			deer; surname; Kangxi radical 198	radical JLPT::n1
+Character Sino-Japanese	麓	麓	麓	lù	ふもと	ロク			foothill	chinese_rare
 Character Sino-Japanese	虜	虏	虜	lǔ	とりこ	リョ			to capture, imprison, seize; a prison	JLPT::n1 HSK::6
 Character Sino-Japanese		鲁	魯	lǔ					foolish, stupid, rash; vulgar	chinese_only HSK::6
 Character Sino-Japanese		驴	驢	lǘ					donkey, ass	chinese_only
@@ -1583,7 +1613,7 @@ Character Sino-Japanese	慮	虑	慮	lǜ	おもんぱか,おもんぱかる	リ�
 Character Sino-Japanese		滤	濾	lǜ					strain out, filter	chinese_only HSK::6
 Character Sino-Japanese	率	率	率	lǜ	ひきいる,おおむね,わりあい,したがう	リツ,ソツ,スイ,ルイ,セツ,シュツ			to lead; ratio; rate; limit	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	緑	绿	綠	lǜ	みどり	リョク,ロク,リク			green; chlorine	JLPT::n1::n2 HSK::6::5::4::3
-Character Sino-Japanese		侣	侶	lǚ	とも	リョ,ロ			companion; associate with	chinese_only HSK::6
+Character Sino-Japanese	侶	侣	侶	lǚ	とも	リョ,ロ			companion; associate with	HSK::6
 Character Sino-Japanese	呂	吕	呂	lǚ	せぼね	リョ,ロ			surname; a musical note	JLPT::n1
 Character Sino-Japanese		屡	屢	lǚ	しばしば	ル			frequently, often, again and again	chinese_only HSK::6
 Character Sino-Japanese	履	履	履	lǚ	はく,くつ,ふむ	リ			footwear, shoes; walk on, tread; hexagram ䷉	JLPT::n1 HSK::6
@@ -1611,7 +1641,7 @@ Character Sino-Japanese	裸	裸	裸	luǒ	はだか	ラ			bare, nude; undress, st
 Character Sino-Japanese		吗	嗎	ma					final interrogative particle	chinese_only HSK::6::5::4::3::2::1
 Character Sino-Japanese		嘛	嘛	ma		マ			final exclamatory particle	chinese_only HSK::6
 Character Sino-Japanese	麻	麻	麻	má	あさ	マ,バ			hemp, jute, flax; sesame; Kangxi radical 200	radical JLPT::n1 HSK::6::5::4
-Character Sino-Japanese		骂	罵	mà					accuse, blame, curse, scold	chinese_only HSK::6::5
+Character Sino-Japanese	罵	骂	罵	mà	ののしる	バ,メ			accuse, blame, curse, scold	HSK::6::5
 Character Sino-Japanese		玛	瑪	mǎ					agate; cornelian	chinese_only
 Character Sino-Japanese		码	碼	mǎ					number, numerals; yard; symbol	chinese_only HSK::6::5::4
 Character Sino-Japanese		蚂	螞	mǎ					ant; leech	chinese_only HSK::6
@@ -1644,7 +1674,7 @@ Character Sino-Japanese		髦	髦	máo	たれがみ	ボウ,モウ,ム,ミョウ		
 Character Sino-Japanese	冒	冒	冒	mào	おかす,おおう	ボウ,モウ,ボク,モク,バイ,マイ			risk, brave, dare	JLPT::n1 HSK::6::5::4::3
 Character Sino-Japanese	帽	帽	帽	mào	ぼうし	ボウ,モウ			hat, cap; cap-like tops	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	茂	茂	茂	mào	しげる	モ,ボウ			thick, lush, dense; talented	JLPT::n1 HSK::6
-Character Sino-Japanese		貌	貌	mào	かたち,かたどる,かお	ボウ,バク,ミョウ,マク			countenance, appearance	chinese_only HSK::6::5::4
+Character Sino-Japanese	貌	貌	貌	mào	かたち,かたどる,かお	ボウ,バク,ミョウ,マク			countenance, appearance	HSK::6::5::4
 Character Sino-Japanese	貿	贸	貿	mào	かえる,あきなう	ボウ,モ,ム			trade, barter; mixed; rashly	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	卯	卯	卯	mǎo	う	ボウ,ミョウ			fourth earthly branch	chinese_rare JLPT::n1
 Character Sino-Japanese	昴	昴	昴	mǎo	すばる	ボウ,ミョウ,ル,リュウ			18th lunar mansion, determinative star 17 Tauri (Electra)	chinese_rare JLPT::n1
@@ -1660,7 +1690,7 @@ Character Sino-Japanese	眉	眉	眉	méi	まゆ	ビ,ミ			eyebrows; upper margin
 Character Sino-Japanese		霉	黴	méi	つゆ,しめり,しみ	バイ,メ			mildew, mold; moldy, mildewed	chinese_only HSK::6::5
 Character Sino-Japanese	妹	妹	妹	mèi	いもうと,いも	マイ,バイ,メ			younger sister	JLPT::n1::n2::n3 HSK::6::5::4::3::2
 Character Sino-Japanese		媚	媚	mèi	こびる	ビ,ミ			charming, attractive; flatter	chinese_only
-Character Sino-Japanese		昧	昧	mèi	くらい	マイ,メ,バイ,ブン,モン			obscure, dark; darken	chinese_only HSK::6
+Character Sino-Japanese	昧	昧	昧	mèi	くらい	マイ,メ,バイ,ブン,モン			obscure, dark; darken	HSK::6
 Character Sino-Japanese	魅	魅	魅	mèi	もののけ,ばけもの,すだま	ミ,ビ			kind of forest demon, elf	JLPT::n1 HSK::6::5
 Character Sino-Japanese	毎	每	每	měi	つね,ごと,ごとに,つねに	マイ,バイ			every	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2
 Character Sino-Japanese	美	美	美	měi	うつくしい,よい,ほめる	ビ,ミ			beautiful, pretty; pleasing	JLPT::n1::n2 HSK::6::5::4
@@ -1675,13 +1705,13 @@ Character Sino-Japanese	夢	梦	夢	mèng	ゆめ,くらい,ゆめみる	ム,ボ�
 Character Sino-Japanese	孟	孟	孟	mèng	かしら,はじめ	モウ,ミョウ,マン,ボウ,ショウ,バン			first in series; great, eminent	JLPT::n1
 Character Sino-Japanese	猛	猛	猛	měng	たけし	モウ,ボウ,ミョウ			violent, savage, cruel; bold	JLPT::n1 HSK::6
 Character Sino-Japanese	弥	弥	彌	mí	ひさしい,とおい,や,いや,いよいよ,あまねし,わたる	ミ,ビ,ゲイ			extensive, full; fill; complete	JLPT::n1 HSK::6
-Character Sino-Japanese		谜	謎	mí					riddle, conundrum; puzzle	chinese_only HSK::6
+Character Sino-Japanese	謎	谜	謎	mí	なぞ	メイ,ベイ,マイ			riddle, conundrum; puzzle	HSK::6
 Character Sino-Japanese	迷	迷	迷	mí	まよう,まどう,まよい	メイ,ベイ,ビ			bewitch, charm, infatuate	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	密	密	密	mì	しげし,ひそか,ひそかに	ミツ,ビツ,ミチ			dense, thick, close; intimate	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	泌	泌	泌	mì	ながれる,にじむ	ヒツ,ヒ,ビチ			to seep out, excrete	JLPT::n1 HSK::6
 Character Sino-Japanese	秘	秘	秘	mì	ひめる,かくす,ひそか	ヒ,ベチ,ベツ			secret, mysterious, abstruse	JLPT::n1 HSK::6::5
 Character Sino-Japanese	糸			mì	いと	シ,ベキ,ミャク			silk; Kangxi radical 120	radical japanese_only JLPT::n1::n2
-Character Sino-Japanese		蜜	蜜	mì	みつ,はちみつ	ミツ,ビツ,ミチ			honey; sweet; nectar	chinese_only HSK::6::5
+Character Sino-Japanese	蜜	蜜	蜜	mì	みつ,はちみつ	ミツ,ビツ,ミチ			honey; sweet; nectar	HSK::6::5
 Character Sino-Japanese		觅	覓	mì					seek; search	chinese_only HSK::6
 Character Sino-Japanese	米	米	米	mǐ	こめ,よね,めえとる	ベイ,マイ,メ,メートル			hulled or husked uncooked rice	radical JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese		眯	眯	mī	くるむ	ベイ,マイ,ビ,ミ			be blinded	chinese_only HSK::6
@@ -1689,6 +1719,7 @@ Character Sino-Japanese		棉	棉	mián	わた	メン,ベン			cotton; cotton pad
 Character Sino-Japanese	眠	眠	眠	mián	ねむる,ねむり,ねむい	ミン,ベン,メン,ビン			close eyes, sleep; hibernate	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	綿	绵	綿	mián	わた,つらなる	メン,ベン,ベツ			cotton wad; wool; soft, downy	JLPT::n1::n2
 Character Sino-Japanese	面	面	面	miàn	おも,おもて,つら	メン,ベン			face; surface; plane; side, dimension; Kangxi radical 176	radical JLPT::n1::n2 HSK::6::5::4::3::2::1
+Character Sino-Japanese	麺			miàn	むぎこ,めん	メン,ベン			flour, dough, noodles	japanese_only
 Character Sino-Japanese	免	免	免	miǎn	まぬかれる,ゆるす	メン,ベン,フ,バン,マン,ブン,モン			spare; excuse from; evade	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	勉	勉	勉	miǎn	つとめる,はげます	ベン,メン			endeavor, make effort; urge	JLPT::n1::n2::n3 HSK::6
 Character Sino-Japanese		缅	緬	miǎn					distant, remote; think of	chinese_only
@@ -1701,12 +1732,12 @@ Character Sino-Japanese		渺	渺	miǎo	ひろい,はるか	ビョウ,ミョウ		
 Character Sino-Japanese	秒	秒	秒	miǎo	のぎ	ビョウ,ミョウ			beard of grain or corn; a second	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese		藐	藐	miǎo	はるか,すすむ,むらさき,かろんじる,とおい	バク,ビョウ,ボウ,ミャク,マク,ミョウ			disregard, slight, disdain	chinese_only HSK::6
 Character Sino-Japanese	滅	灭	滅	miè	ほろびる,ほろぼす	メツ,ベツ,メチ			extinguish; wipe out, exterminate	JLPT::n1 HSK::6
-Character Sino-Japanese		蔑	蔑	miè	さげすむ,ないがしろ,ない	ベツ,メチ,ベイ,メイ			disdain, disregard; slight	chinese_only HSK::6
+Character Sino-Japanese	蔑	蔑	蔑	miè	さげすむ,ないがしろ,ない	ベツ,メチ,ベイ,メイ			disdain, disregard; slight	HSK::6
 Character Sino-Japanese	民	民	民	mín	たみ	ミン,ビン			people, subjects, citizens	JLPT::n1::n2::n3 HSK::6::5::4
 Character Sino-Japanese		悯	憫	mǐn					pity, sympathize with, grieve for	chinese_only
 Character Sino-Japanese	敏	敏	敏	mǐn	とし,さとい	ビン,ミン,ビ			fast, quick, clever, smart	JLPT::n1 HSK::6::5
 Character Sino-Japanese	皿	皿	皿	mǐn	さら	バイ,ミョウ,ベイ,ボウ			shallow container; rad. no. 108	radical chinese_rare JLPT::n1::n2
-Character Sino-Japanese		冥	冥	míng	くらい	メイ,ミョウ,ベキ,ベン,メン			dark, gloomy, night; deep	chinese_only
+Character Sino-Japanese	冥	冥	冥	míng	くらい	メイ,ミョウ,ベキ,ベン,メン			dark, gloomy, night; deep	
 Character Sino-Japanese	名	名	名	míng	な,なのる,なずける,なづける	メイ,ミョウ,ベイ			name, rank, title, position	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2::1
 Character Sino-Japanese	明	明	明	míng	あかるい,あきらか,あける,あかり,あかるむ,あからむ,あく,あくる,あかす,ひかり	メイ,ミョウ,ミン,ベイ,ボウ			bright, light, brilliant; clear	JLPT::n1::n2::n3 HSK::6::5::4::3::2::1
 Character Sino-Japanese	銘	铭	銘	míng	しるす	メイ,ミョウ,ベイ			inscribe, engrave; unforgettably	JLPT::n1 HSK::6
@@ -1778,6 +1809,7 @@ Character Sino-Japanese	能	能	能	néng	あたう,よくする,たえる,は�
 Character Sino-Japanese	尼	尼	尼	ní	あま	ニ,ジツ,ジ,デイ,ニチ,ナイ,イ			Buddhist nun; transliteration	JLPT::n1
 Character Sino-Japanese	泥	泥	泥	ní	どろ,なずむ,ひじ	デイ,ナイ,ニョウ,デツ,ネチ			mud, mire; earth, clay; plaster	JLPT::n1::n2 HSK::6
 Character Sino-Japanese	匿	匿	匿	nì	かくれる,かくす	トク,ジョク,ジ			hide; go into hiding	JLPT::n1
+Character Sino-Japanese	溺	溺	溺	nì	おぼれる,いばり	デキ,ジョウ,ニョウ,ジャク,ダク,ニョク,ニャク			drown; submerge in water; indulge	chinese_rare
 Character Sino-Japanese		腻	膩	nì					greasy, oily, dirty; smooth	chinese_only HSK::6
 Character Sino-Japanese	逆	逆	逆	nì	さからう,むかえる,あらかじめ,さか	ギャク,ゲキ			disobey, rebel; rebel, traitor	JLPT::n1::n2 HSK::6
 Character Sino-Japanese		你	你	nǐ	なんじ	ジ,ニ			you, second person pronoun	chinese_only HSK::6::5::4::3::2::1
@@ -1786,6 +1818,7 @@ Character Sino-Japanese		妮	妮	nī	はしため,やはらかくまつはる	�
 Character Sino-Japanese	年	年	年	nián	とし,みのる,よわい,みのり	ネン,デン,デイ,ニョウ			year; new-years; person's age	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2::1
 Character Sino-Japanese	鮎	鲇	鮎	nián	あゆ,なまず	ネン,デン			sheatfish, Parasilurus asotus	chinese_rare JLPT::n1
 Character Sino-Japanese	念	念	念	niàn	おもう,ねんじる,よむ	ネン,デン			think of, recall, study	JLPT::n1::n2 HSK::6::5
+Character Sino-Japanese	捻	捻	捻	niǎn	ひねる,つまむ,よる	ネン,ジョウ,ニョウ,デツ,ネチ,デン			to twist or nip with the fingers	chinese_rare
 Character Sino-Japanese	娘	娘	娘	niáng	むすめ	ジョウ,ニョウ			mother; young girl; woman; wife	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	嬢			niáng	むすめ	ジョウ,ドウ			troubled, oppressed; fat; mother	japanese_only JLPT::n1
 Character Sino-Japanese	醸	酿	釀	niàng	かもす	ジョウ			brew, ferment	JLPT::n1 HSK::6
@@ -1806,7 +1839,7 @@ Character Sino-Japanese		纽	紐	niǔ					knot; button; handle, knob; tie	chines
 Character Sino-Japanese		钮	鈕	niǔ					button, knob; surname	chinese_only
 Character Sino-Japanese	農	农	農	nóng	くさぎる,たがやす	ノウ,ドウ,ヌ			agriculture, farming; farmer	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	濃	浓	濃	nóng	こい,こまやか	ノウ,ジョウ,ニュ,ヌ,ドウ			thick, strong, concentrated	JLPT::n1::n2 HSK::6::5
-Character Sino-Japanese		弄	弄	nòng	もてあそぶ,たわむれる	ロウ,ル			do, play or fiddle with; alley	chinese_only HSK::6::5::4
+Character Sino-Japanese	弄	弄	弄	nòng	もてあそぶ,たわむれる	ロウ,ル			do, play or fiddle with; alley	HSK::6::5::4
 Character Sino-Japanese	奴	奴	奴	nú	やっこ,やつ,め	ド,ヌ			slave, servant	JLPT::n1 HSK::6
 Character Sino-Japanese	怒	怒	怒	nù	いかる,おこる,いかり	ド,ヌ			anger, rage, passion; angry	JLPT::n1::n2 HSK::6
 Character Sino-Japanese	努	努	努	nǔ	つとめる,ゆめ	ド,ヌ			to exert, strive, make an effort; to pout	JLPT::n1::n2 HSK::6::5::4::3
@@ -1930,6 +1963,7 @@ Character Sino-Japanese	譜	谱	譜	pǔ	しるす	フ,ホ			register, list, tabl
 Character Sino-Japanese	僕	仆	僕	pū	しもべ,やつがれ	ボク,ホク			slave, servant, I	JLPT::n1
 Character Sino-Japanese	撲	扑	撲	pū	うつ	ボク,ハク,ホク			pound, beat, strike; attack	JLPT::n1 HSK::6
 Character Sino-Japanese		其	其	qí	その,それ	キ,ギ			his, her, its, their; that	chinese_only HSK::6::5::4::3
+Character Sino-Japanese	埼	崎	崎	qí	さい,さき	キ,ギ,ゲ			headland	
 Character Sino-Japanese	奇	奇	奇	qí	くし,めずらしい,あやしい,くすし	キ,ギ,イ,アイ			strange, unusual, uncanny, occult	JLPT::n1 HSK::6::5::4::3
 Character Sino-Japanese	岐	岐	岐	qí	えだみち	キ,ギ,シ			high; majestic; fork in road	chinese_rare JLPT::n1
 Character Sino-Japanese	崎	崎	崎	qí	さき,けわしい,みさき	キ,イ,ゲ			rough, uneven, jagged, rugged	JLPT::n1
@@ -1949,16 +1983,16 @@ Character Sino-Japanese	気	气	氣	qì	いき,き	キ,ケ			air, gas, steam, va
 Character Sino-Japanese	汽	汽	汽	qì	ゆげ,みずけ	キ,イツ,カイ,ケ,キツ,コチ,オチ			steam, vapor, gas	JLPT::n1 HSK::6::5::4::3::2
 Character Sino-Japanese	泣	泣	泣	qì	なく,なき,なみだ	キュウ,コウ,リュウ,シュウ			cry, sob, weep	JLPT::n1::n2 HSK::6
 Character Sino-Japanese		迄	迄	qì	およぶ,まで,いたる	キツ,コチ			extend, reach; until; till	chinese_only HSK::6
-Character Sino-Japanese		乞	乞	qǐ	こう,こい	コツ,キ,キツ,コチ,ケ			beg; request	chinese_only HSK::6
+Character Sino-Japanese	乞	乞	乞	qǐ	こう,こい	コツ,キ,キツ,コチ,ケ			beg; request	HSK::6
 Character Sino-Japanese	企	企	企	qǐ	くわだてる,くわだて	キ			plan a project; stand on tiptoe	JLPT::n1 HSK::6::5
 Character Sino-Japanese	啓	启	啓	qǐ	ひらく,もうす	ケイ			open; begin, commence; explain	JLPT::n1 HSK::6::5
 Character Sino-Japanese		岂	豈	qǐ					how? what?	chinese_only HSK::6
 Character Sino-Japanese	綺	绮	綺	qǐ	あや,いろう	キ			fine thin silk; elegant, beautiful	chinese_rare JLPT::n1
 Character Sino-Japanese	起	起	起	qǐ	おきる,おこる,たつ,おこす	キ			rise, stand up; go up; begin	JLPT::n1::n2::n3 HSK::6::5::4::3::2::1
 Character Sino-Japanese	七	七	七	qī	ななつ,ななたび,なな,なの	シチ,シツ			seven	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2::1
-Character Sino-Japanese		凄	悽	qī	さむい,すさまじい,すごい	セイ,サイ			bitter cold, miserable, dreary	chinese_only HSK::6
+Character Sino-Japanese	凄	凄	悽	qī	さむい,すさまじい,すごい	セイ,サイ			bitter cold, miserable, dreary	HSK::6
 Character Sino-Japanese	妻	妻	妻	qī	つま,めあわせる	サイ,セイ,シ			wife	JLPT::n1::n2 HSK::6::5::4::3::2
-Character Sino-Japanese		戚	戚	qī	みうち,いたむ,うれえる	セキ,ソク,ショク,シュク			relative; be related to; sad	chinese_only HSK::6::5::4
+Character Sino-Japanese	戚	戚	戚	qī	みうち,いたむ,うれえる	セキ,ソク,ショク,シュク			relative; be related to; sad	HSK::6::5::4
 Character Sino-Japanese	期	期	期	qī	ちぎる	キ,ゴ,ギ			period of time; date; time limit	JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese		栖	棲	qī	すむ	セイ,サイ			perch; roost; stay	chinese_only
 Character Sino-Japanese	欺	欺	欺	qī	あざむく	ギ,キ			cheat, double-cross, deceive	JLPT::n1 HSK::6
@@ -2022,7 +2056,7 @@ Character Sino-Japanese		擎	擎	qíng	ささげる,たかい,もつ	ケイ,ギ�
 Character Sino-Japanese	晴	晴	晴	qíng	はれる,はれ,はらす	セイ			clear weather, fine weather	JLPT::n1::n2 HSK::6::5::4::3::2
 Character Sino-Japanese	慶	庆	慶	qìng	よい,よろこぶ	ケイ,キョウ			congratulate, celebrate	JLPT::n1 HSK::6::5
 Character Sino-Japanese	請	请	請	qǐng	こう,うける,こい	セイ,ショウ,シン,ジョウ			ask, request; invite; please	JLPT::n1 HSK::6::5::4::3::2::1
-Character Sino-Japanese		顷	頃	qǐng					a moment; a measure of area equal to 100 mu or 6.7 hectares; to lean	chinese_only
+Character Sino-Japanese	頃	顷	頃	qǐng	ころ,しばらく,このごろ	ケイ,キョウ,キ			a moment; a measure of area equal to 100 mu or 6.7 hectares; to lean	
 Character Sino-Japanese	傾	倾	傾	qīng	かたむく,かたむける,くつがえす	ケイ,キョウ			upset, pour out, overflow	JLPT::n1::n2 HSK::6
 Character Sino-Japanese		卿	卿	qīng	きみ,かみ	キョウ,ケイ			noble, high officer	chinese_only
 Character Sino-Japanese		氢	氫	qīng					ammonia; hydrogen nitride	chinese_only
@@ -2055,6 +2089,7 @@ Character Sino-Japanese	全	全	全	quán	まったく,まったい,まっとう
 Character Sino-Japanese	拳	拳	拳	quán	こぶし	ケン,ゲン,カン			fist; various forms of boxing	JLPT::n1 HSK::6::5
 Character Sino-Japanese	権	权	權	quán	おもり,はかる,かり,いきおい,はかり	ケン,ゴン			power, right, authority	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	泉	泉	泉	quán	いずみ,ぜに	セン,ゼン			spring, fountain; wealth, money	JLPT::n1::n2 HSK::6::5::4
+Character Sino-Japanese	詮	诠	詮	quán	のり	セン			explain, expound, comment on	chinese_rare
 Character Sino-Japanese	券	券	券	quàn	わりふ,てがた	ケン			certificate, ticket; title deeds	JLPT::n1::n2 HSK::6
 Character Sino-Japanese	勧	劝	勸	quàn	すすめる	カン,ケン			recommend, advise, urge	JLPT::n1 HSK::6::5
 Character Sino-Japanese	犬	犬	犬	quǎn	いぬ	ケン			dog; radical number 94	radical JLPT::n1::n2::n3 HSK::6
@@ -2119,7 +2154,7 @@ Character Sino-Japanese	颯	飒	颯	sà	ひしぐ,はやて,みだれる	サツ,
 Character Sino-Japanese		洒	灑	sǎ	あらう	セイ,セン,シャ,サイ,シ,ソン,セ,サ			sprinkle; scatter; pour; to wipe away; to shiver	chinese_only HSK::6::5
 Character Sino-Japanese		撒	撒	sā	まく	サン,サツ			release, cast away, let go; disperse; relax	chinese_only HSK::6
 Character Sino-Japanese		赛	賽	sài					compete, contend; contest, race	chinese_only HSK::6::5::4::3
-Character Sino-Japanese		塞	塞	sāi	ふさぐ,みちる,とりで	ソク,サイ			stop up, block, seal, cork; pass, frontier; fortress	chinese_only HSK::6
+Character Sino-Japanese	塞	塞	塞	sāi	ふさぐ,みちる,とりで	ソク,サイ			stop up, block, seal, cork; pass, frontier; fortress	HSK::6
 Character Sino-Japanese	散	散	散	sàn	ちる,ちらす,ちらかす,ちらかる	サン			scatter, disperse, break up	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	傘	伞	傘	sǎn	かさ	サン			umbrella, parasol, parachute	JLPT::n1 HSK::6::5::4::3
 Character Sino-Japanese	三	三	三	sān	みつ,みたび,み,みっつ	サン,シン			three	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2::1
@@ -2138,7 +2173,7 @@ Character Sino-Japanese	僧	僧	僧	sēng	ぼうず	ソウ,ショウ			Buddhist 
 Character Sino-Japanese		啥	啥	shá	なに,なんぞ	シャ			what?	chinese_only HSK::6
 Character Sino-Japanese		厦	廈	shà	いえ	カ,サ,シャ			big building, mansion	chinese_only HSK::6::5
 Character Sino-Japanese		傻	傻	shǎ		サ,セ			foolish, silly, stupid; an imbecile	chinese_only HSK::6::5
-Character Sino-Japanese		刹	剎	shā	はたばしら,てら,くに	サツ,セチ,セツ			temple, shrine, monastery	chinese_only HSK::6
+Character Sino-Japanese	刹	刹	剎	shā	はたばしら,てら,くに	サツ,セチ,セツ			temple, shrine, monastery	HSK::6
 Character Sino-Japanese	殺	杀	殺	shā	ころす,そぐ,けずる,へらす	サツ,セツ,サイ,セイ,シ			kill, slaughter, murder; hurt; to pare off, reduce, clip	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	沙	沙	沙	shā	すな,よなげる	サ,シャ,シ			sand, gravel, pebbles; granulated	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese		煞	煞	shā	ころす	サツ,サイ,セツ,セチ			malignant deity; baleful, noxious; strike dead	chinese_only
@@ -2152,6 +2187,7 @@ Character Sino-Japanese	善	善	善	shàn	よい,よくする,よしとする	�
 Character Sino-Japanese	扇	扇	扇	shàn	おうぎ,あおぐ	セン			fan; door panel	JLPT::n1 HSK::6::5
 Character Sino-Japanese		擅	擅	shàn	ほしいまま	セン,ゼン			monopolize; claim; arbitrarily; to dare	chinese_only HSK::6
 Character Sino-Japanese	繕	缮	繕	shàn	つくろう	ゼン,セン			repair, mend; rewrite, transcribe	chinese_rare JLPT::n1
+Character Sino-Japanese	膳	膳	膳	shàn	すすめる,そなえる	セン,ゼン			meals, provisions, board	chinese_rare
 Character Sino-Japanese		闪	閃	shǎn					flash; avoid, dodge, evade	chinese_only HSK::6::5
 Character Sino-Japanese		陕	陝	shǎn		セン			mountain pass; Shanxi province	chinese_only
 Character Sino-Japanese		删	刪	shān	けずる	サン			to cut; delete	chinese_only HSK::6::5
@@ -2188,13 +2224,13 @@ Character Sino-Japanese	赦	赦	赦	shè	ゆるす	シャ,サク,シャク			for
 Character Sino-Japanese	捨			shě	すてる	シャ			discard, give up willingly; give alms	japanese_only JLPT::n1::n2
 Character Sino-Japanese		奢	奢	shē	おごる	シャ			extravagant, wasteful; exaggerate	chinese_only HSK::6
 Character Sino-Japanese		舍	舍	shě,shè	やどる	シャ,セキ,シャク			house, dwelling; dwell, reside	chinese_only HSK::6::5
-Character Sino-Japanese		谁	誰	shéi					who? whom? whose? anyone?	chinese_only HSK::6::5::4::3::2::1
+Character Sino-Japanese	誰	谁	誰	shéi	だれ,たれ	スイ,ズイ			who? whom? whose? anyone?	HSK::6::5::4::3::2::1
 Character Sino-Japanese		什	什	shén	くみ,とう,まじる	シュウ,ジュウ			file of ten soldiers; mixed, miscellaneous	chinese_only HSK::6::5::4::3::2::1
 Character Sino-Japanese	神	神	神	shén	かみ,こう,たましい,かん	シン,ジン			spirit, god, supernatural being	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	慎	慎	慎	shèn	つつしむ,つつしみ	シン			act with care, be cautious	JLPT::n1 HSK::6::5
 Character Sino-Japanese		渗	滲	shèn	しみる,にじむ	シン,ソン			soak through, infiltrate	chinese_only HSK::6
 Character Sino-Japanese	甚	甚	甚	shèn	はなはだ,なに,はなはだしい	シン,ジン,ソ			great extent; considerably	JLPT::n1 HSK::6::5::4
-Character Sino-Japanese		肾	腎	shèn					kidneys; testes, gizzard	chinese_only
+Character Sino-Japanese	腎	肾	腎	shèn	かなめ	ジン,シン			kidneys; testes, gizzard	
 Character Sino-Japanese		婶	嬸	shěn					wife of father's younger brother	chinese_only
 Character Sino-Japanese	審	审	審	shěn	つまびらか	シン,ハン			examine, investigate; judge	JLPT::n1 HSK::6
 Character Sino-Japanese	伸	伸	伸	shēn	のびる,のばす	シン,チン			extend, stretch out, open up; trust	JLPT::n1::n2 HSK::6::5
@@ -2235,8 +2271,9 @@ Character Sino-Japanese	士	士	士	shì	さむらい	シ,ジ			scholar, gentlem
 Character Sino-Japanese	室	室	室	shì	むろ,へや	シツ,シチ,シ			room, home, house, chamber; 13th lunar mansion, determinative star α Pegasi (Markab)	JLPT::n1::n2::n3 HSK::6::5::4::3::2
 Character Sino-Japanese	市	市	市	shì	いち	シ,ジ			market, fair; city, town; trade	JLPT::n1::n2::n3 HSK::6::5::4::3
 Character Sino-Japanese	式	式	式	shì	のり,のっとる	シキ,ショク,トク,チョク,チキ,シ			style, system, formula, rule	JLPT::n1::n2 HSK::6::5::4
+Character Sino-Japanese	拭	拭	拭	shì	ぬぐう,ふく,ぬぐい	シキ,ショク			wipe away stains with cloth	chinese_rare
 Character Sino-Japanese	是	是	是	shì	これ,この,ここ,ただしい	ゼ,シ,ジ,ダイ,テイ			indeed, yes, right; to be; demonstrative pronoun, this, that	JLPT::n1 HSK::6::5::4::3::2::1
-Character Sino-Japanese		柿	柿	shì	かき	シ			persimmon	chinese_only HSK::6::5::4
+Character Sino-Japanese	柿	柿	柿	shì	かき	シ			persimmon	HSK::6::5::4
 Character Sino-Japanese	氏	氏	氏	shì	うじ	シ,ジ,セイ,ショウ			clan, family; mister	radical JLPT::n1 HSK::6
 Character Sino-Japanese	示	示	示	shì	しめす,しめし	シ,ジ,キ,ギ			show, manifest; demonstrate; Kangxi radical 113	radical JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	視	视	視	shì	みる	シ,ジ			look at, inspect, observe, see	JLPT::n1 HSK::6::5::4::3::2::1
@@ -2265,7 +2302,7 @@ Character Sino-Japanese		售	售	shòu	うる	シュウ,ジュ,シュク,ジュ�
 Character Sino-Japanese	寿	寿	壽	shòu	ことぶき,ひさしい,ことほぐ,いのちながい,ことほぎ,ことぶく	ジュ,ジュウ,ス,シュウ			old age, long life; lifespan	JLPT::n1 HSK::6::5
 Character Sino-Japanese	授	授	授	shòu	さずける,さずかる	ジュ,シュウ			give to, transmit; confer	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	狩	狩	狩	shòu	かる,かり	シュ,シュウ			winter hunting; imperial tour	chinese_rare JLPT::n1
-Character Sino-Japanese		瘦	瘦	shòu	やせる	ソウ,シュウ,シュ			thin, emaciated, lean; meager	chinese_only HSK::6::5::4::3
+Character Sino-Japanese	痩	瘦	瘦	shòu	やせる	ソウ,シュウ,シュ			thin, emaciated, lean; meager	HSK::6::5::4::3
 Character Sino-Japanese	守	守	守	shǒu	まもる,もり,まもり,かみ,もる	シュ,ス,シュウ			defend, protect, guard, conserve	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	手	手	手	shǒu	て,てずから,た	シュ,シュウ			hand	radical JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2
 Character Sino-Japanese	首	首	首	shǒu	くび,こうべ,しるし,おさ,はじめ,はじめる,おびと	シュ,シュウ			head; first; leader, chief; a poem; Kangxi radical 185	radical JLPT::n1::n2::n3 HSK::6::5::4
@@ -2352,7 +2389,7 @@ Character Sino-Japanese		艘	艘	sōu	ふね	ソウ,ショウ,シュウ,シュ		
 Character Sino-Japanese	俗	俗	俗	sú	ならわし	ゾク,ショク			social customs; vulgar, unrefined	JLPT::n1 HSK::6::5
 Character Sino-Japanese	塑	塑	塑	sù	でく	ソ,ス			model in clay, sculpt; plastics	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	宿	宿	宿	sù	やどる,やど,やどす,やどり	シュク,シュウ			stop, rest, lodge, stay overnight; constellation	JLPT::n1::n2 HSK::6::5
-Character Sino-Japanese		溯	溯	sù	さかのぼる	ソ,サク			go upstream, go against current; formerly	chinese_only
+Character Sino-Japanese	遡	溯	溯	sù	さかのぼる	ソ			go upstream; trace source; formerly	
 Character Sino-Japanese	粛	肃	肅	sù	つつしむ	シュク			pay respects; reverently	JLPT::n1 HSK::6::5
 Character Sino-Japanese		粟	粟	sù	あわ,もみ	ゾク,ショク,ソク			unhusked millet; grain	chinese_only
 Character Sino-Japanese	素	素	素	sù	しろぎぬ,きじ,もと,もとより	ソ,ス			white (silk); plain; vegetarian; formerly; normally	JLPT::n1 HSK::6::5
@@ -2412,7 +2449,7 @@ Character Sino-Japanese		毯	毯	tǎn	けむしろ	タン,ダン			rug, carpet, 
 Character Sino-Japanese		摊	攤	tān					spread out, open; apportion	chinese_only HSK::6
 Character Sino-Japanese		滩	灘	tān					bank, a sandbar, shoal; rapids	chinese_only HSK::6::5
 Character Sino-Japanese		瘫	癱	tān					paralysis, palsy, numbness	chinese_only HSK::6
-Character Sino-Japanese		贪	貪	tān					be greedy, covet; covetous	chinese_only HSK::6
+Character Sino-Japanese	貪	贪	貪	tān	むさぼる	ドン,トン,タン			greedy, covet; covetous	HSK::6
 Character Sino-Japanese	唐	唐	唐	táng	から,もろこし	トウ			Tang dynasty; Chinese	JLPT::n1 HSK::6
 Character Sino-Japanese	堂	堂	堂	táng	たかどの,すまい	ドウ,トウ			hall; government office	JLPT::n1::n2::n3 HSK::6
 Character Sino-Japanese		塘	塘	táng	つつみ	トウ,ドウ			pond; tank; dike, embankment	chinese_only HSK::6::5
@@ -2456,7 +2493,7 @@ Character Sino-Japanese	体	体	體	tǐ	からだ	テイ,タイ,ホン,ボン			
 Character Sino-Japanese		剔	剔	tī	えぐる,そる,くじる	テキ,テイ,セキ			pick out; scrape off; scrape meat	chinese_only HSK::6
 Character Sino-Japanese		梯	梯	tī	はしご	テイ,タイ,ダイ			ladder, steps, stairs; lean	chinese_only HSK::6::5::4::3
 Character Sino-Japanese		踢	踢	tī	ける	テキ,チャク,シャク			kick	chinese_only HSK::6::5::4::3::2
-Character Sino-Japanese		填	填	tián	ふさぐ,うずめる,はめる	テン,チン,デン,ジン,シ			fill in, fill up; make good	chinese_only HSK::6::5::4
+Character Sino-Japanese	塡	填	填	tián	ふさぐ,うずめる,しずめる,つくす,みたす,やすらか,やむ,はめる	テン,チン,ジン			fill in, fill up; make good	HSK::6::5::4
 Character Sino-Japanese		甜	甜	tián	うまい,あまい	テン,デン			sweet, sweetness	chinese_only HSK::6::5::4::3
 Character Sino-Japanese	田	田	田	tián	た,かり	デン,テン,チン,ジン			field, arable land, cultivated	radical JLPT::n1::n2::n3 HSK::6
 Character Sino-Japanese	畑			tián	はた,はたけ				dry (as opposed to rice) field; used in Japanese names	japanese_only JLPT::n1::n2
@@ -2469,7 +2506,7 @@ Character Sino-Japanese	跳	跳	跳	tiào	はねる,とぶ,おどる	チョウ,�
 Character Sino-Japanese	挑	挑	挑	tiāo	かかげる,いどむ	チョウ,トウ,ジョウ			a load carried on the shoulders; to carry	JLPT::n1 HSK::6::5
 Character Sino-Japanese		铁	鐵	tiě					iron; strong, solid, firm	chinese_only HSK::6::5::4::3
 Character Sino-Japanese		帖	帖	tiē	かきもの	ジョウ,チョウ			invitation card; notice	chinese_only HSK::6
-Character Sino-Japanese		贴	貼	tiē					paste to, stick on; attached to	chinese_only HSK::6::5
+Character Sino-Japanese	貼	贴	貼	tiē	はる,つく,はり	テン,チョウ			paste to, stick on; attached to	HSK::6::5
 Character Sino-Japanese	亭	亭	亭	tíng	あずまや	テイ,チョウ,チン			pavilion; erect	JLPT::n1 HSK::6
 Character Sino-Japanese	停	停	停	tíng	とどまる,とどめる	テイ,チョウ,ジョウ			stop, suspend, delay; suitable	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	庭	庭	庭	tíng	にわ	テイ			courtyard; spacious hall or yard	JLPT::n1::n2 HSK::6::5
@@ -2517,7 +2554,7 @@ Character Sino-Japanese		吞	吞	tūn	のむ	ドン,トン,テン			swallow; abs
 Character Sino-Japanese		陀	陀	tuó	けわしい	ダ,タ,チ,ジ			steep bank, rough terrain	chinese_only
 Character Sino-Japanese	駄			tuó	のせる	タ,ダ,タイ,ダイ			a horse load; a pack-horse	japanese_only JLPT::n1
 Character Sino-Japanese		驼	駝	tuó					a camel; humpbacked; to carry on the back	chinese_only
-Character Sino-Japanese		唾	唾	tuò	つば	ダ,タ			spit, spit on; saliva	chinese_only HSK::6
+Character Sino-Japanese	唾	唾	唾	tuò	つば	ダ,タ			spit, spit on; saliva	HSK::6
 Character Sino-Japanese	妥	妥	妥	tuǒ	やすい,おだやか	ダ,タ			satisfactory, appropriate	JLPT::n1 HSK::6
 Character Sino-Japanese		椭	橢	tuǒ					oval-shaped, elliptical, tubular	chinese_only HSK::6
 Character Sino-Japanese	託	托	託	tuō	よる,かこつける,かこつ	タク,タ			entrust, rely on; commission	JLPT::n1 HSK::6::5
@@ -2526,18 +2563,18 @@ Character Sino-Japanese	脱	脱	脱	tuō	ぬぐ,ぬける,ぬげる,もし	ダ�
 Character Sino-Japanese		哇	哇	wa	よこしま,はく,むせぶ	アイ,エ,ワ,カイ,ケ,ケイ,ア			vomit; cry of an infant	chinese_only HSK::6
 Character Sino-Japanese		娃	娃	wá	うつくしい	ア,アイ,エ,ワ			baby; doll; pretty girl	chinese_only HSK::6
 Character Sino-Japanese		袜	襪	wà	たび	バツ,マチ			socks, stockings	chinese_only HSK::6::5::4
-Character Sino-Japanese		瓦	瓦	wǎ	かわら,ぐらむ	ガ,ギ,ゲ,グラム			tile; earthenware pottery; girl	radical chinese_only HSK::6
+Character Sino-Japanese	瓦	瓦	瓦	wǎ	かわら,ぐらむ	ガ,ギ,ゲ,グラム			tile; earthenware pottery; girl	radical HSK::6
 Character Sino-Japanese		挖	挖	wā	あばく,おさえる	アツ,アチ,ヤク			dig, dig out, gouge out, scoop	chinese_only HSK::6
 Character Sino-Japanese		蛙	蛙	wā	かえる	ア,ワ,ワイ,カイ,カ,ケ,エ			frog	chinese_only
 Character Sino-Japanese	外	外	外	wài	そと,ほか,はずす,はずれる	ガイ,ゲ,ウイ,ガツ,ガチ			out, outside, external; foreign	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2
 Character Sino-Japanese		歪	歪	wāi	ゆがむ,ひずみ,ひずむ	ワイ,エ			slant; inclined; askew, awry	chinese_only HSK::6::5
 Character Sino-Japanese	丸	丸	丸	wán	まるい,まるめる,たま,まる,まろ	ガン,カン			small round object; pellet, pill	JLPT::n1::n2 HSK::6
 Character Sino-Japanese	完	完	完	wán	まったい,まっとうする	カン,ガン,ゴツ,ゴチ			complete, finish, settle; whole	JLPT::n1::n2 HSK::6::5::4::3::2
-Character Sino-Japanese		玩	玩	wán	もてあそぶ	ガン			play with, joke, enjoy	chinese_only HSK::6::5::4::3::2
+Character Sino-Japanese	玩	玩	玩	wán	もてあそぶ	ガン			play with, joke, enjoy	HSK::6::5::4::3::2
 Character Sino-Japanese	頑	顽	頑	wán	かたくな	ガン,ゲン			obstinate, stubborn; recalcitrant	JLPT::n1 HSK::6
 Character Sino-Japanese	腕	腕	腕	wàn	うで,かいな	ワン			wrist	JLPT::n1::n2
 Character Sino-Japanese		婉	婉	wǎn	うつくしい,したがう	エン,ワン,オン			amiable, congenial; restrained	chinese_only
-Character Sino-Japanese		宛	宛	wǎn	あたかも,あて,ずつ,あてる,さながら	エン,ウツ,オン,ウチ			seem, as if, crooked	chinese_only
+Character Sino-Japanese	宛	宛	宛	wǎn	あたかも,あて,ずつ,あてる,さながら	エン,ウツ,オン,ウチ			seem, as if, crooked	
 Character Sino-Japanese		惋	惋	wǎn	なげく,うらむ	ワン,エン			regret, be sorry; alarmed	chinese_only HSK::6
 Character Sino-Japanese		挽	挽	wǎn	ひく	バン,マン,ベン,メン			pull; pull back, draw back	chinese_only HSK::6
 Character Sino-Japanese	晩	晚	晚	wǎn	くれ,おそい,おくれる,くれる	バン			night	JLPT::n1::n2 HSK::6::5::4::3::2
@@ -2568,7 +2605,7 @@ Character Sino-Japanese		喂	喂	wèi	なげく	キ,カイ,イ			interjection to
 Character Sino-Japanese	尉	尉	尉	wèi	おさえる,やすんじる,じょう	イ,ウツ,ウチ			officer, military rank	JLPT::n1
 Character Sino-Japanese	慰	慰	慰	wèi	なぐさめる,なぐさむ,なぐさみ	イ			comfort, console, calm	JLPT::n1 HSK::6::5
 Character Sino-Japanese	未	未	未	wèi	いまだ,ひつじ	ミ,ビ			not yet; eighth earthly branch	JLPT::n1::n2 HSK::6::5
-Character Sino-Japanese		畏	畏	wèi	おそれる,かしこし,かしこまる,かしこ,おそれ	イ,ワイ,エ			fear, dread, awe, reverence	chinese_only HSK::6
+Character Sino-Japanese	畏	畏	畏	wèi	おそれる,かしこし,かしこまる,かしこ,おそれ	イ,ワイ,エ			fear, dread, awe, reverence	HSK::6
 Character Sino-Japanese	胃	胃	胃	wèi	いぶくろ,いのふ,い	イ			stomach; gizzard of fowl; 17th lunar mansion, determinative star 35 Arietis	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese		蔚	蔚	wèi	おとこよもき,おとこよもぎ	ウツ,イ,ウチ			luxuriant, thick; ornamental	chinese_only HSK::6
 Character Sino-Japanese		谓	謂	wèi					say, tell; call, name; be called	chinese_only HSK::6::5
@@ -2581,7 +2618,7 @@ Character Sino-Japanese	緯	纬	緯	wěi	よこいと	イ			woof; parallels of l
 Character Sino-Japanese	危	危	危	wēi	あやうい,あぶない,あやぶむ	キ,ギ			dangerous, precarious; high; 12th lunar mansion, determinative star α Aquarii (Sadalmelik)	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	威	威	威	wēi	おどす,たけし	イ			pomp, power; powerful; dominate	JLPT::n1 HSK::6::5
 Character Sino-Japanese	微	微	微	wēi	かすか,ない,ひそかに	ビ			small, prefix micro-, trifling	JLPT::n1 HSK::6::5::4
-Character Sino-Japanese		萎	萎	wěi,wēi	なえる,しぼむ	イ,ワイ,エ,ズイ,ニ			wither, wilt	chinese_only HSK::6
+Character Sino-Japanese	萎	萎	萎	wěi,wēi	なえる,しぼむ	イ,ワイ,エ,ズイ,ニ			wither, wilt	HSK::6
 Character Sino-Japanese	匁			wén	もんめ				Japanese unit of weight (1/1000 of a kan)	japanese_only JLPT::n1
 Character Sino-Japanese	文	文	文	wén	ふみ,あや,かざる	ブン,モン,ビン,ミン			literature, culture, writing	radical JLPT::n1::n2::n3 HSK::6::5::4::3
 Character Sino-Japanese	紋	纹	紋	wén	あや,もよう,もん	モン,ブン			line, streak, stripe; wrinkle	JLPT::n1 HSK::6
@@ -2590,15 +2627,14 @@ Character Sino-Japanese	蚊	蚊	蚊	wén	か	ブン,モン			mosquito; gnat	JLPT
 Character Sino-Japanese		雯	雯	wén		ブン,モン			cloud patterns, coloring of cloud	chinese_only
 Character Sino-Japanese	問	问	問	wèn	とう,とん,とい	モン,ブン			ask (about), inquire after	JLPT::n1::n2::n3 HSK::6::5::4::3::2
 Character Sino-Japanese		吻	吻	wěn	くちさき,くちびる	フン,ブン,モン			kiss; the lips; coinciding	chinese_only HSK::6::5
-Character Sino-Japanese		稳	穩	wěn	おだやか	オン			stable, firm, solid, steady	chinese_only HSK::6::5
-Character Sino-Japanese	穏			wěn	おだやか	オン			calm, quiet, peace; moderation	japanese_only JLPT::n1
+Character Sino-Japanese	穏	稳	穩	wěn	おだやか	オン			calm, quiet, peace; moderation	JLPT::n1 HSK::6::5
 Character Sino-Japanese		紊	紊	wěn	みだれる	ビン,ブン,モン			confused, disorder	chinese_only HSK::6
 Character Sino-Japanese	温	温	温	wēn	あたたか,あたためる,あたたかい,あたたまる	オン,ウン			lukewarm	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese		嗡	嗡	wēng		ロウ,ラ,オウ,オ			sound of flying bees, airplanes	chinese_only
 Character Sino-Japanese	翁	翁	翁	wēng	おきな	オウ			old man; father, father-in-law	JLPT::n1
 Character Sino-Japanese		卧	卧	wò	ふす	ガ			lie down; crouch	chinese_only HSK::6::5
 Character Sino-Japanese	握	握	握	wò	にぎる,にぎり	アク,オク,オウ,オ			grasp, hold fast, take by hand	JLPT::n1 HSK::6::5
-Character Sino-Japanese		沃	沃	wò	そそぐ,こえる	ヨク,オク,オウ,ワク			water, irrigate; fertile, rich	chinese_only HSK::6
+Character Sino-Japanese	沃	沃	沃	wò	そそぐ,こえる	ヨク,オク,オウ,ワク			water, irrigate; fertile, rich	HSK::6
 Character Sino-Japanese	渥	渥	渥	wò	あつい,うるおう	アク,オ,オク,オウ			moisten, soak; great, deep; dye; to enrich	chinese_rare JLPT::n1
 Character Sino-Japanese	我	我	我	wǒ	われ,わ,わが	ガ			our, us, i, me, my, we	JLPT::n1 HSK::6::5::4::3::2::1
 Character Sino-Japanese	倭	倭	倭	wō	したがう,やまと	イ,ワ			dwarf; dwarfish, short	chinese_rare JLPT::n1
@@ -2638,7 +2674,7 @@ Character Sino-Japanese		戏	戲	xì					theatrical play, show	chinese_only HSK:
 Character Sino-Japanese	潟			xì	かた	セキ,サク,ジャク,テキ,シャク			land impregnated with salt from the tide	japanese_only JLPT::n1
 Character Sino-Japanese	系	系	系	xì	つなぐ,かける,すじ	ケイ,ゲイ			system; line, link, connection	JLPT::n1 HSK::6::5::4::3::2::1
 Character Sino-Japanese	細	细	細	xì	ほそい,こまかい,くわしい,ほそる,こまか,ほそめる	セイ,サイ			fine, tiny; slender, thin	JLPT::n1::n2 HSK::6::5::4
-Character Sino-Japanese		隙	隙	xì	すき,ひま	ゲキ,ケキ,キャク,コ,ク			crack, split, fissure; grudge	chinese_only HSK::6
+Character Sino-Japanese	隙	隙	隙	xì	すき,ひま	ゲキ,ケキ,キャク,コ,ク			crack, split, fissure; grudge	HSK::6
 Character Sino-Japanese	喜	喜	喜	xǐ	よろこぶ,よろこび	キ,シ			like, love, enjoy; joyful thing	JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese		徙	徙	xǐ	うつる,うつす	シ			move one's abode, shift, migrate	chinese_only HSK::6
 Character Sino-Japanese	洗	洗	洗	xǐ	あらう,あらい	セン,セイ,サイ			wash, rinse; clean, purify	JLPT::n1::n2::n3 HSK::6::5::4::3::2
@@ -2663,7 +2699,7 @@ Character Sino-Japanese		熄	熄	xī	きえる,やむ	ソク,ショク,ソキ			
 Character Sino-Japanese	熙	熙	熙	xī	ひかり,ひかる,ひろい,よろこぶ	キ,イ			bright, splendid, glorious	JLPT::n1
 Character Sino-Japanese	犠	牺	犧	xī	いけにえ	ギ,キ,サ			sacrifice, give up; sacrificial	JLPT::n1 HSK::6
 Character Sino-Japanese	稀	稀	稀	xī	まれ,まばら	キ,ケ			rare, unusual, scarce; sparse	JLPT::n1 HSK::6
-Character Sino-Japanese		膝	膝	xī	ひざ	シツ,シチ			knee	chinese_only HSK::6
+Character Sino-Japanese	膝	膝	膝	xī	ひざ	シツ,シチ			knee	HSK::6
 Character Sino-Japanese	西	西	西	xī	にし	セイ,サイ,シ,セン,アク,ヤク			west(ern); westward; occident; Kangxi radical 146	radical JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2::1
 Character Sino-Japanese		锡	錫	xī					tin, stannum; bestow, confer	chinese_only
 Character Sino-Japanese		侠	俠	xiá	おとこだて,きゃん	キョウ			chivalrous person; knight-errant	chinese_only HSK::6
@@ -2681,6 +2717,7 @@ Character Sino-Japanese		咸	鹹	xián	みな	カン,ゲン,ゴン			together; a
 Character Sino-Japanese	嫌	嫌	嫌	xián	きらう,うたがう,いや	ケン,ゲン			hate, detest; suspect; criticize	JLPT::n1 HSK::6
 Character Sino-Japanese	弦	弦	弦	xián	つる	ゲン,ケン			string; hypotenuse, crescent	JLPT::n1 HSK::6
 Character Sino-Japanese	絃	弦	弦	xián	いと,つる	ゲン,ケン			string on musical instrument	JLPT::n1 HSK::6
+Character Sino-Japanese	舷	舷	舷	xián	ふなばた	ケン,ゲン			the sides of a boat, bulwarks; a gunwale	chinese_rare
 Character Sino-Japanese		衔	銜	xián					bit; hold in mouth, bite; gag	chinese_only HSK::6
 Character Sino-Japanese	賢	贤	賢	xián	かしこい,まさる	ケン			virtuous, worthy, good; able	JLPT::n1::n2 HSK::6
 Character Sino-Japanese	閑	闲	閒	xián	しきり,しずか,ならう	カン,ケン,ゲン			fence, barrier; defend; idle time	JLPT::n1 HSK::6::5
@@ -2689,8 +2726,8 @@ Character Sino-Japanese	憲	宪	憲	xiàn	のり,のっとる	ケン			constitut
 Character Sino-Japanese	献	献	獻	xiàn	たてまつる	ケン,コン,ギ,サ			offer, present; show, display	JLPT::n1 HSK::6::5
 Character Sino-Japanese	現	现	現	xiàn	あらわれる,あらわす,うつつ	ゲン,ケン			appear, manifest, become visible	JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese	線	线	線	xiàn	すじ	セン			thread, line, wire; clue	JLPT::n1::n2 HSK::6::5::4
-Character Sino-Japanese		羡	羨	xiàn	うらやむ,あまり	セン,エン,イ			envy, admire; praise; covet	chinese_only HSK::6::5::4
-Character Sino-Japanese		腺	腺	xiàn	せん	セン			gland	chinese_only
+Character Sino-Japanese	羨	羡	羨	xiàn	うらやむ,あまり	セン,エン,イ,ゼン			envy, admire; praise; covet	HSK::6::5::4
+Character Sino-Japanese	腺	腺	腺	xiàn	せん	セン			gland	
 Character Sino-Japanese	限	限	限	xiàn	かぎる,かぎり	ゲン,カン,ゴン			boundary, limit, line	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	陥	陷	陷	xiàn	おちいる,おとしいれる,とおす	カン,ケン			submerge, sink, plunge; trap	JLPT::n1 HSK::6
 Character Sino-Japanese		馅	餡	xiàn					filling, stuffing; secret	chinese_only HSK::6
@@ -2741,11 +2778,12 @@ Character Sino-Japanese	硝	硝	硝	xiāo		ショウ			saltpeter, niter; to tan	
 Character Sino-Japanese		萧	蕭	xiāo					common artemisia; dejected	chinese_only
 Character Sino-Japanese		销	銷	xiāo					melt, fuse; market, sell	chinese_only HSK::6::5
 Character Sino-Japanese	協	协	協	xié	かなう	キョウ			be united; cooperate	JLPT::n1::n2 HSK::6
+Character Sino-Japanese	脇	协	協	xié	わき	キョウ			ribs, armpits; flank; threaten	HSK::6
 Character Sino-Japanese	挟	挟	挾	xié	はさむ,はさまる,さしはさむ	キョウ,ショウ,コウ,ソウ			clasp under arm; hold to bosom	JLPT::n1::n2
 Character Sino-Japanese	携	携	攜	xié	たずさえる,たずさわる	ケイ			lead by hand, take with; carry	JLPT::n1 HSK::6
 Character Sino-Japanese	斜	斜	斜	xié	ななめ	シャ,ヤ,タ			slanting, sloping, inclined	JLPT::n1 HSK::6::5
 Character Sino-Japanese	脅	胁	脅	xié	おびゃかす,おどす,おどかす,おびやかす,わき	キョウ,コウ,キュウ,ケン			ribs; armpits; flank; threaten	JLPT::n1 HSK::6::5
-Character Sino-Japanese		谐	諧	xié					harmonize, agree; joke, jest	chinese_only HSK::6
+Character Sino-Japanese	諧	谐	諧	xié	やわらぐ,かなう,ととのう	カイ,ガイ			harmonize, agree; joke, jest	HSK::6
 Character Sino-Japanese	邪	邪	邪	xié	や,か,よこしま,ななめ	ヤ,ジャ,シャ,ヨ			wrong, evil, depraved, vicious, perverse, heterodox	JLPT::n1
 Character Sino-Japanese		鞋	鞋	xié	わらじ	アイ,カイ,ケ,ゲ,ケイ			shoes, footwear in general	chinese_only HSK::6::5::4::3
 Character Sino-Japanese	卸	卸	卸	xiè	おろす,おろし	シャ			lay down; retire from office	JLPT::n1 HSK::6
@@ -2763,7 +2801,7 @@ Character Sino-Japanese		衅	釁	xìn	ちぬる,ひま,すき	キン			consecrat
 Character Sino-Japanese	心	心	心	xīn	こころ	シン			heart; mind, intelligence; soul; 5th lunar mansion, determinative star α Scorpii (Antares)	radical JLPT::n1::n2::n3 HSK::6::5::4::3
 Character Sino-Japanese	新	新	新	xīn	あたらしい,あらた,にい,あら,さら	シン			new, recent, fresh, modern	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2
 Character Sino-Japanese	欣	欣	欣	xīn	よろこぶ	ゴン,キン,コン			happy, joyous, delighted	JLPT::n1 HSK::6::5
-Character Sino-Japanese		芯	芯	xīn	ほそい,とうしんぐ	シン			pith from rush (Juncus effusus)	chinese_only
+Character Sino-Japanese	芯	芯	芯	xīn	ほそい,とうしんぐ	シン			pith from rush (Juncus effusus)	
 Character Sino-Japanese	薪	薪	薪	xīn	たきぎ	シン			fuel, firewood; salary	JLPT::n1 HSK::6
 Character Sino-Japanese	辛	辛	辛	xīn	からい,つらい,かのと	シン			bitter; toilsome, laborious; 8th heavenly stem; Kangxi radical 160	radical JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	馨	馨	馨	xīn	かおる,かおり	ケイ,キョウ			fragrant, aromatic; distant fragrance	JLPT::n1
@@ -2777,7 +2815,7 @@ Character Sino-Japanese	姓	姓	姓	xìng	かばね	セイ,ショウ,ソウ			on
 Character Sino-Japanese	幸	幸	幸	xìng	さいわい,しあわせ,さち,ねがう	コウ,ギョウ,ジョウ,ニョウ			luck(ily), favor, fortunately	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	性	性	性	xìng	さが,たち	セイ,ショウ			nature, character, sex	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	杏	杏	杏	xìng	あんず	キョウ,コウ,アン			apricot; almond	JLPT::n1
-Character Sino-Japanese		醒	醒	xǐng	さめる,さます	セイ,ショウ			wake up; sober up; startle	chinese_only HSK::6::5::4
+Character Sino-Japanese	醒	醒	醒	xǐng	さめる,さます	セイ,ショウ			wake up; sober up; startle	HSK::6::5::4
 Character Sino-Japanese	星	星	星	xīng	ほし	セイ,ショウ			a star, planet; any point of light; 25th lunar mansion, determinative star α Hydrae (Alphard)	JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese		猩	猩	xīng	あかいろ	セイ,ショウ,ソウ			species of orangutan	chinese_only
 Character Sino-Japanese		腥	腥	xīng	なまぐさい	セイ,ショウ			raw meat; rank, strong-smelling	chinese_only HSK::6
@@ -2785,18 +2823,19 @@ Character Sino-Japanese	熊	熊	熊	xióng	くま	ユウ,キュウ,グ,ユ,ダ�
 Character Sino-Japanese	雄	雄	雄	xióng	おす,お	ユウ,キュウ,グ,ユ			male of species; hero; manly	JLPT::n1 HSK::6::5
 Character Sino-Japanese	兄	兄	兄	xiōng	あに,え	ケイ,キョウ			elder brother	JLPT::n1::n2::n3 HSK::6::5
 Character Sino-Japanese	凶	凶	兇	xiōng	わるい	キョウ,ク			culprit; murder; bad, sad	JLPT::n1 HSK::6
+Character Sino-Japanese	匂			xiōng	におう,におい				fragrance, smell	japanese_only
 Character Sino-Japanese		匈	匈	xiōng	むね,おそれる,さわぐ	キョウ,ク			breast, chest, thorax; clamor; the Hsiung Nu 'Huns'	chinese_only
 Character Sino-Japanese		汹	洶	xiōng	わく	キョウ			turbulent; noisy, restless	chinese_only HSK::6
 Character Sino-Japanese	胸	胸	胸	xiōng	むね,むな	キョウ,ク			breast, bosom, chest; thorax	JLPT::n1::n2 HSK::6::5
-Character Sino-Japanese		嗅	嗅	xiù	かぐ	キュウ,ク			smell, scent, sniff; olfactive	chinese_only HSK::6
+Character Sino-Japanese	嗅	嗅	嗅	xiù	かぐ	キュウ,ク			smell, scent, sniff; olfactive	HSK::6
 Character Sino-Japanese	秀	秀	秀	xiù	ひいでる	シュウ,シュ			ear of grain; flowering, luxuriant; refined, elegant, graceful	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese		绣	繡	xiù					embroider; embroidery; ornament	chinese_only HSK::6
-Character Sino-Japanese		袖	袖	xiù	そで	シュウ,ジュ			sleeve; put something in sleeve	chinese_only HSK::6
+Character Sino-Japanese	袖	袖	袖	xiù	そで	シュウ,ジュ			sleeve; put something in sleeve	HSK::6
 Character Sino-Japanese		锈	鏽	xiù					rust, corrode	chinese_only HSK::6
 Character Sino-Japanese	朽	朽	朽	xiǔ	くちる	キュウ,ク			decayed, rotten; rot, decay	JLPT::n1 HSK::6
 Character Sino-Japanese	休	休	休	xiū	やすむ,いこう,やめる,やすまる,やすめる	キュウ,ク			rest, stop; retire; do not!	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2
 Character Sino-Japanese	修	修	修	xiū	おさめる,おさまる	シュウ,シュ			study; repair; cultivate	JLPT::n1::n2 HSK::6::5::4
-Character Sino-Japanese		羞	羞	xiū	すすめる,はじる	シュウ,シュ			disgrace, shame; ashamed; shy	chinese_only HSK::6::5::4
+Character Sino-Japanese	羞	羞	羞	xiū	すすめる,はじる	シュウ,シュ			disgrace, shame; ashamed; shy	HSK::6::5::4
 Character Sino-Japanese	脩	脩	脩	xiū	おさめる,ながい,ほじし	シュウ,ユウ,チョウ,ショウ,シュ,ウ			dried meat (used as teachers payment in ancient times)	chinese_rare JLPT::n1
 Character Sino-Japanese	徐	徐	徐	xú	おもむろ	ジョ,ショ			slowly, quietly, calmly; composed, dignified	JLPT::n1
 Character Sino-Japanese	叙	叙	敍	xù	ついでる,ついで,のべる,ついず	ジョ,ショ			express, state, relate, narrate	JLPT::n1 HSK::6::5
@@ -2844,15 +2883,15 @@ Character Sino-Japanese	殉	殉	殉	xùn	したがう	ジュン,シュン,エン
 Character Sino-Japanese		讯	訊	xùn					inquire; ask; examine; reproach	chinese_only HSK::6
 Character Sino-Japanese	訓	训	訓	xùn	おしえる,おしえ,よむ,よみ	クン,キン,シュン			teach, instruct; exegesis	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	迅	迅	迅	xùn	はやい	ジン,シン,シュン			quick, hasty, rapid, sudden	JLPT::n1 HSK::6::5
-Character Sino-Japanese		逊	遜	xùn					humble, modest; yield	chinese_only HSK::6
+Character Sino-Japanese	遜	逊	遜	xùn	ゆずる,へりくだる,したがう	ソン			humble, modest; yield	HSK::6
 Character Sino-Japanese		驯	馴	xùn					tame, docile, obedient	chinese_only
 Character Sino-Japanese	勲	勋	勳	xūn	いさお	クン			meritorious deed; merits; rank	JLPT::n1
 Character Sino-Japanese		熏	燻	xūn	ふすべる,くすべる	クン			smoke, fog, vapor; smoke, cure	chinese_only HSK::6
 Character Sino-Japanese	薫			xūn	かおる,かおりぐさ,かおり	クン			a medicinal herb; to cauterize	japanese_only JLPT::n1
 Character Sino-Japanese		呀	呀	ya	あ,あつ	ガ,カ,ケ			particle used to express surprise or mild emphasis; (Cant.) slurred form of the number ten	chinese_only HSK::6::5::4
-Character Sino-Japanese		崖	崖	yá	がけ	ガイ,ゲ,ギ			cliff, precipice; precipitous	chinese_only HSK::6
+Character Sino-Japanese	崖	崖	崖	yá	がけ	ガイ,ゲ,ギ			cliff, precipice; precipitous	HSK::6
 Character Sino-Japanese	涯	涯	涯	yá	きし,はて	ガイ,ゲ,ガ,ギ			shore, bank, water's edge	JLPT::n1
-Character Sino-Japanese		牙	牙	yá	きば,は,きばへん	ガ,ゲ			tooth, molars, teeth; serrated	radical chinese_only HSK::6::5::4::3
+Character Sino-Japanese	牙	牙	牙	yá	きば,は,きばへん	ガ,ゲ			tooth, molars, teeth; serrated	radical HSK::6::5::4::3
 Character Sino-Japanese	芽	芽	芽	yá	め,めぐむ	ガ,ゲ			bud, sprout, shoot	JLPT::n1 HSK::6
 Character Sino-Japanese		衙	衙	yá	やくしょ	ギョ,ゴ,ガ,ゲ			public office; official residence	chinese_only
 Character Sino-Japanese	亜	亚	亞	yà	つぐ	ア,アツ,オウ,アク			Asia; second	JLPT::n1 HSK::6::5::4
@@ -2877,7 +2916,7 @@ Character Sino-Japanese	言	言	言	yán	こと,いう,ことば,ここに,わ�
 Character Sino-Japanese		阎	閻	yán					village gate; surname	chinese_only
 Character Sino-Japanese	顔	颜	顏	yán	かお	ガン,ゲン			face, facial appearance	JLPT::n1::n2::n3 HSK::6::5::4::3::2
 Character Sino-Japanese		厌	厭	yàn					dislike, detest, reject; satiate	chinese_only HSK::6::5::4
-Character Sino-Japanese		咽	咽	yàn	のど,のむ,むせぶ	イン,エツ,エン,エチ,オン			throat; pharynx	chinese_only HSK::6
+Character Sino-Japanese	咽	咽	咽	yàn	のど,のむ,むせぶ	イン,エツ,エン,エチ,オン			throat; pharynx	HSK::6
 Character Sino-Japanese	宴	宴	宴	yàn	うたげ,たのしむ	エン			to entertain, feast; a feast, banquet	JLPT::n1 HSK::6::5
 Character Sino-Japanese	彦	彦	彥	yàn	ひこ	ゲン			elegant	JLPT::n1
 Character Sino-Japanese	晏	晏	晏	yàn	おそい,やすらか	アン,エン			peaceful, quiet; clear; late in the day	chinese_rare JLPT::n1
@@ -2896,6 +2935,7 @@ Character Sino-Japanese		焉	焉	yān	いずくんそ,すなわち,これ,いず
 Character Sino-Japanese	揚	扬	揚	yáng	あげる,あがる,あげ	ヨウ			scatter, spread; praise	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	楊	杨	楊	yáng	やなぎ	ヨウ			willow, poplar, aspen; surname	JLPT::n1
 Character Sino-Japanese	洋	洋	洋	yáng	なだ	ヨウ,ショウ,ジョウ			ocean, sea; foreign; western	JLPT::n1::n2::n3 HSK::6::5::4
+Character Sino-Japanese	瘍	疡	瘍	yáng	かさ	ヨウ,トウ,ドウ			ulcers, sores; infection	chinese_rare
 Character Sino-Japanese	羊	羊	羊	yáng	ひつじ	ヨウ			sheep, goat; Kangxi radical 123	radical JLPT::n1 HSK::6::5::4::3::2
 Character Sino-Japanese	陽	阳	陽	yáng	ひ,いつわる,きた,みなみ	ヨウ,チョウ,ジョウ			the active, male principle in Chinese philosophy (yang); light; sun	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	様	样	樣	yàng	さま,ざま	ヨウ,ショウ,ゾウ			shape, form, pattern, style	JLPT::n1::n2 HSK::6::5::4::3::2::1
@@ -2920,7 +2960,7 @@ Character Sino-Japanese	薬	药	藥	yào	くすり	ヤク,シャク,リャク			
 Character Sino-Japanese	要	要	要	yào	いる,もとめる,かなめ,こし,むかえる	ヨウ			necessary, essential; necessity	JLPT::n1::n2 HSK::6::5::4::3::2
 Character Sino-Japanese		钥	鑰	yào					key; lock	chinese_only HSK::6::5::4
 Character Sino-Japanese		咬	咬	yǎo	かむ	コウ,ゴウ,ヨウ,オウ,カイ,ギョウ,キョウ			bite, gnaw	chinese_only HSK::6::5
-Character Sino-Japanese		妖	妖	yāo	なまめく,あやしい	ヨウ,コウ,キョウ			strange, weird, supernatural	chinese_only
+Character Sino-Japanese	妖	妖	妖	yāo	なまめく,あやしい	ヨウ,コウ,キョウ			strange, weird, supernatural	
 Character Sino-Japanese	腰	腰	腰	yāo	こし	ヨウ			waist; kidney	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese		邀	邀	yāo	むかえる,もとめる	ヨウ,キョウ			invite, welcome; meet, intercept	chinese_only HSK::6::5::4
 Character Sino-Japanese		爷	爺	yé					father, grandfather	chinese_only HSK::6::5::4::3
@@ -2963,9 +3003,11 @@ Character Sino-Japanese	益	益	益	yì	ます,ますます	エキ,ヤク			prof
 Character Sino-Japanese		绎	繹	yì					to unravel or unreel silk; to interpret	chinese_only HSK::6
 Character Sino-Japanese	翌	翌	翌	yì	とぶ,あくるひ	ヨク,イク			bright; daybreak, dawn; the next day	chinese_rare JLPT::n1::n2
 Character Sino-Japanese	翼	翼	翼	yì	つばさ,たすける	ヨク			wings; fins on fish; shelter; 27th lunar mansion, determinative star α Crateris (Alkes)	JLPT::n1 HSK::6
+Character Sino-Japanese	臆	臆	臆	yì	むね,おくする	オク,ヨク,オキ,イ			chest, breast, bosom; thought	chinese_rare
 Character Sino-Japanese		艺	藝	yì					art; talent, ability; craft	chinese_only HSK::6::5::4
 Character Sino-Japanese		裔	裔	yì	すそ,すえ	エイ,エツ,エチ			progeny, descendants, posterity	chinese_only HSK::6::5
 Character Sino-Japanese	訳	译	譯	yì	わけ,とく	ヤク,エキ			translate; decode; encode	JLPT::n1 HSK::6::5::4
+Character Sino-Japanese	詣	诣	詣	yì	いたる,もうでる	ケイ,ゲイ			reach; achievement, accomplishment	chinese_rare
 Character Sino-Japanese	誼	谊	誼	yì	よい,よしみ	ギ			friendship; appropriate, suitable	JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	議	议	議	yì	はかる	ギ			consult, talk over, discuss	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	逸	逸	逸	yì	はしる,うしなう,それる,はやる	イツ,イチ			flee, escape, break loose	JLPT::n1
@@ -2975,7 +3017,7 @@ Character Sino-Japanese	乙	乙	乙	yǐ	きのと,おと	オツ,イツ			second;
 Character Sino-Japanese	以	以	以	yǐ	おもう,ゆえに,もって,すでに,はなはだ,ひきいる,もちいる	イ,シ,ジ			by means of; thereby, therefore; consider as; in order to	JLPT::n1::n2::n3 HSK::6::5::4::3::2
 Character Sino-Japanese		倚	倚	yǐ	よる,たのむ	イ,キ			rely on, depend on; lean heavily	chinese_only
 Character Sino-Japanese		已	已	yǐ	すでに,やむ,のみ,はなはだ,やめる,み,おのれ	イ,シ,コ,キ			already; finished; stop	radical chinese_only HSK::6::5::4::3::2
-Character Sino-Japanese		椅	椅	yǐ	いす	イ			chair, seat	chinese_only HSK::6::5::4::3::2::1
+Character Sino-Japanese	椅	椅	椅	yǐ	いす	イ			chair, seat	HSK::6::5::4::3::2::1
 Character Sino-Japanese		矣	矣	yǐ		イ			particle of completed action	chinese_only
 Character Sino-Japanese		蚁	蟻	yǐ					ants	chinese_only HSK::6
 Character Sino-Japanese	一	一	一	yī	ひとつ,ひとたび,はじめ,ひと	イチ,イツ			one; a, an; alone	radical JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2::1
@@ -2986,7 +3028,7 @@ Character Sino-Japanese	壱			yī	ひとつ	イチ,イツ,イン			number one	ja
 Character Sino-Japanese	衣	衣	衣	yī	ころも,きる,きぬ	イ,エ			clothes, clothing; cover, skin; Kangxi radical 145	radical JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese	吟	吟	吟	yín	うたう,なく	ギン,キン,ゴン,コン			sing, hum; recite; type of poetry	JLPT::n1 HSK::6
 Character Sino-Japanese	寅	寅	寅	yín	とら	イン,イ			to respect, reverence; respectfully; third earthly branch	chinese_rare JLPT::n1
-Character Sino-Japanese		淫	淫	yín	ひたす,ほしいまま,みだら	イン,エン,ヨウ			obscene, licentious, lewd	chinese_only
+Character Sino-Japanese	淫	淫	淫	yín	ひたす,ほしいまま,みだら	イン,エン,ヨウ			obscene, licentious, lewd	
 Character Sino-Japanese	銀	银	銀	yín	しろがね	ギン,ゴン			silver (element 47, Ag); cash, money, wealth	JLPT::n1::n2::n3 HSK::6::5::4::3
 Character Sino-Japanese	印	印	印	yìn	しるし	イン			print, seal, stamp, chop, mark	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	胤	胤	胤	yìn	たね,つぐ,よつぎ	イン,シン			heir, successor; progeny, posterity	chinese_rare JLPT::n1
@@ -3066,7 +3108,7 @@ Character Sino-Japanese	虞	虞	虞	yú	おそれ,うれえる,おもんぱか,�
 Character Sino-Japanese		逾	逾	yú	こえる,いよいよ	ユ,トウ,ツ			go over, pass over, exceed	chinese_only
 Character Sino-Japanese	隅	隅	隅	yú	すみ	グウ,グ			corner, nook, remote place	chinese_rare JLPT::n1::n2
 Character Sino-Japanese	魚	鱼	魚	yú	うお,さかな,すなどる	ギョ,ゴ			fish; surname; Kangxi radical 195	radical JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2
-Character Sino-Japanese		喻	喻	yù	さとす,さとる,たとえる	ユ			metaphor, analogy; example; like	chinese_only HSK::6
+Character Sino-Japanese	喩	喻	喻	yù	さとす,さとる,たとえる	ユ,ジュ			metaphor	HSK::6
 Character Sino-Japanese	誉	域	域	yù	ほまれ,ほめる	ヨ			fame, reputation; praise	JLPT::n1 HSK::6::5
 Character Sino-Japanese	域	誉	譽	yù	さかい	イキ,ヨク,イク			district, region, boundary; land	JLPT::n1::n2 HSK::6
 Character Sino-Japanese		寓	寓	yù	よる,よせる,かこつける	グウ,ギョ,グ,ゴ			residence; lodge; dwell	chinese_only HSK::6::5
@@ -3083,6 +3125,7 @@ Character Sino-Japanese	裕	裕	裕	yù	ゆたか	ユウ,ユ			abundant, rich, p
 Character Sino-Japanese	諭	谕	諭	yù	さとす	ユ,トウ			proclaim, instruct; edict	JLPT::n1
 Character Sino-Japanese		豫	豫	yù	あらかじめ	ヨ,シャ,ショ			relaxed, comfortable, at ease; hexagram ䷏	chinese_only HSK::6::5
 Character Sino-Japanese	遇	遇	遇	yù	あう,もてなす,たまたま	グウ,ク,グ,ギョウ			meet, come across, encounter	JLPT::n1 HSK::6::5::4::3
+Character Sino-Japanese	鬱	郁	鬱	yù	しげる	ウツ,オチ			luxuriant; dense, thick; moody	HSK::6
 Character Sino-Japanese	郁	郁	鬱	yù	あきらか,かぐわしい,さかん	イク			sweet smelling, rich in aroma; (Cant.) to move, hit	JLPT::n1 HSK::6
 Character Sino-Japanese	預	预	預	yù	あずける,あらかじめ,あずかる	ヨ			prepare, arrange; in advance	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	与	与	與	yǔ	あたえる,くみする,ともに,あずかる,か,くみ,ために,と,より	ヨ			and; with; to; for; give, grant	JLPT::n1::n2 HSK::6::5::4
@@ -3109,7 +3152,7 @@ Character Sino-Japanese	縁	缘	緣	yuán	ふち,へり,よる,えにし,ゆか�
 Character Sino-Japanese		袁	袁	yuán		エン,オン			robe; surname	chinese_only
 Character Sino-Japanese		辕	轅	yuán					axle; magistrate's office; surname	chinese_only HSK::6
 Character Sino-Japanese	媛	媛	媛	yuàn	ひめ	エン,オン			beauty, beautiful woman	chinese_rare JLPT::n1
-Character Sino-Japanese		怨	怨	yuàn	うらむ,うらみ	エン,オン,ウン			hatred, enmity, resentment	chinese_only HSK::6::5
+Character Sino-Japanese	怨	怨	怨	yuàn	うらむ,うらみ	エン,オン,ウン			hatred, enmity, resentment	HSK::6::5
 Character Sino-Japanese	願	愿	願	yuàn	ねがう,ねがい	ガン,ゲン			desire, want; wish; ambition	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	苑	苑	苑	yuàn	その	エン,オン,ウツ,ウン			pasture, park, garden; mansion	JLPT::n1
 Character Sino-Japanese	院	院	院	yuàn	いん	イン,エン,カン,ガン,オン			courtyard, yard, court; school	JLPT::n1::n2::n3 HSK::6::5::4::3::2::1
@@ -3139,6 +3182,7 @@ Character Sino-Japanese		晕	暈	yūn					halo in sky; fog; dizzy, faint	chinese
 Character Sino-Japanese	雑	杂	雜	zá	まじる,まじえる	ザツ,ゾウ,ソウ			mixed, blended; mix, mingle	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese		砸	砸	zá		ソウ			smash, crush, break; pound, mash	chinese_only HSK::6
 Character Sino-Japanese		咋	咋	zǎ	くう,くらう,かむ,くい	サク,サ,シャク,シャ			question-forming particle, why? how? what?; to bite; loud	chinese_only HSK::6
+Character Sino-Japanese	拶	拶	拶	zā	せまる	サツ,サチ			press, squeeze hard; force	chinese_rare
 Character Sino-Japanese	再	再	再	zài	ふたたび	サイ,サ			again, twice, re-	JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese	在	在	在	zài	ある,います	ザイ,ゼ,サイ			be at, in, on; consist in, rest	JLPT::n1::n2 HSK::6::5::4::3::2::1
 Character Sino-Japanese	載	载	載	zài	のせる,しるす,のる,すなわち,とし	サイ,ザイ,タイ			load; carry; transport, convey	JLPT::n1 HSK::6::5
@@ -3180,7 +3224,7 @@ Character Sino-Japanese	憎	憎	憎	zēng	にくむ,にくしみ,にくい,に�
 Character Sino-Japanese	札	札	札	zhá	ふだ,わかじに	サツ,サチ,アツ,アチ,シツ,シチ,セツ,セチ			letter, note; correspondence	chinese_rare JLPT::n1::n2
 Character Sino-Japanese		乍	乍	zhà	たちまち,ながら	サク,サ,ジャ			first time, for the first time	chinese_only
 Character Sino-Japanese	搾			zhà	しぼる	サク,サ			to crush with the hand, press, squeeze, extract	japanese_only JLPT::n1
-Character Sino-Japanese		栅	柵	zhà	やらい,しがらみ	サク,サン			fence; palisade; grid	chinese_only
+Character Sino-Japanese	柵	栅	柵	zhà	やらい,しがらみ,とりで	サク,サン,シャク,セン,セキ			fence; palisade; grid	
 Character Sino-Japanese		榨	榨	zhà	しぼりき	サ,シャ,サイ,サク,セ			to press or extract juices; a press to extract juices; a vegetable	chinese_only HSK::6
 Character Sino-Japanese		炸	炸	zhà	あげる	サク,サ,サツ,ソウ			to fry in oil; to scald; to explode	chinese_only HSK::6::5
 Character Sino-Japanese	詐	诈	詐	zhà	いつわる	サ,シャ,サク,ザク			cheat, defraud, swindle; trick; to feign	JLPT::n1 HSK::6
@@ -3198,9 +3242,10 @@ Character Sino-Japanese	占	占	佔	zhàn	しめる,うらなう,うらない	�
 Character Sino-Japanese	戦	战	戰	zhàn	たたかう,いくさ,おののく,そよぐ	セン			war, fighting, battle	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	桟			zhàn	かけはし,たな	サン,セン,シン			a crosspiece, cleat, frame, door bolt; shelf	japanese_only JLPT::n1
 Character Sino-Japanese		站	站	zhàn	たつ,たたずむ,うまつぎ	タン			stand up; a stand, station	chinese_only HSK::6::5::4::3::2
+Character Sino-Japanese	綻	绽	綻	zhàn	ほころびる	タン,デン,テン			ripped seam, rend, crack	chinese_rare
 Character Sino-Japanese	展	展	展	zhǎn	つらねる,のべる,のびる,のばす	テン			open, unfold; stretch, extend	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese		崭	嶄	zhǎn					high, steep, precipitous; new	chinese_only HSK::6
-Character Sino-Japanese		斩	斬	zhǎn					cut, chop, sever; behead	chinese_only HSK::6
+Character Sino-Japanese	斬	斩	斬	zhǎn	きる	ザン,サン			cut, chop, sever; behead	HSK::6
 Character Sino-Japanese		盏	盞	zhǎn					small cup or container	chinese_only
 Character Sino-Japanese		沾	沾	zhān	うるおう,うるおす	テン,トン,セン,ソン,チョウ			moisten, wet, soak; touch	chinese_only HSK::6
 Character Sino-Japanese		瞻	瞻	zhān	みる	セン			look; look out for; respect	chinese_only HSK::6
@@ -3228,7 +3273,7 @@ Character Sino-Japanese	詔	诏	詔	zhào	みことのり,つげる	ショウ			
 Character Sino-Japanese		赵	趙	zhào					surname; ancient state	chinese_only
 Character Sino-Japanese		找	找	zhǎo	さおさす,たずねる	カ,ゲ,ソウ			search, seek, look for; find	chinese_only HSK::6::5::4::3::2
 Character Sino-Japanese	沼	沼	沼	zhǎo	ぬま	ショウ			lake, fishpond, swamps	JLPT::n1 HSK::6
-Character Sino-Japanese		爪	爪	zhǎo	つめ	ソウ,ショウ			claw, nail, talon; animal feet	radical chinese_only
+Character Sino-Japanese	爪	爪	爪	zhǎo	つめ	ソウ,ショウ			claw, nail, talon; animal feet	radical
 Character Sino-Japanese	招	招	招	zhāo	まねく,まねき	ショウ,キョウ,ジョウ,ギョウ			beckon, summon; recruit, levy	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	昭	昭	昭	zhāo	あきらか	ショウ			bright, luminous; illustrious	JLPT::n1
 Character Sino-Japanese	着	着	着	zhe	きる,つく,きせる,つける	チャク,ジャク			make move, take action	JLPT::n1::n2::n3 HSK::6::5::4::3::2
@@ -3245,7 +3290,7 @@ Character Sino-Japanese	朕	朕	朕	zhèn	われ,きざし	チン,ジン			prono
 Character Sino-Japanese	鎮	镇	鎮	zhèn	しずめる,おさえ,しずまる	チン,テン			town, market place; suppress	JLPT::n1 HSK::6
 Character Sino-Japanese	陣	阵	陣	zhèn	じんだて,いくさ	ジン,チン			column, row or file of troops	JLPT::n1 HSK::6::5
 Character Sino-Japanese	震	震	震	zhèn	ふるう,ふるえる	シン			shake, quake, tremor; excite; trigram ☳; hexagram ䷲	JLPT::n1::n2 HSK::6::5
-Character Sino-Japanese		枕	枕	zhěn	まくら	チン,シン,ジン			pillow	chinese_only HSK::6
+Character Sino-Japanese	枕	枕	枕	zhěn	まくら	チン,シン,ジン			pillow	HSK::6
 Character Sino-Japanese	診	诊	診	zhěn	みる	シン,チン			examine patient, diagnose	JLPT::n1 HSK::6::5
 Character Sino-Japanese	偵	侦	偵	zhēn	うかがう,とう	テイ,トウ,チョウ			spy, reconnoiter; detective	JLPT::n1 HSK::6
 Character Sino-Japanese		斟	斟	zhēn	くむ,くみかわす	シン			to pour wine or tea into a cup; to gauge	chinese_only HSK::6
@@ -3282,7 +3327,7 @@ Character Sino-Japanese	製	制	制	zhì	たつ,つくる	セイ			make, manufac
 Character Sino-Japanese		帜	幟	zhì					flag, pennant; sign; fasten	chinese_only HSK::6
 Character Sino-Japanese	志	志	志	zhì	こころざす,こころざし,しるす,しるし,さかん	シ			purpose, will, determination; annals	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	誌	志	志	zhì	しるす	シ			write down; record; magazine	JLPT::n1::n2 HSK::6::5::4
-Character Sino-Japanese		挚	摯	zhì					sincere, warm, cordial; surname	chinese_only HSK::6
+Character Sino-Japanese	摯	挚	摯	zhì	いたる,つかむ,にえ	シ,チ,シツ,シチ			sincere, warm, cordial; surname	HSK::6
 Character Sino-Japanese		掷	擲	zhì					throw, hurl, cast, fling	chinese_only HSK::6
 Character Sino-Japanese	智	智	智	zhì	ちえ	チ			wisdom, knowledge, intelligence	JLPT::n1 HSK::6::5
 Character Sino-Japanese	治	治	治	zhì	おさめる,なおる,おさまる,なおす	ジ,チ,イ,タイ			govern, regulate, administer	JLPT::n1::n2 HSK::6::5
@@ -3290,6 +3335,7 @@ Character Sino-Japanese	滞	滞	滯	zhì	とどこおる	タイ,テイ,セイ			
 Character Sino-Japanese	秩	秩	秩	zhì	ついで,ふち	チツ,テチ,イツ,テツ,ジチ,イチ			order; orderly; salary; decade	JLPT::n1 HSK::6::5
 Character Sino-Japanese	稚	稚	稚	zhì	おさない,いとけない	チ,ジ			young, immature; childhood	JLPT::n1 HSK::6
 Character Sino-Japanese	窒	窒	窒	zhì	ふさぐ,ふさがる	チツ,テツ,デツ,ネチ,テチ			stop up, obstruct	chinese_rare JLPT::n1
+Character Sino-Japanese	緻	致	致	zhì	こまかい	チ,ジ			delicate, fine; dense	HSK::6::5
 Character Sino-Japanese	置	置	置	zhì	おく	チ			place, lay out; set aside	JLPT::n1::n2 HSK::6::5
 Character Sino-Japanese	至	至	至	zhì	いたる,いたり	シ,テツ,デチ			reach, arrive; extremely, very; Kangxi radical 133	radical JLPT::n1 HSK::6::5::4
 Character Sino-Japanese	致	致	致	zhì	いたす	チ			send, deliver, present; cause	JLPT::n1 HSK::6::5
@@ -3319,7 +3365,7 @@ Character Sino-Japanese	衆	众	眾	zhòng	おおい	シュウ,シュ			multitud
 Character Sino-Japanese	重	重	重	zhòng	おもい,かさねる,え,かさなる,おもんじる,はばかる	チョウ,ジュウ,ジュ,ズ,トウ,シュウ,シュ			heavy, weighty; double	JLPT::n1::n2::n3 HSK::6::5::4::3
 Character Sino-Japanese	塚	冢	冢	zhǒng	つか	チョウ			cemetery; tomb, burial mound	JLPT::n1
 Character Sino-Japanese	種	种	種	zhǒng	たね,うえる	シュ,チョウ,ショウ,ジュ			seed; race; offspring; to plant	JLPT::n1::n2 HSK::6::5::4::3
-Character Sino-Japanese		肿	腫	zhǒng					swell; swollen; swelling	chinese_only HSK::6
+Character Sino-Japanese	腫	肿	腫	zhǒng	はれる,はれもの	ショウ,シュ			swell; swollen; swelling	HSK::6
 Character Sino-Japanese	中	中	中	zhōng	なか,うち,あたる,あてる	チュウ,チュ			central; center, middle; in the midst of; hit (target); attain	JLPT::n1::n2::n3::n4 HSK::6::5::4::3::2::1
 Character Sino-Japanese	忠	忠	忠	zhōng	まごころ,じょう	チュウ,チュ			loyalty, devotion, fidelity	JLPT::n1 HSK::6
 Character Sino-Japanese	柊			zhōng	ひいらぎ	シュウ,シュ			holly	japanese_only JLPT::n1
@@ -3327,11 +3373,13 @@ Character Sino-Japanese	終	终	終	zhōng	おわる,おえる,ついに	シュ�
 Character Sino-Japanese	衷	衷	衷	zhōng	うち,まごころ	チュウ,チュ			heart, from bottom of one's heart	JLPT::n1 HSK::6
 Character Sino-Japanese	鐘	钟	鍾	zhōng	かね	ショウ,シュ			clock; bell	JLPT::n1 HSK::6::5::4::3::2::1
 Character Sino-Japanese	軸	轴	軸	zhóu	しんぎ,まきもの,じく,よこがみ	ジク,チク			axle, axletree; pivot; axis	JLPT::n1
-Character Sino-Japanese		咒	咒	zhòu	のろう,のろい	シュ,シュウ,ジュ			curse, damn, incantation	chinese_only
+Character Sino-Japanese	呪	咒	咒	zhòu	のろう,のろい,まじない	ジュ,シュウ,シュ,ズ			curse, damn, incantation	
 Character Sino-Japanese	宙	宙	宙	zhòu	そら	チュウ,ジュ			time as concept; infinite time	JLPT::n1::n2 HSK::6
 Character Sino-Japanese	昼	昼	晝	zhòu	ひる	チュウ			daytime, daylight	JLPT::n1::n2::n3 HSK::6
 Character Sino-Japanese		皱	皺	zhòu	しわ	スウ,シュ,シュウ			wrinkles, creases, folds	chinese_only HSK::6
+Character Sino-Japanese	酎	酎	酎	zhòu	かもす	チュウ,ジュ			double-fermented wine, vintage wine	chinese_rare
 Character Sino-Japanese		骤	驟	zhòu					procedure; gallop; sudden(ly)	chinese_only HSK::6::5
+Character Sino-Japanese	肘	肘	肘	zhǒu	ひじ	チュウ,チュ			the elbow; help a person shoulder a load	chinese_rare
 Character Sino-Japanese	周	周	周	zhōu	まわり,あまねし,めぐる,めぐらす	シュウ,シュ,ス			Zhou dynasty; circumference	JLPT::n1::n2 HSK::6::5::4::3
 Character Sino-Japanese	週	周	周	zhōu	めぐる	シュウ			week; turn, cycle; anniversary	JLPT::n1::n2::n3::n4 HSK::6::5::4::3
 Character Sino-Japanese	州	州	州	zhōu	す,しま	シュウ,ス			administrative division, state	JLPT::n1::n2 HSK::6
@@ -3347,6 +3395,7 @@ Character Sino-Japanese	柱	柱	柱	zhù	はしら,ことじ,ささえる	チュ
 Character Sino-Japanese	注	注	注	zhù	そそぐ,つぐ	チュウ,チュ,シュ			concentrate, focus, direct	JLPT::n1::n2::n3 HSK::6::5::4::3
 Character Sino-Japanese	祝	祝	祝	zhù	いわう,はふり,のりと,いわい	シュク,シュウ,チョ,シュ			pray for happiness or blessings	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	築	筑	築	zhù	きずく,つく	チク			build, erect; building	JLPT::n1::n2 HSK::6::5
+Character Sino-Japanese	箸	箸	箸	zhù	はし	チョ,チャク,ト			chopsticks	chinese_rare
 Character Sino-Japanese	著	著	著	zhù	あらわす,いちじるし,つく,いちじるしい,あらわれる,きる	チョ,チャク,ジャク			manifest; (Cant.) to wear	JLPT::n1::n2 HSK::6::5::4
 Character Sino-Japanese	貯	贮	貯	zhù	たくわえる	チョ			store, stockpile, hoard	JLPT::n1::n2
 Character Sino-Japanese	鋳	铸	鑄	zhù	いる	チュウ,シュ			melt, cast; coin, mint	JLPT::n1 HSK::6
@@ -3392,9 +3441,10 @@ Character Sino-Japanese	濯	濯	濯	zhuó	あらう	タク,トウ			wash out, ri
 Character Sino-Japanese		灼	灼	zhuó	やく	シャク			burn; broil; cauterize; bright	chinese_only
 Character Sino-Japanese	酌	酌	酌	zhuó	くむ	シャク			serve wine; feast; deliberate	JLPT::n1 HSK::6
 Character Sino-Japanese	拙	拙	拙	zhuō	つたない	セツ,セチ			stupid, clumsy, crude; convention	JLPT::n1 HSK::6
-Character Sino-Japanese		捉	捉	zhuō	とらえる	ソク,サク			grasp, clutch; catch, seize	chinese_only HSK::6
+Character Sino-Japanese	捉	捉	捉	zhuō	とらえる	ソク,サク			grasp, clutch; catch, seize	HSK::6
 Character Sino-Japanese		桌	桌	zhuō	つくえ	タク,チョク			table, desk, stand	chinese_only HSK::6::5::4::3::2::1
 Character Sino-Japanese	字	字	字	zì	あざ,うむ,ます,あざな,やしなう	ジ,シ			letter, character, word	JLPT::n1::n2::n3 HSK::6::5::4::3::2::1
+Character Sino-Japanese	恣	恣	恣	zì	ほしいまま	シ			indulge oneself, unrestrained	chinese_rare
 Character Sino-Japanese	漬	渍	漬	zì	ひたす,つける,つけ,つかる,ひたる	シ,ジ			soak, steep; dye; stains; sodden	chinese_rare JLPT::n1
 Character Sino-Japanese	自	自	自	zì	みずから,おのずから,より	シ,ジ			self, private, personal; from; Kangxi radical 132	radical JLPT::n1::n2::n3 HSK::6::5::4::3
 Character Sino-Japanese		仔	仔	zǐ	たえる,こ	シ,サイ			small thing, child; young animal	chinese_only HSK::6::5::4
@@ -3413,7 +3463,7 @@ Character Sino-Japanese	惣			zǒng	いそがしい,そうじて	ソウ			overal
 Character Sino-Japanese	宗	宗	宗	zōng	むね,たっとぶ	シュウ,ソウ			lineage, ancestry; ancestor, clan	JLPT::n1 HSK::6
 Character Sino-Japanese		棕	棕	zōng		シュ,ソウ			hemp palm; palm tree	chinese_only HSK::6
 Character Sino-Japanese	綜	综	綜	zōng	すべる,おさ,へ	ソウ,ス			arrange threads for weaving	JLPT::n1 HSK::6::5
-Character Sino-Japanese		踪	蹤	zōng	あと	ショウ,ソウ			footprints, traces, tracks	chinese_only HSK::6
+Character Sino-Japanese	踪	踪	蹤	zōng	あと	ショウ,ソウ			footprints, traces, tracks	HSK::6
 Character Sino-Japanese	奏	奏	奏	zòu	かなでる,すすめる,もうす	ソウ,シュ			memorialize emperor; report	JLPT::n1 HSK::6
 Character Sino-Japanese		揍	揍	zòu		ソウ,ス			hit, beat; smash, break	chinese_only HSK::6
 Character Sino-Japanese	走	走	走	zǒu	はしる,おもむく	ソウ,シュ			walk, go on foot; run; leave; Kangxi radical 156	radical JLPT::n1::n2::n3 HSK::6::5::4::3::2

@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import minimist from "minimist";
 import { Cedict } from "./cedict";
-import { k_BCCWJ_FILE_PATH, k_BCLU_FILE_PATH, k_CEDICT_FILE_PATH, k_CHARACTER_LIST_PATH, k_HANZIDB_FILE_PATH, k_HSK_FILE_LIST, k_JLPT_FILE_LIST, k_JMDICT_FILE_PATH, k_KANJIDIC_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_tag_CHINESE_ONLY, k_tag_CHINESE_RARE, k_tag_JAPANESE_ONLY, k_tag_JAPANESE_RARE, k_tag_RADICAL, k_UNIHAN_DB_PATH } from "./consts";
+import { k_BCCWJ_FILE_PATH, k_BCLU_FILE_PATH, k_CEDICT_FILE_PATH, k_CHARACTER_LIST_PATH, k_HANZIDB_FILE_PATH, k_HSK_FILE_LIST, k_JLPT_FILE_LIST, k_JMDICT_FILE_PATH, k_JOYO_FILE_PATH, k_KANJIDIC_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_tag_CHINESE_ONLY, k_tag_CHINESE_RARE, k_tag_JAPANESE_ONLY, k_tag_JAPANESE_RARE, k_tag_RADICAL, k_UNIHAN_DB_PATH } from "./consts";
 import { Kanjidic } from "./kanjidic";
 import { Unihan } from "./unihan";
 import { buildKanjiCardsFromLists } from "./buildKanjiCards";
@@ -17,6 +17,11 @@ import { minSubstrLevenshtein } from './levenshtein';
 
 const args = minimist(process.argv.slice(2));
 
+function getJoyo(): string[] {
+    const content = fs.readFileSync(k_CHARACTER_LIST_PATH + '/' + k_JOYO_FILE_PATH, 'utf-8');
+    return content.split('\n').filter(c => c != '');
+}
+
 async function buildKanji() {
     const unihan = await Unihan.create(k_UNIHAN_DB_PATH);
     const kanjidic = await Kanjidic.create(k_KANJIDIC_FILE_PATH);
@@ -29,7 +34,7 @@ async function buildKanji() {
     const modules = { unihan, kanjidic, hanzidb, cedict, bccwj, bclu, jmdict };
 
     const simpChineseList = combine_without_duplicates(hanzidb.getHSKChars(), hanzidb.getNMostFrequent(3000));
-    const japaneseList = kanjidic.getJLPTChars();
+    const japaneseList = combine_without_duplicates(kanjidic.getJLPTChars(), getJoyo());
     console.log(`Generating list from ${simpChineseList.length} chinese and ${japaneseList.length} japanese characters`);
 
     const radicals: Set<string> = new Set(unihan.getAllKangxiRadicals().flat());

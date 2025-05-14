@@ -189,7 +189,7 @@ export class VariantMap {
         this.forEachEntry((e) => this.populateReadings(e));
 
         log_v(verbose, "Merging simliar readings");
-        const readMerged = this.mergeDuplicatesForPred(andDisjoint(this.isReadingsSimilar));
+        const readMerged = this.mergeDuplicatesForPred(andDisjoint((e1, e2) => this.isReadingsSimilar(e1, e2)));
         readMerged.forEach(([o1, o2, n]) => {
             console.log(getCharList(o1), getCharList(o2), getCharList(n));
         });
@@ -495,7 +495,7 @@ export class VariantMap {
             || common_elements(entry1.japaneseChar, entry2.tradChineseChar).length != 0;
     }
 
-    private isReadingsSimilar(entry1: VariantMapEntry, entry2: VariantMapEntry): boolean {
+    private isReadingsSimilar(entry1: VariantMapEntry, entry2: VariantMapEntry, verbose?: boolean): boolean {
         if (!isSameArray(entry1.pinyin, entry2.pinyin))
             return false;
 
@@ -505,7 +505,7 @@ export class VariantMap {
         // const [match, pct] = getMatchAndPct(r1, r2);
 
         // Check english meaning similarity
-        if (areMeaningsSimilar(entry1.englishMeaning[0], entry2.englishMeaning[0])) {
+        if (areMeaningsSimilar(entry1.englishMeaning[0], entry2.englishMeaning[0], {logSuccess: verbose})) {
             return true;
         }
 

@@ -384,6 +384,7 @@ export function areMeaningsSimilar(
     props?: {
         logFails?: boolean;
         logAll?: boolean;
+        logSuccess?: boolean;
     }
 ): boolean {
     const getWordList = (str: string): string[] =>
@@ -392,7 +393,7 @@ export function areMeaningsSimilar(
            .replace(/,|;/g, ' ')          // strip puncutation
            .split(/\s+/)                  // split by whitespace
            .filter(s => s != '')          // remove empty chars
-           .filter(s => s != 'rad.')      // remove annotations
+           .filter(s => !['rad.', 'radical', 'Kangxi'].includes(s))      // remove annotations
            .filter(s => !s.match(/\d+/)); // don't match numbers
 
     const engWords1 = getWordList(m1);
@@ -419,7 +420,7 @@ export function areMeaningsSimilar(
     }
 
     // if (!res) 
-    if (!!props?.logAll || (props?.logFails && !res)) {
+    if (!!props?.logAll || (props?.logFails && !res) || (props?.logSuccess && res)) {
         console.log("Comparing meanings:")
         console.log(m1);
         console.log(m2);

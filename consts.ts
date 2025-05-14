@@ -29,6 +29,8 @@ export const k_JLPT_FILE_LIST: string[] = [
     'JLPT__n1.txt',
 ];
 
+export const k_JOYO_FILE_PATH = "Joyo_all.txt";
+
 export const k_tag_CHINESE_ONLY = "chinese_only";
 export const k_tag_JAPANESE_ONLY = "japanese_only";
 export const k_tag_CHINESE_RARE = "chinese_rare";
