@@ -31,7 +31,12 @@ export const k_JLPT_FILE_LIST: string[] = [
 
 export const k_tag_CHINESE_ONLY = "chinese_only";
 export const k_tag_JAPANESE_ONLY = "japanese_only";
+export const k_tag_CHINESE_RARE = "chinese_rare";
+export const k_tag_JAPANESE_RARE = "japanese_rare";
+export const k_tag_RADICAL = "radical";
 
 export const k_note_CN_JP = "Character Sino-Japanese";
 export const k_note_CHINESE_ONLY = "Character Chinese";
 export const k_note_JAPANESE_ONLY = "Character Japanese";
+
+export const k_NUM_KANGXI_RADICALS = 214;

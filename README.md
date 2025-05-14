@@ -81,3 +81,6 @@ It could also work in the other direction: you learn a single character, it prop
 * Vocab card generation
 * Integrate "usually_kana" and other tags
 * Generate / integrate radical data
+* Double check character sorting
+* See if it's possible to sort readings
+* For Japanese chars, identified preferred glyph using joyo kanji / JLPT list

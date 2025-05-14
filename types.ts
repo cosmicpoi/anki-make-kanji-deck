@@ -162,7 +162,8 @@ export const card_is_character = (card: KanjiCard_Fuzzy, mychar: string): boolea
 export const common_elements = (a1: string[], a2: string[]) =>
     [...a1].filter(item => a2.includes(item));
 
-const array_difference = (a1: string[], a2: string[]) =>
+// Everything in a1 not in a2
+export const array_difference = <T>(a1: T[], a2: T[]): T[] =>
     [...a1].filter(item => !a2.includes(item));
 
 export const isSameArray = (a1: string[], a2: string[]) =>
@@ -284,6 +285,37 @@ export function isHanCharacter(char: string): boolean {
     return false;
 }
 
+// // Meant to be used with isHanCharacter check
+// export function isRenderable(char: string): boolean {
+//     const code = char.charCodeAt(0);
+//     // CJK Unified Ideographs Extension A (U+3400 through U+4DBF)
+//     if (code >= 0x3400 && code <= 0x4DBF) return true;
+
+//     // CJK Unified Ideographs (U+4E00 through U+9FFF)
+//     if (code >= 0x4E00 && code <= 0x9FFF) return true;
+
+//     // CJK Compatibility Ideographs (U+F900 through U+FAD9)
+//     if (code >= 0xF900 && code <= 0xFAD9) return true;
+
+
+//     // CJK Unified Ideographs Extension B (U+20000 through U+2A6DF)
+//     // CJK Unified Ideographs Extension C (U+2A700 through U+2B739)
+//     // CJK Unified Ideographs Extension D (U+2B740 through U+2B81D)
+//     // CJK Unified Ideographs Extension E (U+2B820 through U+2CEA1)
+//     // CJK Unified Ideographs Extension F (U+2CEB0 through U+2EBE0)
+//     // CJK Unified Ideographs Extension I (U+2EBF0 through U+2EE5D)
+//     if (code >= 0x20000 && code <= 0x2EE5D) return true;
+
+//     // CJK Compatibility Ideographs Supplement (U+2F800 through U+2FA1D)
+//     if (code >= 0x2F800 && code <= 0x2FA1D) return true;
+
+//     // CJK Unified Ideographs Extension G (U+30000 through U+3134A)
+//     // CJK Unified Ideographs Extension H (U+31350 through U+323AF)
+//     if (code >= 0x30000 && code <= 0x323AF) return true;
+
+//     return false;
+// }
+
 export function isHiragana(char: string) {
     const code = char.charCodeAt(0);
     return code >= 0x3040 && code <= 0x309F;
@@ -299,6 +331,28 @@ export function pairsOf<T, S>(a1: Iterable<T>, a2: Iterable<S>): [T, S][] {
     for (const i1 of a1) {
         for (const i2 of a2) {
             pairs.push([i1, i2]);
+        }
+    }
+
+    return pairs;
+}
+
+export function tuplesOf<T>(a: T[]): [T, T][] {
+    const pairs: [T, T][] = [];
+    for (let i = 0; i < a.length; i++) {
+        for (let j = i + 1; j < a.length; j++) {
+            pairs.push([a[i], a[j]]);
+        }
+    }
+
+    return pairs;
+}
+
+export function orderedTuplesOf<T>(a: T[]): [T, T][] {
+    const pairs: [T, T][] = [];
+    for (let i = 0; i < a.length; i++) {
+        for (let j = 0; j < a.length; j++) {
+            pairs.push([a[i], a[j]]);
         }
     }
 

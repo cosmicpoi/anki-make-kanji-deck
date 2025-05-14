@@ -2,7 +2,8 @@ import * as fs from 'fs'
 import * as wanakana from 'wanakana';
 
 import autoBind from "auto-bind";
-import { combine_without_duplicates } from './types';
+import { combine_without_duplicates, isHanCharacter, pairsOf } from './types';
+import { k_NUM_KANGXI_RADICALS } from './consts';
 
 const k_UNIHAN_FILENAMES = {
     Unihan_Readings: "Unihan_Readings.txt",
@@ -36,11 +37,19 @@ function getCleanChar(dbEntry: string): string {
     else return dbEntry;
 }
 
-export function areRadicalStrokesClose(rs1: string, rs2: string, margin: number = 1): boolean {
-    if (rs1 == '' || rs2 == '') return false;
-    const [r1, s1] = rs1.split('.').map(s => parseInt(s));
-    const [r2, s2] = rs2.split('.').map(s => parseInt(s));
-    return r1 == r2 && Math.abs(s1 - s2) <= margin + 0.1;
+export function areRadicalStrokesClose(rsa1: string[], rsa2: string[], margin: number = 1): boolean {
+    if (rsa1.length == 1 || rsa2.length == 1) return false;
+    const compareRs = (rs1: string, rs2: string): boolean => {
+        const [r1, s1] = rs1.split('.').map(s => parseInt(s));
+        const [r2, s2] = rs2.split('.').map(s => parseInt(s));
+        return r1 == r2 && Math.abs(s1 - s2) <= margin + 0.1;
+    }
+    const pairs = pairsOf(rsa1, rsa2);
+    for (const pair of pairs) {
+        if (compareRs(pair[0], pair[1])) return true;
+    }
+
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -49,12 +58,13 @@ export function areRadicalStrokesClose(rs1: string, rs2: string, margin: number 
 
 type UnihanEntry = {
     /* Raw data */
+    glyph: string;
     // IRGs
     kIRG_GSource?: string;
     kIRG_HSource?: string;
     kIRG_JSource?: string;
     kTotalStrokes?: number;
-    kRSUnicode?: string;
+    kRSUnicode?: string[];
     // readings
     kMandarin?: string[];
     kJapanese?: string[];
@@ -72,7 +82,7 @@ type UnihanEntry = {
     cachedJapaneseOn?: string[];
 };
 
-type UnihanIRG = 'kIRG_JSource' | 'kIRG_HSource' | 'kIRG_GSource' | 'kTotalStrokes' | 'kRSUnicode';
+type UnihanIRG = 'kIRG_JSource' | 'kIRG_HSource' | 'kIRG_GSource' | 'kTotalStrokes';
 type UnihanReading = 'kMandarin' | 'kJapanese' | 'kJapaneseKun' | 'kJapaneseOn' | 'kDefinition';
 type UnihanVariant = 'kSemanticVariant' | 'kSpecializedSemanticVariant' | 'kSimplifiedVariant' | 'kTraditionalVariant';
 
@@ -131,7 +141,7 @@ export class Unihan {
                 this.emplace_irg('kTotalStrokes', character, reading_line);
             }
             else if (action == 'kRSUnicode') {
-                this.emplace_irg('kRSUnicode', character, reading_line);
+                this.emplace_rs(character, reading);
             }
             else if (action == 'kMandarin') {
                 this.emplace_readings('kMandarin', character, reading);
@@ -208,8 +218,8 @@ export class Unihan {
         return this.m_entries.get(mychar)?.kTotalStrokes || 0;
     }
 
-    public getRadicalStrokeIdx(mychar: string): string {
-        return this.m_entries.get(mychar)?.kRSUnicode || ''; 
+    public getRadicalStrokeIdx(mychar: string): string[] {
+        return this.m_entries.get(mychar)?.kRSUnicode || [];
     }
 
     // reading getters
@@ -258,7 +268,9 @@ export class Unihan {
     public isSemanticOrSpecializedVariant(lhs: string, rhs: string): boolean {
         const res = this.m_entries.get(lhs);
         if (!res) return false;
-        return res.kTraditionalVariant?.includes(rhs) || false
+        const semantic = res.kSemanticVariant?.includes(rhs) || false;
+        const specialized = res.kSemanticVariant?.includes(rhs) || false;
+        return semantic || specialized;
     }
 
     public hasLink(lhs: string, rhs: string): boolean {
@@ -276,8 +288,25 @@ export class Unihan {
         const entry = this.at(lhs);
         if (key == 'kTotalStrokes') {
             entry[key] = parseInt(rhs);
-        } else {
+        }
+        else {
             entry[key] = rhs;
+        }
+    }
+
+    private emplace_rs(char: string, rs: string[]) {
+        const entry = this.at(char);
+        if (entry['kRSUnicode'] == undefined) entry['kRSUnicode'] = [];
+        entry['kRSUnicode'] = [...entry['kRSUnicode'], ...rs];
+
+        
+        for (const idx of rs) {
+            const arr = this.m_rsToChar.get(idx);
+            if (!arr) {
+                this.m_rsToChar.set(idx, [char]);
+                continue;
+            }
+            arr.push(char);
         }
     }
 
@@ -297,16 +326,47 @@ export class Unihan {
         return this.m_entries.get(k);
     }
 
+    public getByRs(rs: string): UnihanEntry[] {
+        const chars = this.m_rsToChar.get(rs);
+        if (chars == undefined) return [];
+
+        return chars.map(c => this.m_entries.get(c)).filter(e => !!e)
+    }
+
+    public getKangxiRadicals(radicalNum: number): UnihanEntry[] {
+        if (radicalNum < 1 || radicalNum > k_NUM_KANGXI_RADICALS) {
+            console.error("invalid radical number");
+            return [];
+        }
+        const asStr = radicalNum.toString();
+        const radVariants = [asStr + '.0', asStr + "'.0", asStr + "''.0", asStr + "'''.0"];
+        const candidates = radVariants.map(c => this.getByRs(c)).filter(s => !!s);
+        return [...new Set(candidates.flat())];
+    }
+
+    public getAllKangxiRadicals(): string[][] {
+        const rads: string[][] = [[]];
+        for (let i = 1; i <= k_NUM_KANGXI_RADICALS; i++) {
+            const rad = this.getKangxiRadicals(i).map(c => c.glyph)
+            .filter(c => isHanCharacter(c) && (this.isJapanese(c) || this.isSimplified(c) || this.isTraditional(c)));
+            rads.push(rad);
+        } 
+
+        return rads;
+    }
+
     private at(k: string): UnihanEntry {
         const res = this.m_entries.get(k);
         if (!res) {
-            const newEntry = {};
+            const newEntry = { glyph: k };
             this.m_entries.set(k, newEntry)
             return newEntry;
         }
         return res;
     }
 
+    // Characters indexed by RS index
+    private m_rsToChar: Map<string, string[]> = new Map();
     // Entries indexed by character (rather than code point)
     private m_entries: Map<string, UnihanEntry> = new Map();
 }

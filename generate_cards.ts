@@ -1,7 +1,7 @@
 import * as fs from 'fs'
 import minimist from "minimist";
 import { Cedict } from "./cedict";
-import { k_BCCWJ_FILE_PATH, k_BCLU_FILE_PATH, k_CEDICT_FILE_PATH, k_CHARACTER_LIST_PATH, k_HANZIDB_FILE_PATH, k_HSK_FILE_LIST, k_JLPT_FILE_LIST, k_JMDICT_FILE_PATH, k_KANJIDIC_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_tag_CHINESE_ONLY, k_tag_JAPANESE_ONLY, k_UNIHAN_DB_PATH } from "./consts";
+import { k_BCCWJ_FILE_PATH, k_BCLU_FILE_PATH, k_CEDICT_FILE_PATH, k_CHARACTER_LIST_PATH, k_HANZIDB_FILE_PATH, k_HSK_FILE_LIST, k_JLPT_FILE_LIST, k_JMDICT_FILE_PATH, k_KANJIDIC_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_tag_CHINESE_ONLY, k_tag_CHINESE_RARE, k_tag_JAPANESE_ONLY, k_tag_JAPANESE_RARE, k_tag_RADICAL, k_UNIHAN_DB_PATH } from "./consts";
 import { Kanjidic } from "./kanjidic";
 import { Unihan } from "./unihan";
 import { buildKanjiCardsFromLists } from "./buildKanjiCards";
@@ -9,7 +9,7 @@ import { Bccwj } from "./bccwj";
 import { KanjiCard } from "./KanjiCard";
 import { Bclu } from "./Bclu";
 import { Hanzidb } from './Hanzidb';
-import { combine_without_duplicates, hskTag, jlptTag } from './types';
+import { array_difference, combine_without_duplicates, hskTag, jlptTag } from './types';
 
 const args = minimist(process.argv.slice(2));
 
@@ -23,7 +23,7 @@ async function buildKanji() {
 
     const simpChineseList = combine_without_duplicates(hanzidb.getHSKChars(), hanzidb.getNMostFrequent(3000));
     const japaneseList = kanjidic.getJLPTChars();
-    console.log(simpChineseList.length, japaneseList.length);
+    console.log(`Generating list from ${simpChineseList.length} chinese and ${japaneseList.length} japanese characters`);
 
     // Generate card list
     const cards: KanjiCard[] = buildKanjiCardsFromLists({
@@ -33,20 +33,48 @@ async function buildKanji() {
         modules: { unihan, kanjidic, cedict, bccwj, bclu }
     });
 
-    // Add chinese-only or japanese-only tags
+    const radicals: Set<string> =  new Set(unihan.getAllKangxiRadicals().flat());
+
+    const simpChineseSet = new Set(simpChineseList);
+    const japaneseSet = new Set(japaneseList);
+
+    const getAllChars = (entry: KanjiCard): string[] =>
+        combine_without_duplicates(entry.japaneseChar, entry.simpChineseChar, entry.tradChineseChar);
+    const isRadical = (c: KanjiCard): boolean => {
+        const allChars = getAllChars(c);
+        for (const c of allChars) {
+            if (radicals.has(c)) return true;
+        }
+        return false;
+    };
+
+
+    // Add tags
     cards.forEach(card => {
+        // Add radical tags
+        if (isRadical(card)) {
+            card.tags.push(k_tag_RADICAL);
+        }
+        // Add chinese-only or japanese-only tags
         if (card.japaneseChar.length == 0) {
             card.tags.push(k_tag_CHINESE_ONLY);
         }
         else if (card.simpChineseChar.length == 0 && card.tradChineseChar.length == 0) {
             card.tags.push(k_tag_JAPANESE_ONLY);
         }
+        // Add chinese-rare or japanese-rare tags
+        if (card.japaneseChar.length > 0 && !japaneseSet.has(card.japaneseChar[0])) {
+            card.tags.push(k_tag_JAPANESE_RARE);
+        }
+        if (card.simpChineseChar.length > 0 && !simpChineseSet.has(card.simpChineseChar[0])) {
+            card.tags.push(k_tag_CHINESE_RARE);
+        }
     });
 
     // Populate JLPT / HSK levels
     cards.forEach(card => {
         const jlptLevels = card.japaneseChar.map(c => kanjidic.getJLPT(c));
-        const minJlptLevel = jlptLevels.reduce((a, b) => Math.min(a, b), 0);
+        const minJlptLevel = jlptLevels.length == 0 ? 0 : jlptLevels.reduce((a, b) => Math.min(a, b));
         if (minJlptLevel != 0) {
             card.tags.push(jlptTag(minJlptLevel));
         }

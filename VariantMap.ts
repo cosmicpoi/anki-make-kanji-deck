@@ -1,16 +1,19 @@
 // Manages a transliteration map of Japanese, Simplified Chinese, and Traditional Chinese variants of each character
 // Maintains readings, since reading similarity is used to merge characters
 // Derived using unihan data
+// 
+// The spec of VariantMap should be thought of as "the minimal amount of maximum information" for the given chars -
+// i.e. the user gives a list of chars that they want to describe, and the system tries to identify clusters within them
+// and also pull in additional variants for each identified cluster
 
 import * as fs from 'fs'
 import autoBind from "auto-bind";
 import { areRadicalStrokesClose, Unihan } from "./unihan";
-import { apply_getter_to_arr, apply_multi_getter, CharacterType, combine_without_duplicates, common_elements, isSameArray, pairsOf } from "./types";
+import { apply_getter_to_arr, apply_multi_getter, CharacterType, combine_without_duplicates, common_elements, isSameArray, pairsOf, tuplesOf } from "./types";
 import { log_v } from "./logging";
 import * as OpenCC from 'opencc-js';
 
-type VariantMapEntry = {
-    id: number;
+export type CharVariantEntry = {
     japaneseChar: string[];
     simpChineseChar: string[];
     tradChineseChar: string[];
@@ -18,6 +21,10 @@ type VariantMapEntry = {
     pinyin: string[];
     onyomi: string[];
     kunyomi: string[];
+}
+
+type VariantMapEntry = CharVariantEntry & {
+    id: number;
 };
 
 const k_INVALID_ID = -1;
@@ -63,6 +70,9 @@ export class VariantMap {
             this.emplaceNewCharacter(c, CharacterType.Japanese);
         for (const c of simpChars)
             this.emplaceNewCharacter(c, CharacterType.SimplifiedChinese);
+        const initialJpChars: Set<string> = new Set(jpChars);
+        const initialSimpChars: Set<string> = new Set(simpChars);
+        const initialTradChars: Set<string> = new Set([...simpChars].map(c => this.s2t(c)));
 
         log_v(verbose, "Initialized VariantMap with entries: ", this.m_entries.size);
 
@@ -92,6 +102,9 @@ export class VariantMap {
         const jpTradMerged = this.mergeDuplicatesForPred(this.isJpTradDirectVariant);
         log_v(verbose, `Merged ${jpTradMerged} entries. Down to`, this.m_entries.size);
 
+        log_v(verbose, "Populating readings");
+        this.forEachEntry((e) => this.populateReadings(e));
+
         log_v(verbose, "Merging simliar readings");
         const readMerged = this.mergeDuplicatesForPred(this.isReadingsSimilar);
         log_v(verbose, `Merged ${readMerged} entries. Down to`, this.m_entries.size);
@@ -111,8 +124,22 @@ export class VariantMap {
 
         log_v(verbose, 'Guessing Chinese chars');
         this.forEachEntry((e) => this.populateGuessSimpTradFromJap(e));
-
         log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
+
+        const clustered = this.getMatchPred(e => e.japaneseChar.length > 1 && e.simpChineseChar.length > 1 && e.tradChineseChar.length > 1);
+        const clusteredChars = clustered.map(e => [e.japaneseChar, e.simpChineseChar, e.tradChineseChar]);
+        log_v(verbose, "These entries look suspiciously clustered", clusteredChars);
+
+        log_v(verbose, "Could not verify these entries:");
+        const overClustered = clustered.map((e) => this.getClusters(e))
+            .filter(([_e, c]) => c.length > 1);
+        for (const e of overClustered) log_v(verbose, e[1]);
+
+        log_v(verbose, "Declustering clusters");
+        overClustered.forEach(this.declusterEntry);
+
+        log_v(verbose, "Repopulating readings");
+        this.forEachEntry((e) => this.populateReadings(e));
 
         const jp_only = this.getEmpty().filter(e => e.simpChineseChar.length == 0).map(e => e.japaneseChar)
         const cn_only = this.getEmpty().filter(e => e.japaneseChar.length == 0).map(e => [e.simpChineseChar, e.tradChineseChar]);
@@ -122,16 +149,57 @@ export class VariantMap {
 
     }
 
-    private getEmpty(): VariantMapEntry[] {
+    private getMatchPred(pred: (e: VariantMapEntry) => boolean): VariantMapEntry[] {
         const empty: VariantMapEntry[] = [];
         this.forEachEntry(e => {
-            if (missingChar(e)) empty.push(e);
+            if (pred(e)) empty.push(e);
         })
         return empty;
     }
 
+    private getEmpty(): VariantMapEntry[] {
+        return this.getMatchPred(missingChar);
+    }
+
+    // Check that every pair of characters is linked
+    private getClusters(entry: VariantMapEntry): [VariantMapEntry, string[][]] {
+        const chars = [...new Set(getAllChars(entry))];
+        const graph: Record<string, boolean> = {};
+
+        const pairs = tuplesOf(chars);
+        for (const pair of pairs) {
+            if (this.unihan.hasLink(pair[0], pair[1])) {
+                graph[pair.join('')] = true;
+                graph[[pair[1], pair[0]].join('')] = true;
+            }
+        }
+
+        let visited: string[] = [];
+        const toVisit: Set<string> = new Set(chars);
+        const dfs = (node: string): void => {
+            toVisit.delete(node);
+            visited.push(node);
+            const neighbors = chars.filter(c => graph[[node, c].join('')]);
+            for (const neighbor of neighbors) {
+                if (toVisit.has(neighbor)) {
+                    dfs(neighbor);
+                }
+            }
+        }
+
+        const clusters: string[][] = [];
+        while (toVisit.size != 0) {
+            visited = [];
+            dfs([...toVisit][0]);
+            clusters.push(visited);
+        }
+
+
+        return [entry, clusters];
+    }
+
     /* Population functions */
-    private populateReadings(entry: VariantMapEntry) {
+    public populateReadings(entry: CharVariantEntry) {
         const sources: string[][] = [entry.simpChineseChar, entry.tradChineseChar, entry.japaneseChar];
 
         const pinyin = apply_multi_getter(this.unihan.getMandarinPinyin, sources);
@@ -200,6 +268,22 @@ export class VariantMap {
         this.populateSimpFromTrad(entry);
     }
 
+    private depopulateNonMembers(entry: VariantMapEntry, jpMembers: Set<string>, simpCnMembers: Set<string>) {
+        // return;
+        if (entry.japaneseChar.length > 0) {
+            const trimmed = entry.japaneseChar.filter(e => jpMembers.has(e) || simpCnMembers.has(e));
+            // if (trimmed.length != 0) 
+            entry.japaneseChar = trimmed;
+        }
+        if (entry.simpChineseChar.length > 0) {
+            const trimmed = entry.simpChineseChar.filter(e => simpCnMembers.has(e) || jpMembers.has(e));
+            if (trimmed.length != 0)
+                entry.simpChineseChar = trimmed;
+        }
+
+        entry.tradChineseChar = entry.simpChineseChar.map(e => this.s2t(e));
+    }
+
     /* Predicates */
     private isJpToSimp(entry1: VariantMapEntry, entry2: VariantMapEntry): boolean {
         const isVariant = checkAllVariants(this.unihan.isSimplifiedVariant, entry1.japaneseChar, entry2.simpChineseChar);
@@ -250,55 +334,45 @@ export class VariantMap {
         const max = Math.min(r1.size, r2.size);
         const pct = match / max; // # proportion matched
 
+        return match >= 1;
+
+        // check character mismatch - if any set is disjoint and nonempty, it can't be merged
+        // const char_disjoint = (a: string[], b: string[]): boolean =>
+        //     common_elements(a, b).length == 0 && a.length != 0 && b.length != 0;
+        // const m_sp = char_disjoint(entry1.simpChineseChar, entry2.simpChineseChar);
+        // const m_td = char_disjoint(entry1.tradChineseChar, entry2.tradChineseChar);
+        // const m_jp = char_disjoint(entry1.japaneseChar, entry2.japaneseChar);
+
+
         // If it matches a bit, and the radical indices are close
-        if (match >= 1) {
-            const ac1 = getAllChars(entry1);
-            const ac2 = getAllChars(entry2);
-
-            const pairs = pairsOf(ac1, ac2);
-            for (const pair of pairs) {
-                const [a, b] = pair;
-                const rs_a = this.unihan.getRadicalStrokeIdx(a);
-                const rs_b = this.unihan.getRadicalStrokeIdx(b);
-                if (match >= 3 && pct >= 0.7) {
-                    if (areRadicalStrokesClose(rs_a, rs_b, 2)) {
-                        return true;
-                    }
-                }
-                else {
-                    if (areRadicalStrokesClose(rs_a, rs_b, 1)) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        // // If it matches a bit, and it's also disjoint
         // if (match >= 1) {
-        //     // check character mismatch - if any set is disjoint and nonempty, it can't be merged
-        //     const char_disjoint = (a: string[], b: string[]): boolean =>
-        //         common_elements(a, b).length == 0 && a.length != 0 && b.length != 0;
-        //     const m_sp = char_disjoint(entry1.simpChineseChar, entry2.simpChineseChar);
-        //     const m_td = char_disjoint(entry1.tradChineseChar, entry2.tradChineseChar);
-        //     const m_jp = char_disjoint(entry1.japaneseChar, entry2.japaneseChar);
+        //     return true;
+        //     const ac1 = getAllChars(entry1);
+        //     const ac2 = getAllChars(entry2);
 
-        //     const isDisjoint: boolean = m_sp || m_td || m_jp;
-        //     return !isDisjoint;
+        //     const pairs = pairsOf(ac1, ac2);
+        //     for (const pair of pairs) {
+        //         const [a, b] = pair;
+        //         const rs_a = this.unihan.getRadicalStrokeIdx(a);
+        //         const rs_b = this.unihan.getRadicalStrokeIdx(b);
+        //         if (match >= 3 && pct >= 0.7) {
+        //             if (areRadicalStrokesClose(rs_a, rs_b, 2)) {
+        //                 return true;
+        //             }
+        //         }
+        //         else {
+        //             if (areRadicalStrokesClose(rs_a, rs_b, 1)) {
+        //                 return true;
+        //             }
+        //         }
+        //     }
+
+        //     // If all three sets are disjoint, don't merge
+            
         // }
-        return false;
+
+        // return false;
     }
-
-    // function populateSimpFromTrad(card: KanjiCard) {
-    //     if (fuzzy_empty(card.simpChineseChar) && !fuzzy_empty(card.tradChineseChar)) {
-    //         card.simpChineseChar.v = card.tradChineseChar.v.map(c => converter_t2s(c));
-    //     }
-    // }
-
-    // function populateTradFromSimp(card: KanjiCard) {
-    //     if (fuzzy_empty(card.tradChineseChar) && !fuzzy_empty(card.simpChineseChar)) {
-    //         card.tradChineseChar.v = card.simpChineseChar.v.map(c => converter_s2t(c));
-    //     }
-    // }
 
     /* Merge utilties */
 
@@ -332,6 +406,60 @@ export class VariantMap {
     private mergeDuplicatesForPred(pred: (e1: VariantMapEntry, e2: VariantMapEntry) => boolean): number {
         const duplicates = this.getDuplicatesForPred(pred);
         return this.mergeSet(duplicates);
+    }
+
+    private declusterEntry(clusteredEntry: [VariantMapEntry, string[][]]) {
+        const [entry, clusters] = clusteredEntry;
+        this.m_entries.delete(entry.id);
+        for (const cluster of clusters) {
+            const id = this.getId();
+            const japaneseChar: string[] = cluster.filter(c => this.unihan.isJapanese(c));
+            const simpChineseChar: string[] = cluster.filter(c => this.unihan.isSimplified(c));
+            const tradChineseChar: string[] = [... new Set(simpChineseChar.map(c => this.s2t(c)))];
+
+            const newEntry: VariantMapEntry = {
+                ...defaultVariantMapEntry(id),
+                japaneseChar,
+                simpChineseChar,
+                tradChineseChar
+            };
+            this.m_entries.set(id, newEntry);
+        }
+    }
+
+    // Returns if merge was successful or not
+    private tryMergeEntries(id1: number, id2: number): boolean {
+        const old1 = this.m_entries.get(id1);
+        const old2 = this.m_entries.get(id2);
+        if (!old1 || !old2) {
+            return false;
+        }
+
+        // // Final check: don't allow entries to be merged if pinyin isn't exactly the same
+        // if (!isSameArray(old1.pinyin, old2.pinyin)) return false;
+
+        const id = this.getId();
+        const newEntry = defaultVariantMapEntry(id);
+
+        let key: keyof VariantMapEntry;
+        for (key in newEntry) {
+            if (key == 'id') continue;
+            newEntry[key] = combine_without_duplicates(old1[key], old2[key]);
+        }
+
+        this.m_entries.delete(id1);
+        this.m_entries.delete(id2);
+
+        if (this.m_entries.has(id)) {
+            console.error("Entry should not be defined");
+            return false;
+        }
+        this.m_entries.set(id, newEntry);
+
+        getAllChars(newEntry).forEach((c) => {
+            this.m_charToId.set(c, id);
+        })
+        return true;
     }
 
     // Getters and iterators
@@ -368,41 +496,6 @@ export class VariantMap {
 
         this.m_entries.set(id, entry);
         this.m_charToId.set(char, id);
-    }
-
-    // Returns if merge was successful or not
-    private tryMergeEntries(id1: number, id2: number): boolean {
-        const old1 = this.m_entries.get(id1);
-        const old2 = this.m_entries.get(id2);
-        if (!old1 || !old2) {
-            return false;
-        }
-
-        // Final check: don't allow entries to be merged if pinyin isn't exactly the same
-        if (!isSameArray(old1.pinyin, old2.pinyin)) return false;
-
-        const id = this.getId();
-        const newEntry = defaultVariantMapEntry(id);
-
-        let key: keyof VariantMapEntry;
-        for (key in newEntry) {
-            if (key == 'id') continue;
-            newEntry[key] = combine_without_duplicates(old1[key], old2[key]);
-        }
-
-        this.m_entries.delete(id1);
-        this.m_entries.delete(id2);
-
-        if (this.m_entries.has(id)) {
-            console.error("Entry should not be defined");
-            return false;
-        }
-        this.m_entries.set(id, newEntry);
-
-        getAllChars(newEntry).forEach((c) => {
-            this.m_charToId.set(c, id);
-        })
-        return true;
     }
 
     private getId(): number {
