@@ -6,10 +6,9 @@
 // i.e. the user gives a list of chars that they want to describe, and the system tries to identify clusters within them
 // and also pull in additional variants for each identified cluster
 
-import * as fs from 'fs'
 import autoBind from "auto-bind";
-import { areRadicalStrokesClose, Unihan } from "./unihan";
-import { apply_getter_to_arr, apply_multi_getter, areMeaningsSimilar, CharacterType, combine_without_duplicates, common_elements, getMatchAndPct, isSameArray, pairsOf, tuplesOf } from "./types";
+import {  Unihan } from "./unihan";
+import { apply_multi_getter, areMeaningsSimilar, CharacterType, combine_without_duplicates, common_elements, getMatchAndPct, isSameArray, pairsOf } from "./types";
 import { log_v } from "./logging";
 import * as OpenCC from 'opencc-js';
 import { Cedict } from './cedict';
@@ -91,7 +90,6 @@ export class VariantMap {
         this.unihan = unihan;
         this.kanjidic = kanjidic;
         this.cedict = cedict;
-        this.t2s = OpenCC.Converter({ from: 'hk', to: 'cn' });
         this.s2t = OpenCC.Converter({ from: 'cn', to: 'hk' });
 
         this.populateClusters(jpChars, simpChars, verbose);
@@ -209,133 +207,12 @@ export class VariantMap {
         // log_v(verbose, "Entries left with only chinese characters: ", cn_only);
     }
 
-    private tryPopulateAll(jpChars: Iterable<string>, simpChars: Iterable<string>, verbose: boolean) {
-        for (const c of jpChars)
-            this.emplaceNewCharacter(c, CharacterType.Japanese);
-        for (const c of simpChars)
-            this.emplaceNewCharacter(c, CharacterType.SimplifiedChinese);
-        log_v(verbose, "Initialized VariantMap with entries: ", this.m_entries.size);
-
-        log_v(verbose, 'Populating simplified and traditional variants');
-        this.forEachEntry((e) => this.populateSimpTradFromJpVariants(e));
-        this.forEachEntry((e) => this.populateSimpFromTrad(e));
-        this.forEachEntry((e) => this.populateTradFromSimp(e));
-
-        log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
-
-        log_v(verbose, "Merging identical direct variants");
-        const idMerged = this.mergeDuplicatesForPred(this.isIdenticalChar);
-        log_v(verbose, `Merged ${idMerged} entries. Down to`, this.m_entries.size);
-
-        log_v(verbose, "Populating readings");
-        this.forEachEntry((e) => this.populateReadings(e));
-
-        log_v(verbose, 'Populating japanese semantic variants');
-        this.forEachEntry((e) => this.populateJapSemantic(e));
-        log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
-
-        log_v(verbose, "Merging japanese and simplified direct variants");
-        const jpSimpMerged = this.mergeDuplicatesForPred(this.isJpSimpDirectVariant);
-        log_v(verbose, `Merged ${jpSimpMerged} entries. Down to`, this.m_entries.size);
-
-        log_v(verbose, "Merging japanese and traditional direct variants");
-        const jpTradMerged = this.mergeDuplicatesForPred(this.isJpTradDirectVariant);
-        log_v(verbose, `Merged ${jpTradMerged} entries. Down to`, this.m_entries.size);
-
-        log_v(verbose, "Populating readings");
-        this.forEachEntry((e) => this.populateReadings(e));
-
-        log_v(verbose, "Merging simliar readings");
-        const readMerged = this.mergeDuplicatesForPred(this.isReadingsSimilar);
-        log_v(verbose, `Merged ${readMerged} entries. Down to`, this.m_entries.size);
-
-        log_v(verbose, "Merging identical direct variants");
-        const idMerged1 = this.mergeDuplicatesForPred(this.isIdenticalChar);
-        log_v(verbose, `Merged ${idMerged1} entries. Down to`, this.m_entries.size);
-
-        log_v(verbose, 'Populating simplified and traditional variants');
-        this.forEachEntry((e) => this.populateSimpTradFromJpVariants(e));
-        this.forEachEntry((e) => this.populateSimpFromTrad(e));
-        this.forEachEntry((e) => this.populateTradFromSimp(e));
-
-        log_v(verbose, 'Guessing Japanese chars');
-        this.forEachEntry((e) => this.populateGuessJapFromSimpTrad(e));
-        log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
-
-        log_v(verbose, 'Guessing Chinese chars');
-        this.forEachEntry((e) => this.populateGuessSimpTradFromJap(e));
-        log_v(verbose, "Entries left with empty characters: ", this.getEmpty().length);
-
-        const clustered = this.getMatchPred(e => e.japaneseChar.length > 1 && e.simpChineseChar.length > 1 && e.tradChineseChar.length > 1);
-        const clusteredChars = clustered.map(e => [e.japaneseChar, e.simpChineseChar, e.tradChineseChar]);
-        log_v(verbose, "These entries look suspiciously clustered", clusteredChars);
-
-        log_v(verbose, "Could not verify these entries:");
-        const overClustered = clustered.map((e) => this.getClusters(e))
-            .filter(([_e, c]) => c.length > 1);
-        for (const e of overClustered) log_v(verbose, e[1]);
-
-        log_v(verbose, "Declustering clusters");
-        overClustered.forEach(this.declusterEntry);
-
-        log_v(verbose, "Repopulating readings");
-        this.forEachEntry((e) => this.populateReadings(e));
-
-        const jp_only = this.getEmpty().filter(e => e.simpChineseChar.length == 0).map(e => e.japaneseChar)
-        const cn_only = this.getEmpty().filter(e => e.japaneseChar.length == 0).map(e => [e.simpChineseChar, e.tradChineseChar]);
-        log_v(verbose, "Entries left with only japanese characters: ", jp_only);
-        log_v(verbose, "Entries left with only chinese characters: ", cn_only);
-
-
-    }
-
     private getMatchPred(pred: (e: VariantMapEntry) => boolean): VariantMapEntry[] {
         const empty: VariantMapEntry[] = [];
         this.forEachEntry(e => {
             if (pred(e)) empty.push(e);
         })
         return empty;
-    }
-
-    private getEmpty(): VariantMapEntry[] {
-        return this.getMatchPred(missingChar);
-    }
-
-    // Check that every pair of characters is linked
-    private getClusters(entry: VariantMapEntry): [VariantMapEntry, string[][]] {
-        const chars = [...new Set(getAllChars(entry))];
-        const graph: Record<string, boolean> = {};
-
-        const pairs = tuplesOf(chars);
-        for (const pair of pairs) {
-            if (this.unihan.hasLink(pair[0], pair[1])) {
-                graph[pair.join('')] = true;
-                graph[[pair[1], pair[0]].join('')] = true;
-            }
-        }
-
-        let visited: string[] = [];
-        const toVisit: Set<string> = new Set(chars);
-        const dfs = (node: string): void => {
-            toVisit.delete(node);
-            visited.push(node);
-            const neighbors = chars.filter(c => graph[[node, c].join('')]);
-            for (const neighbor of neighbors) {
-                if (toVisit.has(neighbor)) {
-                    dfs(neighbor);
-                }
-            }
-        }
-
-        const clusters: string[][] = [];
-        while (toVisit.size != 0) {
-            visited = [];
-            dfs([...toVisit][0]);
-            clusters.push(visited);
-        }
-
-
-        return [entry, clusters];
     }
 
     /* Population functions */
@@ -371,124 +248,7 @@ export class VariantMap {
         e.englishMeaning = englishMeaning;
     }
 
-    public populateEmptyCharsFromClusterId(entry: CharVariantEntry): void {
-        const allChars = getAllChars(entry);
-        const clusterIds = allChars.map(c => this.unihan.getClusterId(c)).filter(cid => cid != 0);
-
-        const chars: string[] = [...new Set(clusterIds.map(cid => this.unihan.getClusterById(cid)).flat())];
-
-        if (entry.japaneseChar.length == 0) {
-            entry.japaneseChar = chars.filter(c => this.unihan.isJapanese(c));
-        }
-        if (entry.simpChineseChar.length == 0) {
-            entry.simpChineseChar = chars.filter(c => this.unihan.isSimplified(c));
-            entry.tradChineseChar = [...new Set(entry.simpChineseChar.map(c => this.s2t(c)))];
-        }
-    }
-
-
-    private populateSimpTradFromJpVariants(entry: VariantMapEntry) {
-        // If trad character is empty, guess it from japanese
-        if (entry.tradChineseChar.length == 0 && entry.japaneseChar.length != 0) {
-            entry.tradChineseChar = apply_getter_to_arr(this.unihan.getTradChineseVariants, entry.japaneseChar);
-        }
-        // If simp character is empty, guess it from japanese
-        if (entry.simpChineseChar.length == 0 && entry.japaneseChar.length != 0) {
-            entry.simpChineseChar = apply_getter_to_arr(this.unihan.getSimpChineseVariants, entry.japaneseChar);
-        }
-    }
-
-    private populateSimpFromTrad(entry: VariantMapEntry) {
-        entry.simpChineseChar = combine_without_duplicates(
-            entry.simpChineseChar,
-            entry.tradChineseChar.map(c => this.t2s(c))
-        );
-    }
-
-    private populateTradFromSimp(entry: VariantMapEntry) {
-        entry.tradChineseChar = combine_without_duplicates(
-            entry.tradChineseChar,
-            entry.simpChineseChar.map(c => this.s2t(c))
-        );
-    }
-
-    private populateJapSemantic(entry: VariantMapEntry) {
-        if (entry.japaneseChar.length == 0 && (entry.simpChineseChar.length != 0 || entry.tradChineseChar.length != 0)) {
-            const guess_sources = combine_without_duplicates(entry.simpChineseChar, entry.tradChineseChar);
-            let candidates: string[] = apply_getter_to_arr(this.unihan.getGetSemanticOrSpecializedVariants, guess_sources);
-            candidates = candidates.filter(c => this.unihan.isJapanese(c));
-
-            entry.japaneseChar = candidates;
-        }
-    }
-
-    private populateGuessJapFromSimpTrad(entry: VariantMapEntry) {
-        if (entry.japaneseChar.length == 0 && (entry.simpChineseChar.length != 0 || entry.tradChineseChar.length != 0)) {
-            let candidates = combine_without_duplicates(entry.simpChineseChar, entry.tradChineseChar);
-            candidates = candidates.filter(e => this.unihan.isJapanese(e));
-
-            entry.japaneseChar = candidates;
-        }
-    }
-
-    private populateGuessSimpTradFromJap(entry: VariantMapEntry) {
-        if (entry.japaneseChar.length != 0) {
-            if (entry.simpChineseChar.length == 0) {
-                entry.simpChineseChar = entry.japaneseChar.filter(c => this.unihan.isSimplified(c));
-            }
-            if (entry.tradChineseChar.length == 0) {
-                entry.tradChineseChar = entry.japaneseChar.filter(c => this.unihan.isTraditional(c));
-            }
-        }
-        this.populateTradFromSimp(entry);
-        this.populateSimpFromTrad(entry);
-    }
-
-    private depopulateNonMembers(entry: VariantMapEntry, jpMembers: Set<string>, simpCnMembers: Set<string>) {
-        // return;
-        if (entry.japaneseChar.length > 0) {
-            const trimmed = entry.japaneseChar.filter(e => jpMembers.has(e) || simpCnMembers.has(e));
-            // if (trimmed.length != 0) 
-            entry.japaneseChar = trimmed;
-        }
-        if (entry.simpChineseChar.length > 0) {
-            const trimmed = entry.simpChineseChar.filter(e => simpCnMembers.has(e) || jpMembers.has(e));
-            if (trimmed.length != 0)
-                entry.simpChineseChar = trimmed;
-        }
-
-        entry.tradChineseChar = entry.simpChineseChar.map(e => this.s2t(e));
-    }
-
     /* Predicates */
-    private isJpToSimp(entry1: VariantMapEntry, entry2: VariantMapEntry): boolean {
-        const isVariant = checkAllVariants(this.unihan.isSimplifiedVariant, entry1.japaneseChar, entry2.simpChineseChar);
-        return isVariant && isSameArray(entry1.pinyin, entry2.pinyin);
-    }
-
-    private isSimpToJp(entry1: VariantMapEntry, entry2: VariantMapEntry): boolean {
-        const isVariant = checkAllVariants(this.unihan.isSemanticOrSpecializedVariant, entry1.simpChineseChar, entry2.japaneseChar);
-        return isVariant && isSameArray(entry1.pinyin, entry2.pinyin);
-    }
-
-    private isJpSimpDirectVariant(entry1: VariantMapEntry, entry2: VariantMapEntry): boolean {
-        return this.isJpToSimp(entry1, entry2) || this.isSimpToJp(entry1, entry2);
-    }
-
-
-    private isJpToTrad(entry1: VariantMapEntry, entry2: VariantMapEntry): boolean {
-        const isVariant = checkAllVariants(this.unihan.isTraditionalVariant, entry1.japaneseChar, entry2.tradChineseChar);
-        return isVariant && isSameArray(entry1.pinyin, entry2.pinyin);
-    }
-
-    private isTradToJp(entry1: VariantMapEntry, entry2: VariantMapEntry): boolean {
-        const isVariant = checkAllVariants(this.unihan.isSemanticOrSpecializedVariant, entry1.tradChineseChar, entry2.japaneseChar);
-        return isVariant && isSameArray(entry1.pinyin, entry2.pinyin);
-    }
-
-    private isJpTradDirectVariant(entry1: VariantMapEntry, entry2: VariantMapEntry): boolean {
-        return this.isJpToTrad(entry1, entry2) || this.isTradToJp(entry1, entry2);
-    }
 
     private isIdenticalChar(entry1: VariantMapEntry, entry2: VariantMapEntry): boolean {
         return common_elements(entry1.japaneseChar, entry2.simpChineseChar).length != 0
@@ -547,25 +307,6 @@ export class VariantMap {
         return this.mergeSet(duplicates);
     }
 
-    private declusterEntry(clusteredEntry: [VariantMapEntry, string[][]]) {
-        const [entry, clusters] = clusteredEntry;
-        this.m_entries.delete(entry.id);
-        for (const cluster of clusters) {
-            const id = this.getId();
-            const japaneseChar: string[] = cluster.filter(c => this.unihan.isJapanese(c));
-            const simpChineseChar: string[] = cluster.filter(c => this.unihan.isSimplified(c));
-            const tradChineseChar: string[] = [... new Set(simpChineseChar.map(c => this.s2t(c)))];
-
-            const newEntry: VariantMapEntry = {
-                ...defaultVariantMapEntry(id),
-                japaneseChar,
-                simpChineseChar,
-                tradChineseChar
-            };
-            this.m_entries.set(id, newEntry);
-        }
-    }
-
     // Returns old entries and new entry if merge was successful
     private tryMergeEntries(id1: number, id2: number): [VariantMapEntry, VariantMapEntry, VariantMapEntry] | undefined {
         const old1 = this.m_entries.get(id1);
@@ -599,23 +340,7 @@ export class VariantMap {
     public forEachEntry(handler: (entry: VariantMapEntry) => void): void {
         this.m_entries.forEach(handler);
     }
-    // Export
-    public writeToFile(path: string): void {
-        const writeStream = fs.createWriteStream(path, { flags: 'w', encoding: 'utf8' });
-        writeStream.on('drain', () => console.log('Drain event triggered'));
 
-        this.forEachEntry(e => {
-            const vals: string[] = [];
-            vals.push(e.japaneseChar.join(','));
-            vals.push(e.simpChineseChar.join(','));
-            vals.push(e.tradChineseChar.join(','));
-            vals.push(e.pinyin.join(','));
-            vals.push(e.kunyomi.join(','));
-            vals.push(e.onyomi.join(','));
-            writeStream.write(vals.join('\t') + "\n");
-        });
-        writeStream.end(() => { console.log('Finished writing file.'); });
-    }
     // Basic Map logic
     private emplaceNewCharacter(char: string, charType: CharacterType) {
         const id = this.getId();
@@ -640,7 +365,6 @@ export class VariantMap {
     private unihan: Unihan;
     private kanjidic: Kanjidic;
     private cedict: Cedict;
-    private t2s: OpenCC.ConvertText;
     private s2t: OpenCC.ConvertText;
 
     private m_id: number = 0;
