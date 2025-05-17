@@ -73,13 +73,42 @@ You could tell the system to learn a single sentence, and it would dynamically u
 
 It could also work in the other direction: you learn a single character, it propagates out to words and sentences, and those are registered in the system.
 
+To look for potential duplicates in output:
+```
+CN first:
+(^Character Sino-Japanese\t\t([^\s])\t([^\s])\t(.+?)\t.+\nCharacter Sino-Japanese\t([^\s])\t\t\t\4.+$)
+JP first:
+(^Character Sino-Japanese\t([^\s])\t\t\t(.+?)\t.+\nCharacter Sino-Japanese\t\t([^\s])\t([^\s])\t\3.+$)
+
+
+
+Without backref:
+(^Character Sino-Japanese\t\t([^\s])\t([^\s])\t(.+?)\t.+\nCharacter Sino-Japanese\t[^\s]\t\t\t.+$)
+
+(^Character Sino-Japanese\t[^\s]\t\t\t.+\nCharacter Sino-Japanese\t\t([^\s])\t([^\s])\t(.+?)\t.+$)
+```
+
 
 ## TODO:
-* Stroke order
-* CN/Kun/ON vocab lookup
-* Sentence example generation
-* Vocab card generation
+
+Easy, high-value
+* Refactor  
+* Add stroke order
+* Generate furigana (with kana - easy, using kana alignment)
+  * Generate furigana (kanji only - hard )
+* Filter our proper nouns from chinese readings
+* Add frequency and stroke count fields
+* Output pinyin/kun/on for jp/cn-only cards; sort by pinyin on export
 * Integrate "usually_kana" and other tags
-* Generate / integrate radical data
-* Double check character sorting
-* Generate furigana
+* Vocab card generation
+* Generate radical cards
+
+Hard, high-value  
+* Write up or publish results somehow
+* Sentence example generation
+
+Hard, low-value
+* Generate radical breakdown
+
+Easy, low-value
+* Optimize XML parser

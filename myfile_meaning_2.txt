@@ -1,7 +1,0 @@
-#separator:tab
-#html:true
-#notetype column:1
-#tags column:9
-Character Sino-Japanese	中	中	中	zhōng	なか,うち,あたる	チュウ	central; center, middle; in the midst of; hit (target); attain	HSK::6::5::4::3::2::1 JLPT::n1::n2::n3::n4::n5
-Character Chinese	乒	乒	pīng	(used with 乓) “ping” of “ping pong”				HSK::6::5::4 HSK::7-9 chinese_only
-Character Japanese	匂	におう,におい		fragrance, smell				JLPT::n1 japanese_only

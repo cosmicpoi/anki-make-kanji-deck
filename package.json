@@ -20,10 +20,11 @@
     "wanakana": "^5.3.1"
   },
   "scripts": {
-    "execute": "yarn ts-node main.ts",
+    "execute": "ts-node -r tsconfig-paths/register",
     "clean": "rm -rf node_modules"
   },
   "devDependencies": {
-    "@types/node": "^22.15.17"
+    "@types/node": "^22.15.17",
+    "tsconfig-paths": "^4.2.0"
   }
 }
