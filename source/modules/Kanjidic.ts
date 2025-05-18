@@ -110,9 +110,13 @@ export class Kanjidic {
     }
 
     public getJLPTChars(): string[] {
-        console.log(this.m_entries.size);
         const values: string[][] = [...this.m_jlptToChar.values()];
         return values.reduce((a1, a2) => [...a1, ...a2]);
+    }
+
+    public getFrequentChars(): string[] {
+        return [...this.m_entries.values()]
+            .filter(e => !!e.freq).map(e => e.character);
     }
 
     public getJLPT(char: string): number {
@@ -146,10 +150,10 @@ export class Kanjidic {
 
             this.m_charToGrade.set(entry.character, entry.grade);
         }
+
     }
 
     // Fields
-    private m_freqRankToChar: Map<number, string> = new Map();
     private m_gradeToChar: Map<number, string[]> = new Map();
     private m_charToGrade: Map<string, number> = new Map();
     private m_jlptToChar: Map<number, string[]> = new Map();

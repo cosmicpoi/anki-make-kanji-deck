@@ -15,17 +15,7 @@ Also, download `Unihan.zip` ([latest](https://www.unicode.org/Public/UCD/latest/
 ## Running
 To run script:
 ```
-yarn ts-node generate_cards.ts -o myfile.txt
-```
-
-To generate all-character lists:
-```
-yarn ts-node generate-character-list.ts -c lists/Chinese_All.txt -j lists/Japanese_All.txt
-```
-
-To generated unnested word lists:
-```
-yarn ts-node generate_unnested_words.ts -i lists/words_raw_nested -o lists/words
+yarn execute execute/generate_cards.ts -o output/myfile.txt
 ```
 
 To clean build folder:

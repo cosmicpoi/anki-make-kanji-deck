@@ -2,7 +2,8 @@ import * as fs from 'fs'
 import * as readline from 'readline';
 
 import autoBind from "auto-bind";
-import { log_v } from '../../logging';
+import { log_v } from '../utils/logging';
+import { isHanCharacter } from 'types';
 
 enum BccwjWordType {
     Kai = '外',  // Foreign Loanwords
@@ -77,6 +78,18 @@ export class Bccwj {
         return this.m_entries.get(word)?.frequency || 0;
     }
 
+    public getNMostFrequentChars(n: number): string[] {
+        const chars: string[] = [];
+        for (let i = 0; i <= this.m_freqRankToWord.size; i++ ){
+            if (chars.length == n) break;
+            const res = this.m_freqRankToWord.get(i);
+            if (res && res.length == 1 && isHanCharacter(res.substring(0, 1))) {
+                chars.push(res);
+            }
+        }
+        return chars;
+    }
+
     public forEachEntry(handler: (entry: BccwjEntry) => void): void {
         this.m_entries.forEach(handler);
     }
@@ -94,8 +107,9 @@ export class Bccwj {
         return this.m_maxFrequency;
     }
 
-    // Map lemma to entry
     private m_maxFrequency: number = 0;
+    // Maps frequency rank from 1 to N to entry lemma
     private m_freqRankToWord: Map<number, string> = new Map();
+    // Map lemma to entry
     private m_entries: Map<string, BccwjEntry> = new Map();
 }

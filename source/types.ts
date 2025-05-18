@@ -5,7 +5,7 @@ export enum CharacterType {
     Japanese = "Japanese",
 };
 
-export const combine_without_duplicates = (...arrays: string[][]): string[] =>
+export const combine_without_duplicates = <T>(...arrays: T[][]): T[] =>
     [...new Set(arrays.flat())];
 
 export const common_elements = (a1: string[], a2: string[]) =>

@@ -9,9 +9,9 @@
 import autoBind from "auto-bind";
 import { Unihan } from "Unihan";
 import { apply_multi_getter, areMeaningsSimilar, CharacterType, combine_without_duplicates, common_elements, getMatchAndPct, isSameArray, pairsOf } from "./types";
-import { log_v } from "../logging";
+import { log_v } from "./utils/logging";
 import * as OpenCC from 'opencc-js';
-import { Cedict } from './consts/Cedict';
+import { Cedict } from './modules/Cedict';
 import { Kanjidic } from './modules/Kanjidic';
 
 export type CharVariantEntry = {
@@ -181,11 +181,11 @@ export class VariantMap {
         this.forEachEntry(mapTradToSimp);
 
         // Now try to find duplicates via character checking
-
         log_v(verbose, "Merging identical direct variants");
         const idMerged = this.mergeDuplicatesForPred(andDisjoint(this.isIdenticalChar));
         log_v(verbose, `Merged ${idMerged.length} entries. Down to`, this.m_entries.size);
 
+        // Try to merge entries by reading similarity
         log_v(verbose, "Populating readings");
         this.forEachEntry((e) => this.populateReadings(e));
 
@@ -197,17 +197,15 @@ export class VariantMap {
         log_v(verbose, `Merged ${readMerged.length} entries. Down to`, this.m_entries.size);
 
 
-        // log_v(verbose, "Merging identical direct variants");
-        // const idMerge2 = this.mergeDuplicatesForPred(this.isIdenticalChar);
-        // log_v(verbose, `Merged ${idMerge2.length} entries. Down to`, this.m_entries.size);
+        // Finally, merge duplicates, repopulate readings, remap traditional again
+        log_v(verbose, "Merging identical direct variants");
+        const idMerge2 = this.mergeDuplicatesForPred(this.isIdenticalChar);
+        log_v(verbose, `Merged ${idMerge2.length} entries. Down to`, this.m_entries.size);
 
         log_v(verbose, "Repopulating readings");
         this.forEachEntry((e) => this.populateReadings(e));
 
-        // const jp_only = this.getEmpty().filter(e => e.simpChineseChar.length == 0).map(e => e.japaneseChar)
-        // const cn_only = this.getEmpty().filter(e => e.japaneseChar.length == 0).map(e => [e.simpChineseChar, e.tradChineseChar]);
-        // log_v(verbose, "Entries left with only japanese characters: ", jp_only);
-        // log_v(verbose, "Entries left with only chinese characters: ", cn_only);
+        this.forEachEntry(mapTradToSimp);
     }
 
     /* Population functions */

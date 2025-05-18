@@ -24,7 +24,7 @@ import { isHanCharacter } from "../types";
 type JmdictSense = {
     pos: string[]; // pos
     xref: string[]; // cross-reference
-    gloss: string[];
+    gloss: JmdictGloss[];
     misc: string[];
     s_inf: string[];
 };
@@ -36,6 +36,10 @@ type JmdictRele = {
     reb: string;
     re_pri: string[];
 }
+type JmdictGloss = {
+    lang: JmdictGlossLang;
+    text: string;
+};
 
 export type JmdictEntry = {
     ent_seq: number; // ent_seq
@@ -50,6 +54,9 @@ export type JmdictEntry = {
 
 const makeDefaultSense = (): JmdictSense =>
     ({ pos: [], xref: [], gloss: [], misc: [], s_inf: [] });
+
+const makeDefaultGloss = (): JmdictGloss =>
+    ({ lang: JmdictGlossLang.eng, text: '' });
 
 const k_KEB_INVALID = '';
 const makeDefaultKele = (): JmdictKele =>
@@ -97,6 +104,10 @@ enum JmdictMiscKeys {
     usually_kana = "&uk;",
 };
 
+export enum JmdictGlossLang {
+    eng = "eng",
+}
+
 type JmdictElement = ParamXMLElement<keyof JmdictTagType, keyof JmdictAttrKey>;
 
 type JME_EntSeq = JmdictElement & {
@@ -129,6 +140,9 @@ type JME_Rele = JmdictElement & {
 };
 type JME_Gloss = JmdictElement & {
     tagName: 'gloss',
+    attributes: {
+        'xml:lang': JmdictGlossLang,
+    }
     children: [string]
 };
 type JME_Pos = JmdictElement & {
@@ -319,11 +333,19 @@ export class Jmdict {
             }
             return rele;
         };
+        const serializeGloss = (el: JME_Gloss): JmdictGloss => {
+            const gloss = makeDefaultGloss();
+            gloss.lang = el.attributes?.['xml:lang'] || JmdictGlossLang.eng;
+            gloss.text = el.children[0];
+            return gloss;
+        };
         const serializeSense = (el: JME_Sense): JmdictSense => {
             const sense = makeDefaultSense();
             for (const child of el.children) {
                 if (child.tagName == 'pos') sense.pos.push(child.children[0]);
-                else if (child.tagName == 'gloss') sense.gloss.push(child.children[0]);
+                else if (child.tagName == 'gloss') sense.gloss.push(
+                    serializeGloss(child)
+                );
                 else if (child.tagName == 'xref') sense.xref.push(child.children[0]);
                 else if (child.tagName == 'misc') sense.misc.push(child.children[0]);
                 else if (child.tagName == 's_inf') sense.s_inf.push(child.children[0]);

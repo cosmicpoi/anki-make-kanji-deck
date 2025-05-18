@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as readline from 'readline';
 
 import autoBind from "auto-bind";
-import { log_v } from '../../logging';
+import { log_v } from '../utils/logging';
 
 
 

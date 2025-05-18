@@ -466,6 +466,7 @@ export class Unihan {
         return [...new Set(candidates.flat())];
     }
 
+    // Returns list of radicals as an array of 214 string arrays (entry i being the ith radical and variants)
     public getAllKangxiRadicals(): string[][] {
         const rads: string[][] = [[]];
         for (let i = 1; i <= k_NUM_KANGXI_RADICALS; i++) {

@@ -1,18 +1,38 @@
 import * as fs from 'fs'
 import minimist from "minimist";
-import { Cedict } from "../source/consts/Cedict";
-import { k_BCCWJ_FILE_PATH, k_BCLU_FILE_PATH, k_CEDICT_FILE_PATH, k_CHARACTER_LIST_PATH, k_HANZIDB_FILE_PATH, k_HSK_FILE_LIST, k_JLPT_FILE_LIST, k_JMDICT_FILE_PATH, k_JOYO_FILE_PATH, k_KANJIDIC_FILE_PATH, k_note_CHINESE_ONLY, k_note_CN_JP, k_note_JAPANESE_ONLY, k_SUBTLEX_FILE_PATH, k_tag_CHINESE_ONLY, k_tag_CHINESE_RARE, k_tag_JAPANESE_ONLY, k_tag_JAPANESE_RARE, k_tag_RADICAL, k_UNIHAN_DB_PATH } from "../source/consts/consts";
-import { Kanjidic } from "../source/modules/Kanjidic";
-import { Unihan } from "../unihan";
+import { Cedict } from "../source/modules/Cedict";
+import {
+    k_BCCWJ_FILE_PATH,
+    k_CEDICT_FILE_PATH,
+    k_CHARACTER_LIST_PATH,
+    k_HANZIDB_FILE_PATH,
+    k_JMDICT_FILE_PATH,
+    k_JOYO_FILE_PATH,
+    k_KANJIDIC_FILE_PATH,
+    k_SUBTLEX_FILE_PATH,
+    k_UNIHAN_DB_PATH
+} from "../source/consts/consts";
+import { Kanjidic } from "Kanjidic";
+import { Unihan } from "Unihan";
 import { buildKanjiCardsFromLists } from "../source/buildKanjiCards";
-import { Bccwj } from "../source/modules/Bccwj";
-import { KanjiCard } from "../KanjiCard";
-import { Bclu } from "../source/modules/Bclu";
-import { Hanzidb } from '../Hanzidb';
-import { array_difference, combine_without_duplicates, hskTag, jlptTag } from '../source/types';
-import { getJpSorter, getSorter } from '../source/utils/freqCharSort';
-import { getPreferredReading, getPreferredRele, Jmdict } from '../source/modules/Jmdict';
-import { Subtlex } from '../source/modules/Subtlex';
+import { Bccwj } from "Bccwj";
+import { KanjiCard } from "KanjiCard";
+import { Hanzidb } from 'Hanzidb';
+import { combine_without_duplicates, hskTag, jlptTag } from '../source/types';
+import { Jmdict } from 'Jmdict';
+import { Subtlex } from 'Subtlex';
+
+const k_tag_CHINESE_ONLY = "chinese_only";
+const k_tag_JAPANESE_ONLY = "japanese_only";
+const k_tag_CHINESE_RARE = "chinese_rare";
+const k_tag_JAPANESE_RARE = "japanese_rare";
+const k_tag_JOYO = "jouyou_kanji";
+const k_tag_JINMEIYO = "jinmeiyou_kanji";
+const k_tag_RADICAL = "radical";
+
+const k_note_CN_JP = "Character Sino-Japanese";
+const k_note_CHINESE_ONLY = "Character Chinese";
+const k_note_JAPANESE_ONLY = "Character Japanese";
 
 const args = minimist(process.argv.slice(2));
 
@@ -21,8 +41,13 @@ function getJoyo(): string[] {
     return content.split('\n').filter(c => c != '');
 }
 
+function getJinmeiyo(): string[] {
+    const content = fs.readFileSync(k_CHARACTER_LIST_PATH + '/' + k_JOYO_FILE_PATH, 'utf-8');
+    return content.split('\n').filter(c => c != '').filter(c => c.at(0) != "#");
+}
+
 async function buildKanji() {
-    const unihan = await Unihan.create(k_UNIHAN_DB_PATH, {validateLinks: true});
+    const unihan = await Unihan.create(k_UNIHAN_DB_PATH, { validateLinks: true });
     const kanjidic = await Kanjidic.create(k_KANJIDIC_FILE_PATH);
     const hanzidb = await Hanzidb.create(k_HANZIDB_FILE_PATH);
     const cedict = await Cedict.create(k_CEDICT_FILE_PATH);
@@ -32,33 +57,50 @@ async function buildKanji() {
 
     const modules = { unihan, kanjidic, hanzidb, cedict, bccwj, subtlex, jmdict };
 
-    const simpChineseList = combine_without_duplicates(hanzidb.getHSKChars(), hanzidb.getNMostFrequent(3000));
-    const japaneseList = combine_without_duplicates(kanjidic.getJLPTChars(), getJoyo());
+    const joyo = new Set(getJoyo());
+    const jinmeiyo = new Set(getJinmeiyo());
+
+    const simpChineseList = combine_without_duplicates(
+        hanzidb.getHSKChars(),
+        hanzidb.getNMostFrequent(3000)
+    );
+    const japaneseList = combine_without_duplicates(
+        kanjidic.getJLPTChars(),
+        kanjidic.getFrequentChars(),
+        bccwj.getNMostFrequentChars(3000),
+        [...joyo],
+        [...jinmeiyo],
+    );
     console.log(`Generating list from ${simpChineseList.length} chinese and ${japaneseList.length} japanese characters`);
 
     const radicals: Set<string> = new Set(unihan.getAllKangxiRadicals().flat());
 
     // Generate card list
-    const cards: KanjiCard[] = buildKanjiCardsFromLists({ japaneseList, simpChineseList, modules });
+    const {
+        cards,
+        chineseVocab,
+        japaneseVocab,
+        sinoJapaneseVocab
+    } = buildKanjiCardsFromLists({ japaneseList, simpChineseList, modules });
 
     const getAllChars = (entry: KanjiCard): string[] =>
         combine_without_duplicates(entry.japaneseChar, entry.simpChineseChar, entry.tradChineseChar);
 
     // Sort and return
-    const getSortKey = (c: KanjiCard) => {
+    const pinyinSort = (c: KanjiCard) => {
         const entries = [...c.pinyin];
         entries.sort();
         return entries.join(',');
     }
-    const getSortKey2 = (c: KanjiCard) => {
+    const charSort = (c: KanjiCard) => {
         const chars = getAllChars(c);
         chars.sort();
         return chars.join(',');
     }
     cards.sort((c1, c2) => {
-        const c = getSortKey(c1).localeCompare(getSortKey(c2));
+        const c = pinyinSort(c1).localeCompare(pinyinSort(c2));
         if (c == 0) {
-            return getSortKey2(c1).localeCompare(getSortKey2(c2));
+            return charSort(c1).localeCompare(charSort(c2));
         }
         else return c;
     });
@@ -105,6 +147,13 @@ async function buildKanji() {
         if (card.simpChineseChar.length > 0 && !has_cn) {
             card.tags.push(k_tag_CHINESE_RARE);
             numRareCn++;
+        }
+        // Add jinmeiyo and joyo tags
+        if (card.japaneseChar.some(c => joyo.has(c))) {
+            card.tags.push(k_tag_JOYO);
+        }
+        if (card.japaneseChar.some(c => jinmeiyo.has(c))) {
+            card.tags.push(k_tag_JINMEIYO);
         }
     });
 
@@ -175,14 +224,14 @@ async function buildKanji() {
             // tuple of key, delimiter
             let field_order: [keyof KanjiCard, string][] = jp_cn_field_order;
             let note_type = k_note_CN_JP;
-            if (card.tags.includes(k_tag_CHINESE_ONLY)) {
-                field_order = cn_field_order;
-                note_type = k_note_CHINESE_ONLY;
-            }
-            else if (card.tags.includes(k_tag_JAPANESE_ONLY)) {
-                field_order = jp_field_order;
-                note_type = k_note_JAPANESE_ONLY;
-            }
+            // if (card.tags.includes(k_tag_CHINESE_ONLY)) {
+            //     field_order = cn_field_order;
+            //     note_type = k_note_CHINESE_ONLY;
+            // }
+            // else if (card.tags.includes(k_tag_JAPANESE_ONLY)) {
+            //     field_order = jp_field_order;
+            //     note_type = k_note_JAPANESE_ONLY;
+            // }
 
             let fields: string[] = Array(col_count).fill('');
 
