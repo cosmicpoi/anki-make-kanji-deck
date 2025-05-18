@@ -12,6 +12,8 @@ import * as wanakana from 'wanakana';
 import { minSubstrLevenshtein } from './utils/levenshtein';
 import { Hanzidb } from 'Hanzidb';
 import { Subtlex } from 'Subtlex';
+import { generateAccentPinyinDelim } from 'utils/pinyin';
+import { generateFurigana } from 'utils/furigana';
 
 function isSinoJpVocab(
     unihan: Unihan,
@@ -363,10 +365,10 @@ export function buildKanjiCardsFromLists(
                 if (idx != undefined) {
                     const cnword = sinojp[idx][0].simplified;
                     const pinyin = sinojp[idx][0].reading[0].pinyin;
-                    sinoJpDesc = `/${cnword}[${pinyin}]`;
+                    sinoJpDesc = `/${cnword}[${generateAccentPinyinDelim(pinyin)}]`;
                 }
                 
-                return `${w}[${jpFurigana[w]}]${sinoJpDesc} - ${jpMeanings[w]}`;
+                return `${generateFurigana(w, jpFurigana[w])}${sinoJpDesc} - ${jpMeanings[w]}`;
             }
             e.japaneseOnVocab = e.japaneseOnVocab.map(c => getStr(c));
             e.japaneseKunVocab = e.japaneseKunVocab.map(c => getStr(c));
@@ -393,10 +395,10 @@ export function buildKanjiCardsFromLists(
                 if (idx != undefined) {
                     const jpword = sinojp[idx][1][1];
                     const furiga = jpFurigana[jpword];
-                    sinoJpDesc = `/${jpword}[${furiga}]`;
+                    sinoJpDesc = `/${generateFurigana(jpword, furiga)}`;
                 }
                 
-                return `${e.simplified}[${e.reading[0].pinyin}]${sinoJpDesc} - ${e.reading[0].definition}`;
+                return `${e.simplified}[${generateAccentPinyinDelim(e.reading[0].pinyin)}]${sinoJpDesc} - ${e.reading[0].definition}`;
             }
             e.simpChineseVocab = pickedEntries.map(e => getStr(e));
             e.tradChineseVocab = pickedEntries.map(e => getStr(e));

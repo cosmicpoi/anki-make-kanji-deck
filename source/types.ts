@@ -86,8 +86,33 @@ export function isHanCharacter(char: string): boolean {
     return false;
 }
 
+function isHiragana(char: string): boolean {
+    const code = char.codePointAt(0);
+    return code !== undefined && code >= 0x3040 && code <= 0x309F;
+}
+
+function isKatakana(char: string): boolean {
+    const code = char.codePointAt(0);
+    // Standard Katakana and Katakana Phonetic Extensions
+    return code !== undefined && (
+        (code >= 0x30A0 && code <= 0x30FF) || // Katakana block
+        (code >= 0x31F0 && code <= 0x31FF)    // Katakana Phonetic Extensions
+    );
+}
+
+export function isKana(char: string): boolean {
+    // Exclude exotic or rare kana
+    // Do not exclude 'ー'
+    const exclusions = ['・', 'ヽ', 'ヾ', 'ヿ', '゙', '゚', '゛', '゜', 'ゝ', 'ゞ', 'ゟ'];
+    return (isHiragana(char) || isKatakana(char)) && !exclusions.includes(char);
+}
+
 export function isHanCharacters(s: string): boolean {
     return s.split('').every(isHanCharacter);
+}
+
+export function strIsKana(s: string): boolean {
+    return s.split('').every(isKana);
 }
 
 export function pairsOf<T, S>(a1: Iterable<T>, a2: Iterable<S>): [T, S][] {
@@ -162,12 +187,12 @@ export function areMeaningsSimilar(
 ): boolean {
     const getWordList = (str: string): string[] =>
         str.replace(/\(.+\)/, '')         // remove parenthesized 
-           .replace(/\[.+\]\)/, '')       // remove brackets 
-           .replace(/,|;/g, ' ')          // strip puncutation
-           .split(/\s+/)                  // split by whitespace
-           .filter(s => s != '')          // remove empty chars
-           .filter(s => !['rad.', 'radical', 'Kangxi'].includes(s))      // remove annotations
-           .filter(s => !s.match(/\d+/)); // don't match numbers
+            .replace(/\[.+\]\)/, '')       // remove brackets 
+            .replace(/,|;/g, ' ')          // strip puncutation
+            .split(/\s+/)                  // split by whitespace
+            .filter(s => s != '')          // remove empty chars
+            .filter(s => !['rad.', 'radical', 'Kangxi'].includes(s))      // remove annotations
+            .filter(s => !s.match(/\d+/)); // don't match numbers
 
     const engWords1 = getWordList(m1);
     const engWords2 = getWordList(m2);

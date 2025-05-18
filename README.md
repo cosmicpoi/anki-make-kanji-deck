@@ -82,14 +82,25 @@ Without backref:
 ## TODO:
 
 Easy, high-value
-* Refactor  
 * Add stroke order
-* Generate furigana (with kana - easy, using kana alignment)
-  * Generate furigana (kanji only - hard )
-* Filter our proper nouns from chinese readings
 * Add frequency and stroke count fields
-* Output pinyin/kun/on for jp/cn-only cards; sort by pinyin on export
-* Integrate "usually_kana" and other tags
+* Integrate "usually_kana", "archaic", and other tags ()
+  * rare - rare term
+  * pol - teneigo
+  * hon - sonkeigo
+  * hum - kenjougo
+  * rK - rarely used kanji
+  * sK - search-only kanji
+  * ik - irregular kana
+  * iK - irregular kanji
+  * io - irregular okurigana
+  * oK - outdated kanji
+  * m-sl - manga slang
+  * joc - humorous term
+  * obs - obselete term
+  * on-mim - mimetic term
+  * sl - slang
+* Integrate part of speech
 * Vocab card generation
 * Generate radical cards
 
@@ -99,6 +110,7 @@ Hard, high-value
 
 Hard, low-value
 * Generate radical breakdown
+* Generate furigana (kanji only - hard )
 
 Easy, low-value
 * Optimize XML parser
