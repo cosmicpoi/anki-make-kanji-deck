@@ -82,8 +82,6 @@ Without backref:
 ## TODO:
 
 Easy, high-value
-* Add stroke order
-* Add frequency and stroke count fields
 * Integrate "usually_kana", "archaic", and other tags ()
   * rare - rare term
   * pol - teneigo
@@ -100,8 +98,8 @@ Easy, high-value
   * obs - obselete term
   * on-mim - mimetic term
   * sl - slang
-* Integrate part of speech
 * Vocab card generation
+  * Integrate part of speech
 * Generate radical cards
 
 Hard, high-value  

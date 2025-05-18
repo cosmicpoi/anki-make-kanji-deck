@@ -3,7 +3,7 @@ import * as wanakana from 'wanakana';
 
 const isSmallChar = (c: string): boolean => ['ゃ', 'ゅ', 'ょ'].includes(c);
 
-const isKanjiLike = (c: string): boolean => isHanCharacter(c) || c == '々';
+const isKanjiLike = (c: string): boolean => isHanCharacter(c) || c == '々' || c == 'ヶ';
 function isStrKanjiOrKana(s: string): boolean {
     if (s.length == 0) console.error("WARNING: Got an empty string in isStrKanjiOrKana, vacuously true");
     return s.split('').every(c => isKanjiLike(c) || isKana(c));
@@ -11,7 +11,7 @@ function isStrKanjiOrKana(s: string): boolean {
 
 // Take in a kanji-rendered string like and hiragana and generate bracketed furigana.
 // 頑張る, がんばる -> 頑張[ばんば]る
-export function generateFurigana(kanjiReading: string, hiragana: string): string {
+export function generateFurigana(kanjiReading: string, hiragana: string, padKana: boolean = false): string {
     // console.log(kanjiReading, hiragana);
     // Recursively generate tuple of aligned tokens
     function _generateFurigana(kanjiChars: string[], hiraganaChars: string[]): [string, string][] {
@@ -222,7 +222,17 @@ export function generateFurigana(kanjiReading: string, hiragana: string): string
             return s1;
         }
         else { // isStrKanjiOrKana(s1) && isStrKanjiOrKana(s2)
-            return s1 != s2 ? `${s1}[${s2}]` : s1
+            if (s1 != s2) {
+                return `${s1}[${s2}]`;
+            }
+            else {
+                if (padKana) {
+                    return `${s1}[ ]`
+                }
+                else {
+                    return s1;
+                }
+            }
         }
     }).join('');
 }

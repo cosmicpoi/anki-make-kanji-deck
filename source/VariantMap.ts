@@ -45,8 +45,6 @@ const defaultVariantMapEntry = (id: number): VariantMapEntry => ({
 export const getAllChars = (entry: CharVariantEntry): string[] =>
     combine_without_duplicates(entry.japaneseChar, entry.simpChineseChar, entry.tradChineseChar);
 
-const missingChar = (entry: VariantMapEntry): boolean =>
-    entry.japaneseChar.length == 0 || entry.simpChineseChar.length == 0 || entry.tradChineseChar.length == 0;
 
 const isDisjoint = (entry1: VariantMapEntry, entry2: VariantMapEntry) => {
     const disjointjp = [entry1.japaneseChar, entry2.japaneseChar].filter(a => a.length != 0).length == 1
@@ -59,20 +57,6 @@ type BinaryPred = (e1: VariantMapEntry, e2: VariantMapEntry) => boolean;
 const andDisjoint = (pred: BinaryPred): BinaryPred =>
     (e1: VariantMapEntry, e2: VariantMapEntry) => isDisjoint(e1, e2) && pred(e1, e2);
 
-const checkAllVariants = (
-    isVariant: (l: string, r: string) => boolean,
-    lhs: string[],
-    rhs: string[]
-): boolean => {
-    for (const c1 of lhs) {
-        for (const c2 of rhs) {
-            if (isVariant(c1, c2)) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
 
 export class VariantMap {
     constructor(
@@ -111,6 +95,18 @@ export class VariantMap {
         for (const c of simpChars)
             this.emplaceNewCharacter(c, CharacterType.SimplifiedChinese);
         log_v(verbose, "Initialized VariantMap with entries: ", this.m_entries.size);
+
+        // Map traditional and merge duplicates
+        const mapTradToSimp = (e: VariantMapEntry) => { e.tradChineseChar = [...new Set(e.simpChineseChar.map(c => this.s2t(c)))] }
+        this.forEachEntry(mapTradToSimp);
+        
+        log_v(verbose, "Merging identical direct variants");
+        while (1) {
+            const idMerged = this.mergeDuplicatesForPred(andDisjoint(this.isIdenticalChar));
+            log_v(verbose, `Merged ${idMerged.length} entries. Down to`, this.m_entries.size);
+            if (idMerged.length == 0) break;
+        }
+    
 
         // There is another technique where we create a card for each cluster like so:
         //      for (const cid in clusters) {
@@ -155,7 +151,6 @@ export class VariantMap {
 
         // Now, merge cards based on subgraph cluster. First we populate traditional characters. Then we check if each 
         // jp vs simp/trad pair is in the same subgraph or not.
-        const mapTradToSimp = (e: VariantMapEntry) => { e.tradChineseChar = [...new Set(e.simpChineseChar.map(c => this.s2t(c)))] }
         this.forEachEntry(mapTradToSimp);
 
         const getCharList = (e: VariantMapEntry): [string, string, string] =>
@@ -199,7 +194,7 @@ export class VariantMap {
 
         // Finally, merge duplicates, repopulate readings, remap traditional again
         log_v(verbose, "Merging identical direct variants");
-        const idMerge2 = this.mergeDuplicatesForPred(this.isIdenticalChar);
+        const idMerge2 = this.mergeDuplicatesForPred(andDisjoint(this.isIdenticalChar));
         log_v(verbose, `Merged ${idMerge2.length} entries. Down to`, this.m_entries.size);
 
         log_v(verbose, "Repopulating readings");
@@ -247,8 +242,7 @@ export class VariantMap {
     /* Predicates */
 
     private isIdenticalChar(entry1: VariantMapEntry, entry2: VariantMapEntry): boolean {
-        return common_elements(entry1.japaneseChar, entry2.simpChineseChar).length != 0
-            || common_elements(entry1.japaneseChar, entry2.tradChineseChar).length != 0;
+        return common_elements(getAllChars(entry1), getAllChars(entry2)).length != 0;
     }
 
     private isReadingsSimilar(entry1: VariantMapEntry, entry2: VariantMapEntry, verbose?: boolean): boolean {

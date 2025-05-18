@@ -15,8 +15,7 @@ export type KanjiCard = {
     // example sentences
     japaneseKunVocab: string[];
     japaneseOnVocab: string[];
-    simpChineseVocab: string[];
-    tradChineseVocab: string[];
+    chineseVocab: string[];
 
     // example sentences
     japaneseExampleSentences: string[];
@@ -29,9 +28,10 @@ export type KanjiCard = {
     tradChineseStrokeOrder: string[];
 
     // difficulty and stroke count
-    strokeCount?: number;
-    japaneseDifficulty?: number;
-    simpChineseDifficulty?: number;
+    japaneseStrokeCount?: number;
+    chineseStrokeCount?: number;
+    japaneseFrequency?: number;
+    chineseFrequency?: number;
 
     // tags 
     tags: string[]; // never actually fuzzy, just for type convenience
@@ -54,8 +54,7 @@ export const defaultKanjiCard = (): KanjiCard => ({
     // example sentences
     japaneseKunVocab: [],
     japaneseOnVocab: [],
-    simpChineseVocab: [],
-    tradChineseVocab: [],
+    chineseVocab: [],
 
     // example sentences
     japaneseExampleSentences: [],

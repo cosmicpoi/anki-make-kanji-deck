@@ -230,12 +230,29 @@ export function buildKanjiCardsFromLists(
         e.englishMeaning = englishMeaning;
     })
 
+    // Populate stroke count and frequency
+    cards.forEach(e => {
+        if (e.simpChineseChar.length > 0) {
+            const char = e.simpChineseChar[0];
+            e.chineseStrokeCount = unihan.getTotalStrokes(char);
+            e.chineseFrequency = subtlex.getFrequency(char);
+        }
+
+        if (e.japaneseChar.length > 0) {
+            const char = e.japaneseChar[0];
+            e.japaneseStrokeCount = unihan.getTotalStrokes(char);
+            e.japaneseFrequency = bccwj.getFrequency(char);
+        }
+    });
+
 
     const chineseVocab: string[] = [];
     const japaneseVocab: string[] = [];
     const sinoJapaneseVocab: [string, string][] = [];
     // Populate vocab 
     for (const e of cards) {
+        // // @ts-ignore
+        // if (0 == 0) break;
         // use these to pick sino-chinese later one 
         let jpAllVocab: [string, string][] = []; // tuples of kanji reading, word
         const jpCharReadings: string[] = [...e.onyomi, ...e.kunyomi];
@@ -359,7 +376,7 @@ export function buildKanjiCardsFromLists(
             e.japaneseOnVocab.sort(jpSorter);
             e.japaneseKunVocab.sort(jpSorter);
 
-            const getStr = (w: string): string =>  {
+            const getStr = (w: string): string => {
                 let sinoJpDesc = '';
                 const idx = isSinoJp_jp(w);
                 if (idx != undefined) {
@@ -367,8 +384,8 @@ export function buildKanjiCardsFromLists(
                     const pinyin = sinojp[idx][0].reading[0].pinyin;
                     sinoJpDesc = `/${cnword}[${generateAccentPinyinDelim(pinyin)}]`;
                 }
-                
-                return `${generateFurigana(w, jpFurigana[w])}${sinoJpDesc} - ${jpMeanings[w]}`;
+
+                return `${generateFurigana(w, jpFurigana[w], true)}${sinoJpDesc} - ${jpMeanings[w]}`;
             }
             e.japaneseOnVocab = e.japaneseOnVocab.map(c => getStr(c));
             e.japaneseKunVocab = e.japaneseKunVocab.map(c => getStr(c));
@@ -387,21 +404,25 @@ export function buildKanjiCardsFromLists(
                 pickedEntries.push(candidates[0]);
                 candidates.splice(0, 1);
             }
-            
+
             // Format and output
-            const getStr = (e: CedictEntry): string =>  {
+            const getStr = (e: CedictEntry): string => {
+                let tradVar = '';
+                if (e.traditional != e.simplified) {
+                    tradVar = `/${e.traditional}`;
+                }
+
                 let sinoJpDesc = '';
                 const idx = isSinoJp_cn(e);
                 if (idx != undefined) {
                     const jpword = sinojp[idx][1][1];
                     const furiga = jpFurigana[jpword];
-                    sinoJpDesc = `/${generateFurigana(jpword, furiga)}`;
+                    sinoJpDesc = `/${generateFurigana(jpword, furiga, true)}`;
                 }
-                
-                return `${e.simplified}[${generateAccentPinyinDelim(e.reading[0].pinyin)}]${sinoJpDesc} - ${e.reading[0].definition}`;
+
+                return `${e.simplified}[${generateAccentPinyinDelim(e.reading[0].pinyin)}]${tradVar}${sinoJpDesc} - ${e.reading[0].definition}`;
             }
-            e.simpChineseVocab = pickedEntries.map(e => getStr(e));
-            e.tradChineseVocab = pickedEntries.map(e => getStr(e));
+            e.chineseVocab = pickedEntries.map(e => getStr(e));
         }
     }
 

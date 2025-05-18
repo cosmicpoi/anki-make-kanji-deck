@@ -377,9 +377,17 @@ export class Unihan {
             const arr = this.m_rsToChar.get(idx);
             if (!arr) {
                 this.m_rsToChar.set(idx, [char]);
-                continue;
             }
-            arr.push(char);
+            else arr.push(char);
+
+            // emplace into list
+            const radIdx = idx.split('.')[0].replace('\'', '');
+            const radNo = parseInt(radIdx);
+            const arr2 = this.m_ridxToChars.get(radNo);
+            if (!arr2) {
+                this.m_ridxToChars.set(radNo, [char]);
+            }
+            else arr2.push(char);
         }
     }
 
@@ -445,6 +453,10 @@ export class Unihan {
         return chars.map(c => this.m_entries.get(c)).filter(e => !!e)
     }
 
+    public getCharsByRadicalNo(radNo: number): string[] {
+        return this.m_ridxToChars.get(radNo) || [];
+    }
+
     // 0 means there is no cluster
     public getClusterId(char: string): number {
         return this.m_charToClusterId.get(char) || k_INVALID_CLUSTER_ID;
@@ -496,6 +508,7 @@ export class Unihan {
     private m_links: Map<string, string[]> = new Map();
     // Characters indexed by RS index
     private m_rsToChar: Map<string, string[]> = new Map();
+    private m_ridxToChars: Map<number, string[]> = new Map();
     // Entries indexed by character (rather than code point)
     private m_entries: Map<string, UnihanEntry> = new Map();
 }

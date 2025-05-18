@@ -6,6 +6,7 @@ import {
     k_CEDICT_FILE_PATH,
     k_CHARACTER_LIST_PATH,
     k_HANZIDB_FILE_PATH,
+    k_JINMEIYO_FILE_PATH,
     k_JMDICT_FILE_PATH,
     k_JOYO_FILE_PATH,
     k_KANJIDIC_FILE_PATH,
@@ -36,17 +37,19 @@ const k_note_JAPANESE_ONLY = "Character Japanese";
 
 const args = minimist(process.argv.slice(2));
 
+const invisibleChars = /[\u200B\u200C\u200D\u2060\uFEFF]/g;
 function getJoyo(): string[] {
     const content = fs.readFileSync(k_CHARACTER_LIST_PATH + '/' + k_JOYO_FILE_PATH, 'utf-8');
-    return content.split('\n').filter(c => c != '');
+    return content.replace(invisibleChars, '').split('\n').filter(c => c != '');
 }
 
 function getJinmeiyo(): string[] {
-    const content = fs.readFileSync(k_CHARACTER_LIST_PATH + '/' + k_JOYO_FILE_PATH, 'utf-8');
-    return content.split('\n').filter(c => c != '').filter(c => c.at(0) != "#");
+    const content = fs.readFileSync(k_CHARACTER_LIST_PATH + '/' + k_JINMEIYO_FILE_PATH, 'utf-8');
+    return content.replace(invisibleChars, '').split('\n').filter(c => c != '').filter(c => c.at(0) != "#");
 }
 
 async function buildKanji() {
+    // Initialize modules
     const unihan = await Unihan.create(k_UNIHAN_DB_PATH, { validateLinks: true });
     const kanjidic = await Kanjidic.create(k_KANJIDIC_FILE_PATH);
     const hanzidb = await Hanzidb.create(k_HANZIDB_FILE_PATH);
@@ -57,6 +60,7 @@ async function buildKanji() {
 
     const modules = { unihan, kanjidic, hanzidb, cedict, bccwj, subtlex, jmdict };
 
+    // Build character lists
     const joyo = new Set(getJoyo());
     const jinmeiyo = new Set(getJinmeiyo());
 
@@ -83,10 +87,10 @@ async function buildKanji() {
         sinoJapaneseVocab
     } = buildKanjiCardsFromLists({ japaneseList, simpChineseList, modules });
 
-    const getAllChars = (entry: KanjiCard): string[] =>
-        combine_without_duplicates(entry.japaneseChar, entry.simpChineseChar, entry.tradChineseChar);
 
     // Sort and return
+    const getAllChars = (entry: KanjiCard): string[] =>
+        combine_without_duplicates(entry.japaneseChar, entry.simpChineseChar, entry.tradChineseChar);
     const pinyinSort = (c: KanjiCard) => {
         const entries = [...c.pinyin];
         entries.sort();
@@ -149,10 +153,10 @@ async function buildKanji() {
             numRareCn++;
         }
         // Add jinmeiyo and joyo tags
-        if (card.japaneseChar.some(c => joyo.has(c))) {
+        if (card.japaneseChar.length > 0 && card.japaneseChar.some(c => joyo.has(c))) {
             card.tags.push(k_tag_JOYO);
         }
-        if (card.japaneseChar.some(c => jinmeiyo.has(c))) {
+        if (card.japaneseChar.length > 0 && card.japaneseChar.some(c => jinmeiyo.has(c))) {
             card.tags.push(k_tag_JINMEIYO);
         }
     });
@@ -191,7 +195,11 @@ async function buildKanji() {
             ['englishMeaning', ','],
             ['japaneseKunVocab', '<br>'],
             ['japaneseOnVocab', '<br>'],
-            ['simpChineseVocab', '<br>'],
+            ['chineseVocab', '<br>'],
+            ['japaneseFrequency', ''],
+            ['chineseFrequency', ''],
+            ['japaneseStrokeCount', ''],
+            ['chineseStrokeCount', ''],
             // ['tradChineseVocab', '<br>'],
         ];
 
@@ -203,6 +211,8 @@ async function buildKanji() {
             ['englishMeaning', ','],
             ['japaneseKunVocab', '<br>'],
             ['japaneseOnVocab', '<br>'],
+            ['japaneseFrequency', ''],
+            ['japaneseStrokeCount', ''],
         ];
 
         const cn_field_order: [keyof KanjiCard, string][] = [
@@ -210,7 +220,9 @@ async function buildKanji() {
             ['tradChineseChar', ','],
             ['pinyin', ','],
             ['englishMeaning', ','],
-            ['simpChineseVocab', '<br>'],
+            ['chineseVocab', '<br>'],
+            ['chineseFrequency', ''],
+            ['chineseStrokeCount', ''],
             // ['tradChineseVocab', '<br>'],
         ];
 
@@ -241,7 +253,7 @@ async function buildKanji() {
                 }
                 else if (i <= field_order.length) {
                     const [key, delim] = field_order[i - 1];
-                    if (key != 'strokeCount' && key != 'japaneseDifficulty' && key != 'simpChineseDifficulty') {
+                    if (key != 'japaneseStrokeCount' && key != 'chineseStrokeCount' && key != 'japaneseFrequency' && key != 'chineseFrequency') {
                         fields[i] = card[key].join(delim);
                     }
                     else {
