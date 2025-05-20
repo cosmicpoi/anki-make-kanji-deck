@@ -123,8 +123,6 @@ export enum JmdictAbbrevs {
     manga_slang = "&m-sl;", // manga slang
     obselete = "&obs;", // obselete
     archaic = "&arch;", // archaic
-
-
 };
 
 export enum JmdictGlossLang {
@@ -206,9 +204,35 @@ type JME_Entry = JmdictElement & {
 //----------------------------------------------------------------------------------------------------------------------
 
 export function isUsuallyKana(entry: JmdictEntry): boolean {
-    const misc = entry.sense.map(s => s.misc)
-        .filter(misc => misc.includes(JmdictAbbrevs.usually_kana));
-    return misc.length > 0;
+    const sense = getPreferredSense(entry);
+    return sense.misc.some(misc => misc == JmdictAbbrevs.usually_kana);
+}
+
+export function getPreferredSense(entry: JmdictEntry): JmdictSense {
+    const senses = entry.sense.filter(s => !(isSlang(s) || isObselete(s) || isArchaic(s)));
+    if (senses.length > 0) {
+        return senses[0];
+    }
+    return entry.sense[0];
+}
+
+export function isSlang(sense: JmdictSense): boolean {
+    return sense.misc.some(misc => misc == JmdictAbbrevs.slang
+        || misc == JmdictAbbrevs.manga_slang
+        || misc == JmdictAbbrevs.net_sl
+    );
+}
+
+export function isObselete(sense: JmdictSense): boolean {
+    return sense.misc.some(misc => misc == JmdictAbbrevs.obselete);
+}
+
+export function isVulgar(sense: JmdictSense): boolean {
+    return sense.misc.some(misc => misc == JmdictAbbrevs.vulgar);
+}
+
+export function isArchaic(sense: JmdictSense): boolean {
+    return sense.misc.some(misc => misc == JmdictAbbrevs.archaic);
 }
 
 const k_SCORE_1 = 1;
@@ -235,8 +259,8 @@ const getScore = (pris: string[]): number => {
 
 function getPreferredKeleWithScore(entry: JmdictEntry): [string | undefined, number] {
     if (entry.k_ele.length == 0) return [undefined, -1]
-    let kele = entry.k_ele.filter(k => 
-        !k.ke_inf.includes(JmdictAbbrevs.irregular_kanji) && 
+    let kele = entry.k_ele.filter(k =>
+        !k.ke_inf.includes(JmdictAbbrevs.irregular_kanji) &&
         !k.ke_inf.includes(JmdictAbbrevs.irregular_okurigana) &&
         !k.ke_inf.includes(JmdictAbbrevs.rarely_kanji) &&
         !k.ke_inf.includes(JmdictAbbrevs.outdated_kanji) &&
@@ -273,7 +297,7 @@ export function getPreferredKele(entry: JmdictEntry): string {
 
 function getPreferredReleWithScore(entry: JmdictEntry): [string | undefined, number] {
     if (entry.r_ele.length == 0) return [undefined, -1];
-    let rele = entry.r_ele.filter(r => 
+    let rele = entry.r_ele.filter(r =>
         !r.re_inf.includes(JmdictAbbrevs.irregular_kana)
     );
     if (rele.length == 0) rele = entry.r_ele;

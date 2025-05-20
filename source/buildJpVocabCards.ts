@@ -1,19 +1,21 @@
 import * as fs from 'fs'
-import { Jmdict, JmdictGlossLang, JmdictSense, getPreferredReading, isUsuallyKana, getPreferredRele } from 'Jmdict';
+import { Jmdict, JmdictGlossLang, JmdictSense, getPreferredReading, isUsuallyKana, getPreferredRele, getPreferredSense, isArchaic, isObselete, isVulgar, isSlang, getPreferredKele } from 'Jmdict';
 import { Cedict } from 'modules/Cedict';
 import { Unihan } from 'Unihan';
 import { Bccwj } from 'Bccwj';
 import { isHanCharacter, isHanCharacters } from 'types';
-import { getCnSorter, getSorter } from 'utils/freqCharSort';
+import { getCnSorter, getJpSorter, getSorter } from 'utils/freqCharSort';
 import { Subtlex } from 'Subtlex';
 import * as OpenCC from 'opencc-js';
 import { generateAccentPinyinDelim } from 'utils/pinyin';
 import { VariantMap } from 'VariantMap';
-import { k_tag_USUALLY_KANA } from 'consts/consts';
+import { k_tag_LANG_ARCHAIC, k_tag_LANG_OBSELETE, k_tag_LANG_SLANG, k_tag_LANG_VULGAR, k_tag_USUALLY_KANA } from 'consts/consts';
+import * as wanakana from 'wanakana';
 
 type JapaneseVocabCard = {
     word: string;
     hiragana: string;
+    romaji: string;
     chinese: string;
     meaning: string;
     grammar: string[];
@@ -89,33 +91,23 @@ export async function generateJpVocabCards(props: {
         if (entries.length == 0) return undefined;
         const entry = entries[0]; // TODO: get preferred entry somehow?
 
-        // Get preferred spelling and hiragana
-        let prefReading = '';
-        let isKana = false;
-        if (isUsuallyKana(entry)) {
-            prefReading = getPreferredReading(entry);
-            isKana = true;
-        }
-        else {
-            prefReading = getPreferredReading(entry);
-            isKana = !prefReading.split('').some(c => isHanCharacter(c));
-        }
-
         // Get preferred sense
+        if (entry.sense.length == 0) return undefined;
+        const prefSense = getPreferredSense(entry);
+        const otherSenses = entry.sense.filter(e => e != prefSense);
+
+        // Get meaning
         const getMeaning = (sense: JmdictSense): string => {
             const glosses = sense.gloss.filter(g => g.lang == JmdictGlossLang.eng);
             const texts: string[] = glosses.map(g => g.text);
             return texts.length > 0 ? texts.join('; ') : '';
         }
 
-        if (entry.sense.length == 0) return undefined;
-        const prefSense = entry.sense[0];
-        const otherSenses = entry.sense.slice(1);
-
         // Check if sino-chinese
         let chinese = '';
-        if (isHanCharacters(word)) {
-            const cnCandidates = getSinoJpCandidates(word);
+        let stripped = word.split('').filter(isHanCharacter).join('');
+        if (stripped.length != 0) {
+            const cnCandidates = getSinoJpCandidates(stripped);
             cnCandidates.sort(cnSorter);
             if (cnCandidates.length > 0) {
                 chinese = cnCandidates[0];
@@ -134,14 +126,27 @@ export async function generateJpVocabCards(props: {
         let frequency: number | undefined = bccwj.getFrequency(word);
         if (frequency == 0) frequency = undefined;
 
+        // Get preferred spelling and hiragana
+        const romaji = wanakana.toRomaji(getPreferredRele(entry));
+        const isKatakana = wanakana.isKatakana(getPreferredKele(entry));
+        
+        let prefReading = getPreferredReading(entry);
+        const prefKele = getPreferredKele(entry);
+        if (!isKatakana && prefKele != '') prefReading = prefKele;
+
         // Make tags
         const tags: string[] = [];
-        if (isKana) tags.push(k_tag_USUALLY_KANA);
-
+        if (isUsuallyKana(entry) && !isKatakana) tags.push(k_tag_USUALLY_KANA);
+        if (isArchaic(prefSense)) tags.push(k_tag_LANG_ARCHAIC);
+        if (isObselete(prefSense)) tags.push(k_tag_LANG_OBSELETE);
+        if (isVulgar(prefSense)) tags.push(k_tag_LANG_VULGAR);
+        if (isSlang(prefSense)) tags.push(k_tag_LANG_SLANG); 
+        
         // Return constructed card
         return {
             word: prefReading,
-            hiragana: !isKana ? getPreferredRele(entry) : '',
+            hiragana: isKatakana ? '' : getPreferredRele(entry),
+            romaji,
             chinese,
             meaning: getMeaning(prefSense),
             grammar: prefSense.pos.map(p => jmdict.interpretEntity(p)).map(interpretParens),
@@ -162,9 +167,27 @@ export async function generateJpVocabCards(props: {
 export async function writeJpVocabCardsToFile(props: {
     filePath: string,
     cards: JapaneseVocabCard[],
+    tagGetter?: (card: JapaneseVocabCard) => string[],
+    modules: {
+        unihan: Unihan;
+        bccwj: Bccwj;
+    }
 }): Promise<void> {
-    const {cards, filePath} = props;
+    const { cards, filePath, tagGetter } = props;
+    const { unihan, bccwj } = props.modules;
+    const { jpSorter } = getJpSorter({ unihan, freq: bccwj });
 
+    // Sort in place
+    cards.sort((c1, c2) => c1.romaji.localeCompare(c2.romaji));
+
+    // Write tags
+    if (tagGetter) {
+        cards.forEach(c => {
+            c.tags = [...c.tags, ...tagGetter(c)];
+        })
+    }
+
+    // Write to file
     const writeStream = fs.createWriteStream(filePath, {
         flags: 'w', // 'a' to append
         encoding: 'utf8'
@@ -173,6 +196,7 @@ export async function writeJpVocabCardsToFile(props: {
     const field_order: (keyof JapaneseVocabCard)[] = [
         'word',
         'hiragana',
+        'romaji',
         'chinese',
         'meaning',
         'grammar',
@@ -181,7 +205,7 @@ export async function writeJpVocabCardsToFile(props: {
         'frequency',
     ];
 
-    const col_count = field_order.length + 1;
+    const col_count = field_order.length + 2;
     writeStream.write("#separator:tab\n");
     writeStream.write("#html:true\n");
     writeStream.write("#notetype column:1\n");
@@ -194,6 +218,7 @@ export async function writeJpVocabCardsToFile(props: {
         const formatFns: { [K in keyof JapaneseVocabCard]: (value: JapaneseVocabCard[K]) => string; } = {
             word: (c: string) => c,
             hiragana: (c: string) => c,
+            romaji: (c: string) => c,
             chinese: (c: string) => c,
             meaning: (c: string) => c,
             grammar: (c: string[]) => c.join('; '),

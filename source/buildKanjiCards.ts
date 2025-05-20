@@ -435,7 +435,7 @@ export function writeKanjiCardsToFile(props: {
     japaneseList: string[],
     simpChineseList: string[],
     cards: KanjiCard[],
-    tagGetter: (card: KanjiCard) => string[],
+    tagGetter?: (card: KanjiCard) => string[],
     modules: {
         unihan: Unihan;
         kanjidic: Kanjidic;
@@ -513,9 +513,11 @@ export function writeKanjiCardsToFile(props: {
     });
 
     // Populate other tags
-    cards.forEach(card => {
-        card.tags = [...card.tags, ...tagGetter(card)];
-    });
+    if (tagGetter) {
+        cards.forEach(card => {
+            card.tags = [...card.tags, ...tagGetter(card)];
+        });
+    }
 
     // Now write to file
 

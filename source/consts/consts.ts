@@ -41,13 +41,18 @@ export const k_NUM_KANGXI_RADICALS = 214;
 
 
 export const k_tag_CHINESE_ONLY = "chinese_only";
-export const k_tag_JAPANESE_ONLY = "japanese_only";
 export const k_tag_CHINESE_RARE = "chinese_rare";
+export const k_tag_JAPANESE_ONLY = "japanese_only";
 export const k_tag_JAPANESE_RARE = "japanese_rare";
-export const k_tag_JOYO = "jouyou_kanji";
 export const k_tag_JINMEIYO = "jinmeiyou_kanji";
+export const k_tag_JOYO = "jouyou_kanji";
 export const k_tag_RADICAL = "radical";
 export const k_tag_USUALLY_KANA = "usually_kana";
+
+export const k_tag_LANG_SLANG = "language::slang";
+export const k_tag_LANG_VULGAR = "language::vulgar";
+export const k_tag_LANG_ARCHAIC = "language::archaic";
+export const k_tag_LANG_OBSELETE = "language::archaic";
 
 export const k_note_CN_JP = "Character Sino-Japanese";
 export const k_note_CHINESE_ONLY = "Character Chinese";

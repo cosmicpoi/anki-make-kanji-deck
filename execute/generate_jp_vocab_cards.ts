@@ -1,6 +1,5 @@
 import { k_BCCWJ_FILE_PATH, k_CEDICT_FILE_PATH, k_JLPT_FILE_LIST, k_WORD_LIST_PATH, k_JMDICT_FILE_PATH, k_UNIHAN_DB_PATH, k_SUBTLEX_FILE_PATH } from 'consts/consts';
 import minimist from "minimist";
-import * as fs from 'fs'
 import { Jmdict, JmdictEntry, JmdictGlossLang, JmdictAbbrevs, JmdictSense, getPreferredReading, isUsuallyKana, getPreferredRele } from 'Jmdict';
 import { Cedict } from 'modules/Cedict';
 import { Unihan } from 'Unihan';
@@ -36,17 +35,24 @@ async function doThing() {
     const cedict = await Cedict.create(k_CEDICT_FILE_PATH);
     const bccwj = await Bccwj.create(k_BCCWJ_FILE_PATH);
     const subtlex = await Subtlex.create(k_SUBTLEX_FILE_PATH);
-
+    const modules = { jmdict, cedict, bccwj, subtlex, unihan };
 
     const cards = await generateJpVocabCards({
         words: jlptWords.flat(),
-        modules: {
-            jmdict, cedict, bccwj, subtlex, unihan
-        }
+        modules,
     });
 
+    const jpVocabTags = (card: JapaneseVocabCard): string[] => {
+        return [];
+    }
+
     if (args['o']) {
-        writeJpVocabCardsToFile({ filePath: args['o'], cards });
+        writeJpVocabCardsToFile({
+            filePath: args['o'],
+            cards,
+            tagGetter: jpVocabTags,
+            modules,
+        });
     }
 }
 
