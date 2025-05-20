@@ -201,6 +201,9 @@ async function buildKanji() {
             chineseStrokeCount: (n?: number) => n != undefined ? n.toString() : '0',
             tags: (c: string[]) => c.join(' '),
         };
+        function formatCardField<K extends keyof KanjiCard>(key: K, card: KanjiCard): string {
+            return formatFns[key]?.(card[key]) || '';
+        }
 
         // No need to specify tags, it always goes at the end
         const jp_cn_field_order: (keyof KanjiCard)[] = [
@@ -269,15 +272,10 @@ async function buildKanji() {
                 }
                 else if (i <= field_order.length) {
                     const key: keyof KanjiCard = field_order[i - 1];
-                    if (key != 'japaneseStrokeCount' && key != 'chineseStrokeCount' && key != 'japaneseFrequency' && key != 'chineseFrequency') {
-                        fields[i] = formatFns[key](card[key]);
-                    }
-                    else {
-                        fields[i] = card[key] != undefined ? card[key].toString() : '';
-                    }
+                    fields[i] = formatCardField(key, card) || '';
                 }
                 else if (i == col_count - 1) {
-                    fields[i] = card.tags.join(' ');
+                    fields[i] = formatFns['tags'](card.tags);
                 }
             }
 

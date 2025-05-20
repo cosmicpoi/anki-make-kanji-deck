@@ -7,7 +7,7 @@ import { Unihan } from 'Unihan';
 
 const args = minimist(process.argv.slice(2));
 
-type JapaneseVocabCard = {
+type ChineseVocabCard = {
     word: string;
     hiragana: string;
     chinese: string;
@@ -35,7 +35,7 @@ async function generateCards() {
     const jlptWords = k_JLPT_FILE_LIST.map(path => readJlpt(path));
     const [jlpt5, jlpt4, jlpt3, jlpt2, jlpt1] = jlptWords;
 
-    const cards: JapaneseVocabCard[] = [];
+    const cards: ChineseVocabCard[] = [];
 
 
     if (args['o']) {
@@ -45,7 +45,7 @@ async function generateCards() {
         });
 
 
-        const field_order: (keyof JapaneseVocabCard)[] = [
+        const field_order: (keyof ChineseVocabCard)[] = [
             'chinese',
         ];
         const col_count = field_order.length + 1;
@@ -58,7 +58,7 @@ async function generateCards() {
             const k_NOTE_TYPE = "Vocab Japanese";
             let fields: string[] = Array(col_count).fill('');
 
-            const formatFns: { [K in keyof JapaneseVocabCard]: (value: JapaneseVocabCard[K]) => string; } = {
+            const formatFns: { [K in keyof ChineseVocabCard]: (value: ChineseVocabCard[K]) => string; } = {
                 word: (c: string) => c,
                 hiragana: (c: string) => c,
                 chinese: (c: string) => c,
@@ -69,7 +69,7 @@ async function generateCards() {
                 frequency: (n?: number) => n != undefined ? n.toString() : '0',
                 tags: (c: string[]) => c.join(' '),
             };
-            function formatCardField<K extends keyof JapaneseVocabCard>(key: K, card: JapaneseVocabCard): string {
+            function formatCardField<K extends keyof ChineseVocabCard>(key: K, card: ChineseVocabCard): string {
                 return formatFns[key]?.(card[key]) || '';
             }
 
@@ -78,7 +78,7 @@ async function generateCards() {
                     fields[i] = k_NOTE_TYPE;
                 }
                 else if (i <= field_order.length) {
-                    const key: keyof JapaneseVocabCard = field_order[i - 1];
+                    const key: keyof ChineseVocabCard = field_order[i - 1];
                     fields[i] = formatCardField(key, card) || '';
                 }
                 else if (i == col_count - 1) {
