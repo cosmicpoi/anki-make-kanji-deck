@@ -184,46 +184,62 @@ async function buildKanji() {
             encoding: 'utf8'
         });
 
+        const formatFns: { [K in keyof KanjiCard]: (value: KanjiCard[K]) => string; } = {
+            japaneseChar: (c: string[]) => c.join(','),
+            simpChineseChar: (c: string[]) => c.join(','),
+            tradChineseChar: (c: string[]) => c.join(','),
+            pinyin: (c: string[]) => c.join(','),
+            kunyomi: (c: string[]) => c.join(','),
+            onyomi: (c: string[]) => c.join(','),
+            englishMeaning: (c: string[]) => c.join('; '),
+            japaneseKunVocab: (c: string[]) => c.map(w => `<p>${w}</p>`).join(''),
+            japaneseOnVocab: (c: string[]) => c.map(w => `<p>${w}</p>`).join(''),
+            chineseVocab: (c: string[]) => c.map(w => `<p>${w}</p>`).join(''),
+            japaneseFrequency: (n?: number) => n != undefined ? n.toString() : '0',
+            chineseFrequency: (n?: number) => n != undefined ? n.toString() : '0',
+            japaneseStrokeCount: (n?: number) => n != undefined ? n.toString() : '0',
+            chineseStrokeCount: (n?: number) => n != undefined ? n.toString() : '0',
+            tags: (c: string[]) => c.join(' '),
+        };
+
         // No need to specify tags, it always goes at the end
-        const jp_cn_field_order: [keyof KanjiCard, string][] = [
-            ['japaneseChar', ','],
-            ['simpChineseChar', ','],
-            ['tradChineseChar', ','],
-            ['pinyin', ','],
-            ['kunyomi', ','],
-            ['onyomi', ','],
-            ['englishMeaning', ','],
-            ['japaneseKunVocab', '<br>'],
-            ['japaneseOnVocab', '<br>'],
-            ['chineseVocab', '<br>'],
-            ['japaneseFrequency', ''],
-            ['chineseFrequency', ''],
-            ['japaneseStrokeCount', ''],
-            ['chineseStrokeCount', ''],
-            // ['tradChineseVocab', '<br>'],
+        const jp_cn_field_order: (keyof KanjiCard)[] = [
+            'japaneseChar',
+            'simpChineseChar',
+            'tradChineseChar',
+            'pinyin',
+            'kunyomi',
+            'onyomi',
+            'englishMeaning',
+            'japaneseKunVocab',
+            'japaneseOnVocab',
+            'chineseVocab',
+            'japaneseFrequency',
+            'chineseFrequency',
+            'japaneseStrokeCount',
+            'chineseStrokeCount',
         ];
 
-        const jp_field_order: [keyof KanjiCard, string][] = [
-            ['japaneseChar', ','],
-            ['pinyin', ','],
-            ['kunyomi', ','],
-            ['onyomi', ','],
-            ['englishMeaning', ','],
-            ['japaneseKunVocab', '<br>'],
-            ['japaneseOnVocab', '<br>'],
-            ['japaneseFrequency', ''],
-            ['japaneseStrokeCount', ''],
+        const jp_field_order: (keyof KanjiCard)[] = [
+            'japaneseChar',
+            'pinyin',
+            'kunyomi',
+            'onyomi',
+            'englishMeaning',
+            'japaneseKunVocab',
+            'japaneseOnVocab',
+            'japaneseFrequency',
+            'japaneseStrokeCount',
         ];
 
-        const cn_field_order: [keyof KanjiCard, string][] = [
-            ['simpChineseChar', ','],
-            ['tradChineseChar', ','],
-            ['pinyin', ','],
-            ['englishMeaning', ','],
-            ['chineseVocab', '<br>'],
-            ['chineseFrequency', ''],
-            ['chineseStrokeCount', ''],
-            // ['tradChineseVocab', '<br>'],
+        const cn_field_order: (keyof KanjiCard)[] = [
+            'simpChineseChar',
+            'tradChineseChar',
+            'pinyin',
+            'englishMeaning',
+            'chineseVocab',
+            'chineseFrequency',
+            'chineseStrokeCount',
         ];
 
         const col_count = jp_cn_field_order.length + 2;
@@ -234,16 +250,16 @@ async function buildKanji() {
 
         cards.forEach(card => {
             // tuple of key, delimiter
-            let field_order: [keyof KanjiCard, string][] = jp_cn_field_order;
+            let field_order: (keyof KanjiCard)[] = jp_cn_field_order;
             let note_type = k_note_CN_JP;
-            // if (card.tags.includes(k_tag_CHINESE_ONLY)) {
-            //     field_order = cn_field_order;
-            //     note_type = k_note_CHINESE_ONLY;
-            // }
-            // else if (card.tags.includes(k_tag_JAPANESE_ONLY)) {
-            //     field_order = jp_field_order;
-            //     note_type = k_note_JAPANESE_ONLY;
-            // }
+            if (card.tags.includes(k_tag_CHINESE_ONLY)) {
+                field_order = cn_field_order;
+                note_type = k_note_CHINESE_ONLY;
+            }
+            else if (card.tags.includes(k_tag_JAPANESE_ONLY)) {
+                field_order = jp_field_order;
+                note_type = k_note_JAPANESE_ONLY;
+            }
 
             let fields: string[] = Array(col_count).fill('');
 
@@ -252,9 +268,9 @@ async function buildKanji() {
                     fields[i] = note_type;
                 }
                 else if (i <= field_order.length) {
-                    const [key, delim] = field_order[i - 1];
+                    const key: keyof KanjiCard = field_order[i - 1];
                     if (key != 'japaneseStrokeCount' && key != 'chineseStrokeCount' && key != 'japaneseFrequency' && key != 'chineseFrequency') {
-                        fields[i] = card[key].join(delim);
+                        fields[i] = formatFns[key](card[key]);
                     }
                     else {
                         fields[i] = card[key] != undefined ? card[key].toString() : '';

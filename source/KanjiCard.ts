@@ -17,16 +17,6 @@ export type KanjiCard = {
     japaneseOnVocab: string[];
     chineseVocab: string[];
 
-    // example sentences
-    japaneseExampleSentences: string[];
-    simpChineseExampleSentences: string[];
-    tradChineseExampleSentences: string[];
-
-    // stroke order URIs
-    japaneseStrokeOrder: string[];
-    simpChineseStrokeOrder: string[];
-    tradChineseStrokeOrder: string[];
-
     // difficulty and stroke count
     japaneseStrokeCount?: number;
     chineseStrokeCount?: number;
@@ -51,20 +41,10 @@ export const defaultKanjiCard = (): KanjiCard => ({
     // meaning
     englishMeaning: [],
 
-    // example sentences
+    // vocab
     japaneseKunVocab: [],
     japaneseOnVocab: [],
     chineseVocab: [],
-
-    // example sentences
-    japaneseExampleSentences: [],
-    simpChineseExampleSentences: [],
-    tradChineseExampleSentences: [],
-
-    // stroke order URIs
-    japaneseStrokeOrder: [],
-    simpChineseStrokeOrder: [],
-    tradChineseStrokeOrder: [],
 
     // tags 
     tags: [],

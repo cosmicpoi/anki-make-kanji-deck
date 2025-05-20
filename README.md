@@ -100,7 +100,6 @@ Easy, high-value
   * sl - slang
 * Vocab card generation
   * Integrate part of speech
-* Generate radical cards
 
 Hard, high-value  
 * Write up or publish results somehow

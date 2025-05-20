@@ -13,7 +13,6 @@ import { minSubstrLevenshtein } from './utils/levenshtein';
 import { Hanzidb } from 'Hanzidb';
 import { Subtlex } from 'Subtlex';
 import { generateAccentPinyinDelim } from 'utils/pinyin';
-import { generateFurigana } from 'utils/furigana';
 
 function isSinoJpVocab(
     unihan: Unihan,
@@ -385,7 +384,7 @@ export function buildKanjiCardsFromLists(
                     sinoJpDesc = `/${cnword}[${generateAccentPinyinDelim(pinyin)}]`;
                 }
 
-                return `${generateFurigana(w, jpFurigana[w], true)}${sinoJpDesc} - ${jpMeanings[w]}`;
+                return `${w}[${jpFurigana[w]}]${sinoJpDesc} - ${jpMeanings[w]}`;
             }
             e.japaneseOnVocab = e.japaneseOnVocab.map(c => getStr(c));
             e.japaneseKunVocab = e.japaneseKunVocab.map(c => getStr(c));
@@ -417,7 +416,7 @@ export function buildKanjiCardsFromLists(
                 if (idx != undefined) {
                     const jpword = sinojp[idx][1][1];
                     const furiga = jpFurigana[jpword];
-                    sinoJpDesc = `/${generateFurigana(jpword, furiga, true)}`;
+                    sinoJpDesc = `/${jpword}[${furiga}]`;
                 }
 
                 return `${e.simplified}[${generateAccentPinyinDelim(e.reading[0].pinyin)}]${tradVar}${sinoJpDesc} - ${e.reading[0].definition}`;

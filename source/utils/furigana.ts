@@ -1,5 +1,15 @@
-import { isHanCharacter, isHanCharacters, isKana, strIsKana } from 'types';
-import * as wanakana from 'wanakana';
+import { isHanCharacter, isKana } from 'types';
+
+function isStrKatakana(input: string): boolean {
+    return input.split('').every(isKana);
+}
+
+function katakanaToHiragana(input: string): string {
+    return input.replace(/[\u30A1-\u30F6]/g, (char: string) => {
+        const code = char.charCodeAt(0);
+        return String.fromCharCode(code - 0x60);
+    });
+}
 
 const isSmallChar = (c: string): boolean => ['ゃ', 'ゅ', 'ょ'].includes(c);
 
@@ -11,7 +21,7 @@ function isStrKanjiOrKana(s: string): boolean {
 
 // Take in a kanji-rendered string like and hiragana and generate bracketed furigana.
 // 頑張る, がんばる -> 頑張[ばんば]る
-export function generateFurigana(kanjiReading: string, hiragana: string, padKana: boolean = false): string {
+export function generateFurigana(kanjiReading: string, hiragana: string, padKana: boolean = true): string {
     // console.log(kanjiReading, hiragana);
     // Recursively generate tuple of aligned tokens
     function _generateFurigana(kanjiChars: string[], hiraganaChars: string[]): [string, string][] {
@@ -22,7 +32,7 @@ export function generateFurigana(kanjiReading: string, hiragana: string, padKana
             const kanjiChar = kanjiChars[kanji]
             const kanaChar = hiraganaChars[kana];
             if (!isKana(kanjiChar)) return false;
-            return wanakana.toHiragana(kanjiChar) == wanakana.toHiragana(kanaChar);
+            return katakanaToHiragana(kanjiChar) == katakanaToHiragana(kanaChar);
         }
         // Helper function for early returns which tokenizes our input with punctuation
         const earlyReturn = (): [string, string][] => {
@@ -74,13 +84,13 @@ export function generateFurigana(kanjiReading: string, hiragana: string, padKana
         // If both start with kana, find the first sequence and pop it
         if (isKana(kanjiChars[0]) && isKana(hiraganaChars[0])) {
             // console.log("Branch A");
-             if (!areAligned(0, 0)) throw "Tried to render invalid furigana";
+            if (!areAligned(0, 0)) throw "Tried to render invalid furigana";
 
             let kanaEnd = 0;
             let kanjiEnd = 0;
             // Get the next kana sequence in the kanji reading
             while (
-                kanaEnd <= hiragana.length && kanjiEnd <= kanjiReading.length &&
+                kanaEnd <= hiraganaChars.length && kanjiEnd <= kanjiChars.length &&
                 areAligned(kanaEnd, kanjiEnd)
             ) {
                 kanjiEnd++;
@@ -216,23 +226,61 @@ export function generateFurigana(kanjiReading: string, hiragana: string, padKana
         }
     }
     const readings: [string, string][] = _generateFurigana(kanjiReading.split(''), hiragana.split(''));
+    // console.log(readings);
     return readings.map(([s1, s2]): string => {
+        // If it's a grammar char, just return it as is
         if (!isStrKanjiOrKana(s1) || !isStrKanjiOrKana(s2)) {
+            const isGrammar = (s: string) => s == '' || !isStrKanjiOrKana(s);
+            if (!(isGrammar(s1) && isGrammar(s2))) {
+                console.log(`t1:"${s1}", t2:"${s2}"`);
+                throw "Invalid token";
+            }
+
             if (s1 != '' && s2 != '' && s1 != s2) console.log("WARNING: weird reading", kanjiReading, hiragana, '|', s1, s2);
             return s1;
         }
         else { // isStrKanjiOrKana(s1) && isStrKanjiOrKana(s2)
-            if (s1 != s2) {
+            let isSingle: boolean = false;
+            if (isStrKatakana(s1) && katakanaToHiragana(s1) == s2) {
+                isSingle = true;
+            }
+            if (s1 == s2) {
+                isSingle = true;
+            }
+
+            if (!isSingle) {
                 return `${s1}[${s2}]`;
             }
             else {
-                if (padKana) {
-                    return `${s1}[ ]`
-                }
-                else {
-                    return s1;
-                }
+                return padKana ? `${s1}[ ]` : s1;
             }
         }
     }).join('');
+}
+
+export function generateRuby(kanjiReading: string, hiragana: string): string {
+    const reading = generateFurigana(kanjiReading, hiragana);
+    return `<ruby>${reading.replace(/\[/g,'<rt>').replace(/\]/g,'</rt>')}</ruby>`;
+}
+
+export function generatePinyinRuby(kanji: string, pinyin: string): string {
+    const pinyinParts = pinyin.split(' ');
+    const content = kanji.split('').map((c, i) => `${c}<rt>${pinyinParts[i]}</rt>`).join('');
+    return `<ruby>${content}</ruby>`
+}
+
+export function replaceWithRuby(source: string): string {
+    return source.replace(/((\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana})+?)\[(.+?)\]/gu, (m: string) => {
+        const parts = m.split('[');
+        const chars = parts[0];
+        const reading = parts[1].slice(0, -1);
+        if (isKana(reading.substring(0, 1))) return generateRuby(chars, reading);
+        else return generatePinyinRuby(chars, reading);
+    });
+}
+
+export function replaceRubyForId(id: string): void {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = replaceWithRuby(el.innerHTML);
 }

@@ -57,16 +57,15 @@ export const make_count_handler = (): CountHandler => {
     return { increment, get };
 };
 
-export function isHanCharacter(char: string): boolean {
-    const code = char.charCodeAt(0);
+export const k_UNICODE_HAN_BOUNDS: [number, number][] = [
     // CJK Unified Ideographs Extension A (U+3400 through U+4DBF)
-    if (code >= 0x3400 && code <= 0x4DBF) return true;
+    [0x3400, 0x4DBF],
 
     // CJK Unified Ideographs (U+4E00 through U+9FFF)
-    if (code >= 0x4E00 && code <= 0x9FFF) return true;
+    [0x4E00, 0x9FFF],
 
     // CJK Compatibility Ideographs (U+F900 through U+FAD9)
-    if (code >= 0xF900 && code <= 0xFAD9) return true;
+    [0xF900, 0xFAD9],
 
     // CJK Unified Ideographs Extension B (U+20000 through U+2A6DF)
     // CJK Unified Ideographs Extension C (U+2A700 through U+2B739)
@@ -74,24 +73,31 @@ export function isHanCharacter(char: string): boolean {
     // CJK Unified Ideographs Extension E (U+2B820 through U+2CEA1)
     // CJK Unified Ideographs Extension F (U+2CEB0 through U+2EBE0)
     // CJK Unified Ideographs Extension I (U+2EBF0 through U+2EE5D)
-    if (code >= 0x20000 && code <= 0x2A6DF) return true;
+    [0x20000, 0x2A6DF],
 
     // CJK Compatibility Ideographs Supplement (U+2F800 through U+2FA1D)
-    if (code >= 0x2F800 && code <= 0x2FA1D) return true;
+    [0x2F800, 0x2FA1D],
 
     // CJK Unified Ideographs Extension G (U+30000 through U+3134A)
     // CJK Unified Ideographs Extension H (U+31350 through U+323AF)
-    if (code >= 0x30000 && code <= 0x323AF) return true;
+    [0x30000, 0x323AF],
+];
+
+export function isHanCharacter(char: string): boolean {
+    const code = char.charCodeAt(0);
+    for (const tup of k_UNICODE_HAN_BOUNDS) {
+        if (code >= tup[0] && code < tup[1]) return true;
+    }
 
     return false;
 }
 
-function isHiragana(char: string): boolean {
+export function isHiragana(char: string): boolean {
     const code = char.codePointAt(0);
     return code !== undefined && code >= 0x3040 && code <= 0x309F;
 }
 
-function isKatakana(char: string): boolean {
+export function isKatakana(char: string): boolean {
     const code = char.codePointAt(0);
     // Standard Katakana and Katakana Phonetic Extensions
     return code !== undefined && (

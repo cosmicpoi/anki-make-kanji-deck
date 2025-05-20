@@ -10,6 +10,7 @@
     "@types/minimist": "^1.2.5",
     "@types/opencc-js": "^1.0.3",
     "auto-bind": "^5.0.1",
+    "esbuild": "^0.25.4",
     "fast-levenshtein": "^3.0.0",
     "hanzi-writer": "^3.7.2",
     "minimist": "^1.2.8",
