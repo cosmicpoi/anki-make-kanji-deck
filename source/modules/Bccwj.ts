@@ -78,9 +78,13 @@ export class Bccwj {
         return this.m_entries.get(word)?.frequency || 0;
     }
 
+    public getFrequencyRank(word: string): number {
+        return this.m_entries.get(word)?.rank || 0;
+    }
+
     public getNMostFrequentChars(n: number): string[] {
         const chars: string[] = [];
-        for (let i = 0; i <= this.m_freqRankToWord.size; i++ ){
+        for (let i = 0; i <= this.m_freqRankToWord.size; i++) {
             if (chars.length == n) break;
             const res = this.m_freqRankToWord.get(i);
             if (res && res.length == 1 && isHanCharacter(res.substring(0, 1))) {
@@ -88,6 +92,16 @@ export class Bccwj {
             }
         }
         return chars;
+    }
+
+    public getNMostFrequentWords(n: number): string[] {
+        const words: string[] = [];
+        for (let i = 0; i <= this.m_freqRankToWord.size; i++) {
+            if (words.length == n) break;
+            const res = this.m_freqRankToWord.get(i);
+            if (res) words.push(res);
+        }
+        return words;
     }
 
     public forEachEntry(handler: (entry: BccwjEntry) => void): void {

@@ -120,9 +120,10 @@ export function buildKanjiCardsFromLists(
     }
 ): {
     cards: KanjiCard[],
-    chineseVocab: string[],
-    japaneseVocab: string[],
+    chineseVocab: Iterable<string>,
+    japaneseVocab: Iterable<string>,
     sinoJapaneseVocab: [string, string][],
+    variantMap: VariantMap,
 } {
     // Initialize resources
     const { unihan, kanjidic, cedict, bccwj, subtlex, jmdict, hanzidb } = props.modules;
@@ -236,19 +237,23 @@ export function buildKanjiCardsFromLists(
         if (e.simpChineseChar.length > 0) {
             const char = e.simpChineseChar[0];
             e.chineseStrokeCount = unihan.getTotalStrokes(char);
+            if (e.chineseStrokeCount == 0) e.chineseStrokeCount = undefined;
             e.chineseFrequency = subtlex.getFrequency(char);
+            if (e.chineseFrequency == 0) e.chineseFrequency = undefined;
         }
 
         if (e.japaneseChar.length > 0) {
             const char = e.japaneseChar[0];
             e.japaneseStrokeCount = unihan.getTotalStrokes(char);
+            if (e.japaneseStrokeCount == 0) e.japaneseStrokeCount = undefined;
             e.japaneseFrequency = bccwj.getFrequency(char);
+            if (e.japaneseFrequency == 0) e.japaneseFrequency = undefined;
         }
     });
 
 
-    const chineseVocab: string[] = [];
-    const japaneseVocab: string[] = [];
+    const chineseVocab: Set<string> = new Set();
+    const japaneseVocab: Set<string> = new Set();
     const sinoJapaneseVocab: [string, string][] = [];
     // Populate vocab 
     for (const e of cards) {
@@ -388,6 +393,9 @@ export function buildKanjiCardsFromLists(
 
                 return `${w}[${jpFurigana[w]}]${sinoJpDesc} - ${jpMeanings[w]}`;
             }
+            e.japaneseOnVocab.forEach(w => japaneseVocab.add(w));
+            e.japaneseKunVocab.forEach(w => japaneseVocab.add(w));
+
             e.japaneseOnVocab = e.japaneseOnVocab.map(c => getStr(c));
             e.japaneseKunVocab = e.japaneseKunVocab.map(c => getStr(c));
         }
@@ -423,11 +431,13 @@ export function buildKanjiCardsFromLists(
 
                 return `${e.simplified}[${generateAccentPinyinDelim(e.reading[0].pinyin)}]${tradVar}${sinoJpDesc} - ${e.reading[0].definition}`;
             }
+            pickedEntries.forEach(w => chineseVocab.add(w.simplified));
             e.chineseVocab = pickedEntries.map(e => getStr(e));
         }
+
     }
 
-    return { cards, chineseVocab, japaneseVocab, sinoJapaneseVocab };
+    return { cards, chineseVocab, japaneseVocab, sinoJapaneseVocab, variantMap };
 }
 
 export function writeKanjiCardsToFile(props: {
@@ -537,10 +547,10 @@ export function writeKanjiCardsToFile(props: {
         japaneseKunVocab: (c: string[]) => c.map(w => `<p>${w}</p>`).join(''),
         japaneseOnVocab: (c: string[]) => c.map(w => `<p>${w}</p>`).join(''),
         chineseVocab: (c: string[]) => c.map(w => `<p>${w}</p>`).join(''),
-        japaneseFrequency: (n?: number) => n != undefined ? n.toString() : '0',
-        chineseFrequency: (n?: number) => n != undefined ? n.toString() : '0',
-        japaneseStrokeCount: (n?: number) => n != undefined ? n.toString() : '0',
-        chineseStrokeCount: (n?: number) => n != undefined ? n.toString() : '0',
+        japaneseFrequency: (n?: number) => n != undefined ? n.toString() : '',
+        chineseFrequency: (n?: number) => n != undefined ? n.toString() : '',
+        japaneseStrokeCount: (n?: number) => n != undefined ? n.toString() : '',
+        chineseStrokeCount: (n?: number) => n != undefined ? n.toString() : '',
         tags: (c: string[]) => c.join(' '),
     };
     function formatCardField<K extends keyof KanjiCard>(key: K, card: KanjiCard): string {
@@ -567,7 +577,6 @@ export function writeKanjiCardsToFile(props: {
 
     const jp_field_order: (keyof KanjiCard)[] = [
         'japaneseChar',
-        'pinyin',
         'kunyomi',
         'onyomi',
         'englishMeaning',

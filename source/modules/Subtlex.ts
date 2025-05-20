@@ -25,17 +25,18 @@ export class Subtlex {
         let count = 0;
 
         for await (const line of rl) {
-            if (count < 2) {
+            if (count <= 2) {
                 count++;
                 continue;
             }
             const vals = line.split(',');
             const freq = parseInt(vals[1]);
 
-            subtlex.m_entries.set(vals[0], freq);
+            subtlex.m_entries.set(vals[0], { freq, rank: count - 2 });
             if (freq > subtlex.m_maxFrequency) {
                 subtlex.m_maxFrequency = freq;
             }
+            subtlex.m_freqRankToWord.set(count - 2, vals[0]);
 
             if (props?.maxLines) {
                 count++;
@@ -47,7 +48,21 @@ export class Subtlex {
     }
 
     public getFrequency(word: string): number {
-        return this.m_entries.get(word) || 0;
+        return this.m_entries.get(word)?.freq || 0;
+    }
+
+    public getFrequencyRank(word: string): number {
+        return this.m_entries.get(word)?.rank || 0;
+    }
+
+    public getNMostFrequentWords(n: number): string[] {
+        if (n > this.m_entries.size) {
+            console.error("N too large, max is ", this.m_entries.size);
+            return [];
+        }
+        return Array(n).fill(0)
+            .map((_, i) => this.m_freqRankToWord.get(i + 1) || '')
+            .filter(s => s != '');
     }
 
     public getMaxFrequency(): number {
@@ -56,6 +71,7 @@ export class Subtlex {
 
 
     // Map lemma to entry
+    private m_freqRankToWord: Map<number, string> = new Map();
     private m_maxFrequency: number = 0;
-    private m_entries: Map<string, number> = new Map();
+    private m_entries: Map<string, { freq: number, rank: number }> = new Map();
 }

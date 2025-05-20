@@ -17,13 +17,12 @@ export const k_SUBTLEX_FILE_PATH: string = k_DATA('SUBTLEX-CH-WF.csv');
 
 
 export const k_HSK_FILE_LIST: string[] = [
-    'HSK__1.txt',
-    'HSK__2.txt',
-    'HSK__3.txt',
-    'HSK__4.txt',
-    'HSK__5.txt',
-    'HSK__6.txt',
-    'HSK__7-9.txt' 
+    'HSK_1.txt',
+    'HSK_2.txt',
+    'HSK_3.txt',
+    'HSK_4.txt',
+    'HSK_5.txt',
+    'HSK_6.txt',
 ];
 
 export const k_JLPT_FILE_LIST: string[] = [
@@ -39,6 +38,8 @@ export const k_JINMEIYO_FILE_PATH ="Jinmeiyo.txt";
 
 export const k_NUM_KANGXI_RADICALS = 214;
 
+export const k_tag_HSK = "HSK";
+export const k_tag_HSK_7_9 = "HSK::7-9";
 
 export const k_tag_CHINESE_ONLY = "chinese_only";
 export const k_tag_CHINESE_RARE = "chinese_rare";
@@ -57,3 +58,5 @@ export const k_tag_LANG_OBSELETE = "language::archaic";
 export const k_note_CN_JP = "Character Sino-Japanese";
 export const k_note_CHINESE_ONLY = "Character Chinese";
 export const k_note_JAPANESE_ONLY = "Character Japanese";
+export const k_note_VOCAB_CHINESE = "Vocab Chinese";
+export const k_note_VOCAB_JAPANESE = "Vocab Japanese";

@@ -369,6 +369,13 @@ export function getPreferredReading(entry: JmdictEntry): string {
     return val;
 }
 
+export function getReadings(entry: JmdictEntry): string[] {
+    return [
+        ...entry.k_ele.map(kele => kele.keb), 
+        ...entry.r_ele.map(rele => rele.reb)
+    ];
+}
+
 //----------------------------------------------------------------------------------------------------------------------
 // Jmdict Implementation
 //----------------------------------------------------------------------------------------------------------------------

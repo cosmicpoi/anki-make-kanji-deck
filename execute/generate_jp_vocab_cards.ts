@@ -5,7 +5,7 @@ import { Cedict } from 'modules/Cedict';
 import { Unihan } from 'Unihan';
 import { Bccwj } from 'Bccwj';
 import { Subtlex } from 'Subtlex';
-import { generateJpVocabCards, writeJpVocabCardsToFile } from 'buildJpVocabCards';
+import { buildJpVocabCards, writeJpVocabCardsToFile } from 'buildJpVocabCards';
 import { readFileLines } from 'utils/readFile';
 
 const args = minimist(process.argv.slice(2));
@@ -37,7 +37,7 @@ async function doThing() {
     const subtlex = await Subtlex.create(k_SUBTLEX_FILE_PATH);
     const modules = { jmdict, cedict, bccwj, subtlex, unihan };
 
-    const cards = await generateJpVocabCards({
+    const cards = await buildJpVocabCards({
         words: jlptWords.flat(),
         modules,
     });

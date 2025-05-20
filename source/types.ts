@@ -1,3 +1,4 @@
+import { k_tag_HSK } from "consts/consts";
 
 export enum CharacterType {
     TraditionalChinese = "TraditionalChinese",
@@ -163,11 +164,21 @@ export function jlptTag(n: number) {
 }
 
 export function hskTag(n: number) {
-    let tag = "HSK";
+    let tag = k_tag_HSK;
     for (let i = 6; i >= n; i--) {
         tag = tag + "::" + i;
     }
     return tag;
+}
+
+export function freqTag5k(freqRank: number, prefix = ""): string | undefined {
+    if (freqRank <= 10000) return prefix + "freq::30k::25k::20k::15k::10k";
+    else if (freqRank <= 15000) return prefix + "freq::30k::25k::20k::15k";
+    else if (freqRank <= 20000) return prefix + "freq::30k::25k::20k";
+    else if (freqRank <= 25000) return prefix + "freq::30k::25k";
+    else if (freqRank <= 30000) return prefix + "freq::30k";
+
+    return undefined;
 }
 
 export function getMatchAndPct(l1: string[], l2: string[]): [number, number] {

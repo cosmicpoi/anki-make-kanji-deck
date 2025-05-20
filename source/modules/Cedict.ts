@@ -34,7 +34,7 @@ export class Cedict {
             const traditional = match[1];
             const simplified = match[2];
             const pinyin = match[3];
-            const definition = match[4];
+            const definition = match[4].replace("/", ";");
 
             this.emplaceEntry(traditional, simplified, { pinyin, definition });
         });

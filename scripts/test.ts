@@ -1,11 +1,11 @@
+import { Bccwj } from 'Bccwj';
+import { k_BCCWJ_FILE_PATH, k_HANZIDB_FILE_PATH } from 'consts/consts';
+import { Hanzidb } from 'Hanzidb';
 import * as generateFurigana from 'utils/furigana';
 
-console.log(generateFurigana.replaceWithRuby(`
-<p>他人[tā rén]/他人[たにん] - another person; sb else; other people</p>
+async function doThing() {
+    const hanzidb = await Hanzidb.create(k_HANZIDB_FILE_PATH);
+    // console.log(bccwj.getFrequencyRank('中々'));
+}
 
-<p>他者[tā zhě]/他者[たしゃ] - others/(sociology, philosophy) the Other</p>
-
-<p>他们[tā men]/他們 - they; them</p>
-
-<p>其他[qí tā] - other/(sth or sb) else/the rest</p>
-`));
+doThing();
