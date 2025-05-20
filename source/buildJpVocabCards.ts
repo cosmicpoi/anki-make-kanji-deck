@@ -1,3 +1,4 @@
+import * as fs from 'fs'
 import { Jmdict, JmdictGlossLang, JmdictSense, getPreferredReading, isUsuallyKana, getPreferredRele } from 'Jmdict';
 import { Cedict } from 'modules/Cedict';
 import { Unihan } from 'Unihan';
@@ -8,9 +9,7 @@ import { Subtlex } from 'Subtlex';
 import * as OpenCC from 'opencc-js';
 import { generateAccentPinyinDelim } from 'utils/pinyin';
 import { VariantMap } from 'VariantMap';
-
-
-const k_tag_USUALLY_KANA = "usually_kana";
+import { k_tag_USUALLY_KANA } from 'consts/consts';
 
 type JapaneseVocabCard = {
     word: string;
@@ -34,7 +33,6 @@ function interpretParens(str: string) {
     str = str.replace("(jisoumeishi)", "(時間を表す名詞)");
     return str;
 }
-
 
 
 export async function generateJpVocabCards(props: {
@@ -159,4 +157,68 @@ export async function generateJpVocabCards(props: {
     console.log("These cards were undefined: ", cards_raw.filter(t => !t[1]).map(t => t[0]))
     const cards: JapaneseVocabCard[] = cards_raw.map(t => t[1]).filter(t => !!t);
     return cards;
+}
+
+export async function writeJpVocabCardsToFile(props: {
+    filePath: string,
+    cards: JapaneseVocabCard[],
+}): Promise<void> {
+    const {cards, filePath} = props;
+
+    const writeStream = fs.createWriteStream(filePath, {
+        flags: 'w', // 'a' to append
+        encoding: 'utf8'
+    });
+
+    const field_order: (keyof JapaneseVocabCard)[] = [
+        'word',
+        'hiragana',
+        'chinese',
+        'meaning',
+        'grammar',
+        'otherMeanings',
+        'sentences',
+        'frequency',
+    ];
+
+    const col_count = field_order.length + 1;
+    writeStream.write("#separator:tab\n");
+    writeStream.write("#html:true\n");
+    writeStream.write("#notetype column:1\n");
+    writeStream.write(`#tags column:${col_count}\n`);
+
+    cards.forEach(card => {
+        const k_NOTE_TYPE = "Vocab Japanese";
+        let fields: string[] = Array(col_count).fill('');
+
+        const formatFns: { [K in keyof JapaneseVocabCard]: (value: JapaneseVocabCard[K]) => string; } = {
+            word: (c: string) => c,
+            hiragana: (c: string) => c,
+            chinese: (c: string) => c,
+            meaning: (c: string) => c,
+            grammar: (c: string[]) => c.join('; '),
+            otherMeanings: (c: string[]) => c.join(','),
+            sentences: (c: string[]) => c.join('<br>'),
+            frequency: (n?: number) => n != undefined ? n.toString() : '0',
+            tags: (c: string[]) => c.join(' '),
+        };
+        function formatCardField<K extends keyof JapaneseVocabCard>(key: K, card: JapaneseVocabCard): string {
+            return formatFns[key]?.(card[key]) || '';
+        }
+
+        for (let i = 0; i < col_count; i++) {
+            if (i == 0) {
+                fields[i] = k_NOTE_TYPE;
+            }
+            else if (i <= field_order.length) {
+                const key: keyof JapaneseVocabCard = field_order[i - 1];
+                fields[i] = formatCardField(key, card) || '';
+            }
+            else if (i == col_count - 1) {
+                fields[i] = formatFns['tags'](card.tags);
+            }
+        }
+
+        writeStream.write(fields.join('\t') + '\n');
+    })
 }

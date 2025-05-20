@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { Unihan } from 'Unihan';
 import { Kanjidic } from 'Kanjidic';
 import { Cedict, CedictEntry } from 'modules/Cedict';
@@ -13,6 +14,7 @@ import { minSubstrLevenshtein } from './utils/levenshtein';
 import { Hanzidb } from 'Hanzidb';
 import { Subtlex } from 'Subtlex';
 import { generateAccentPinyinDelim } from 'utils/pinyin';
+import { k_tag_RADICAL, k_tag_CHINESE_ONLY, k_tag_JAPANESE_ONLY, k_tag_JAPANESE_RARE, k_tag_CHINESE_RARE, k_note_CN_JP, k_note_CHINESE_ONLY, k_note_JAPANESE_ONLY } from 'consts/consts';
 
 function isSinoJpVocab(
     unihan: Unihan,
@@ -428,3 +430,199 @@ export function buildKanjiCardsFromLists(
     return { cards, chineseVocab, japaneseVocab, sinoJapaneseVocab };
 }
 
+export function writeKanjiCardsToFile(props: {
+    filePath: string,
+    japaneseList: string[],
+    simpChineseList: string[],
+    cards: KanjiCard[],
+    tagGetter: (card: KanjiCard) => string[],
+    modules: {
+        unihan: Unihan;
+        kanjidic: Kanjidic;
+        hanzidb: Hanzidb;
+    }
+}): void {
+    const { filePath, japaneseList, simpChineseList, cards, tagGetter } = props;
+    const { unihan, kanjidic, hanzidb } = props.modules;
+
+    // Sort and return
+    const getAllChars = (entry: KanjiCard): string[] =>
+        combine_without_duplicates(entry.japaneseChar, entry.simpChineseChar, entry.tradChineseChar);
+    const pinyinSort = (c: KanjiCard) => {
+        const entries = [...c.pinyin];
+        entries.sort();
+        return entries.join(',');
+    }
+    const charSort = (c: KanjiCard) => {
+        const chars = getAllChars(c);
+        chars.sort();
+        return chars.join(',');
+    }
+    cards.sort((c1, c2) => {
+        const c = pinyinSort(c1).localeCompare(pinyinSort(c2));
+        if (c == 0) {
+            return charSort(c1).localeCompare(charSort(c2));
+        }
+        else return c;
+    });
+
+    const simpChineseSet = new Set(simpChineseList);
+    const japaneseSet = new Set(japaneseList);
+
+    const radicals: Set<string> = new Set(unihan.getAllKangxiRadicals().flat());
+    const isRadical = (c: KanjiCard): boolean => {
+        const allChars = getAllChars(c);
+        for (const c of allChars) {
+            if (radicals.has(c)) return true;
+        }
+        return false;
+    };
+
+    // const { getJpFreqIdx, getCnFreqIdx } = getSorter({ unihan, jpFreq: bccwj, cnFreq: subltex });
+    // const freq_threshold = 300;
+
+    let numRareJp = 0;
+    let numRareCn = 0;
+
+    // Add tags
+    cards.forEach(card => {
+        // Add radical tags
+        if (isRadical(card)) {
+            card.tags.push(k_tag_RADICAL);
+        }
+        // Add chinese-only or japanese-only tags
+        if (card.japaneseChar.length == 0) {
+            card.tags.push(k_tag_CHINESE_ONLY);
+        }
+        else if (card.simpChineseChar.length == 0 && card.tradChineseChar.length == 0) {
+            card.tags.push(k_tag_JAPANESE_ONLY);
+        }
+        // Add chinese-rare or japanese-rare tags
+        const has_jp = card.japaneseChar.map(e => japaneseSet.has(e)).reduce((a, b) => a || b, false);
+        const has_cn = card.simpChineseChar.map(e => simpChineseSet.has(e)).reduce((a, b) => a || b, false);
+        // const jp_rare = card.japaneseChar.map(e => getJpFreqIdx(e)).reduce((a, b) => Math.max(a, b), 0) < freq_threshold;
+        // const cn_rare = card.simpChineseChar.map(e => getCnFreqIdx(e)).reduce((a, b) => Math.max(a, b), 0) < freq_threshold;
+        if (card.japaneseChar.length > 0 && !has_jp) {
+            card.tags.push(k_tag_JAPANESE_RARE);
+            numRareJp++;
+        }
+        if (card.simpChineseChar.length > 0 && !has_cn) {
+            card.tags.push(k_tag_CHINESE_RARE);
+            numRareCn++;
+        }
+    });
+
+    // Populate other tags
+    cards.forEach(card => {
+        card.tags = [...card.tags, ...tagGetter(card)];
+    });
+
+    // Now write to file
+
+    const writeStream = fs.createWriteStream(filePath, {
+        flags: 'w', // 'a' to append
+        encoding: 'utf8'
+    });
+
+    const formatFns: { [K in keyof KanjiCard]: (value: KanjiCard[K]) => string; } = {
+        japaneseChar: (c: string[]) => c.join(','),
+        simpChineseChar: (c: string[]) => c.join(','),
+        tradChineseChar: (c: string[]) => c.join(','),
+        pinyin: (c: string[]) => c.join(','),
+        kunyomi: (c: string[]) => c.join(','),
+        onyomi: (c: string[]) => c.join(','),
+        englishMeaning: (c: string[]) => c.join('; '),
+        japaneseKunVocab: (c: string[]) => c.map(w => `<p>${w}</p>`).join(''),
+        japaneseOnVocab: (c: string[]) => c.map(w => `<p>${w}</p>`).join(''),
+        chineseVocab: (c: string[]) => c.map(w => `<p>${w}</p>`).join(''),
+        japaneseFrequency: (n?: number) => n != undefined ? n.toString() : '0',
+        chineseFrequency: (n?: number) => n != undefined ? n.toString() : '0',
+        japaneseStrokeCount: (n?: number) => n != undefined ? n.toString() : '0',
+        chineseStrokeCount: (n?: number) => n != undefined ? n.toString() : '0',
+        tags: (c: string[]) => c.join(' '),
+    };
+    function formatCardField<K extends keyof KanjiCard>(key: K, card: KanjiCard): string {
+        return formatFns[key]?.(card[key]) || '';
+    }
+
+    // No need to specify tags, it always goes at the end
+    const jp_cn_field_order: (keyof KanjiCard)[] = [
+        'japaneseChar',
+        'simpChineseChar',
+        'tradChineseChar',
+        'pinyin',
+        'kunyomi',
+        'onyomi',
+        'englishMeaning',
+        'japaneseKunVocab',
+        'japaneseOnVocab',
+        'chineseVocab',
+        'japaneseFrequency',
+        'chineseFrequency',
+        'japaneseStrokeCount',
+        'chineseStrokeCount',
+    ];
+
+    const jp_field_order: (keyof KanjiCard)[] = [
+        'japaneseChar',
+        'pinyin',
+        'kunyomi',
+        'onyomi',
+        'englishMeaning',
+        'japaneseKunVocab',
+        'japaneseOnVocab',
+        'japaneseFrequency',
+        'japaneseStrokeCount',
+    ];
+
+    const cn_field_order: (keyof KanjiCard)[] = [
+        'simpChineseChar',
+        'tradChineseChar',
+        'pinyin',
+        'englishMeaning',
+        'chineseVocab',
+        'chineseFrequency',
+        'chineseStrokeCount',
+    ];
+
+    const col_count = jp_cn_field_order.length + 2;
+    writeStream.write("#separator:tab\n");
+    writeStream.write("#html:true\n");
+    writeStream.write("#notetype column:1\n");
+    writeStream.write(`#tags column:${col_count}\n`);
+
+    cards.forEach(card => {
+        // tuple of key, delimiter
+        let field_order: (keyof KanjiCard)[] = jp_cn_field_order;
+        let note_type = k_note_CN_JP;
+        if (card.tags.includes(k_tag_CHINESE_ONLY)) {
+            field_order = cn_field_order;
+            note_type = k_note_CHINESE_ONLY;
+        }
+        else if (card.tags.includes(k_tag_JAPANESE_ONLY)) {
+            field_order = jp_field_order;
+            note_type = k_note_JAPANESE_ONLY;
+        }
+
+        let fields: string[] = Array(col_count).fill('');
+
+        for (let i = 0; i < col_count; i++) {
+            if (i == 0) {
+                fields[i] = note_type;
+            }
+            else if (i <= field_order.length) {
+                const key: keyof KanjiCard = field_order[i - 1];
+                fields[i] = formatCardField(key, card) || '';
+            }
+            else if (i == col_count - 1) {
+                fields[i] = formatFns['tags'](card.tags);
+            }
+        }
+
+        writeStream.write(fields.join('\t') + '\n');
+    })
+
+    writeStream.end(() => {
+        console.log('Finished writing file.');
+    });
+}
