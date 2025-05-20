@@ -1,4 +1,4 @@
-import { k_CEDICT_FILE_PATH, k_JLPT_FILE_LIST, k_JLPT_WORD_LIST_PATH, k_JMDICT_FILE_PATH, k_UNIHAN_DB_PATH } from 'consts/consts';
+import { k_CEDICT_FILE_PATH, k_JLPT_FILE_LIST, k_WORD_LIST_PATH, k_JMDICT_FILE_PATH, k_UNIHAN_DB_PATH } from 'consts/consts';
 import minimist from "minimist";
 import * as fs from 'fs'
 import { Jmdict } from 'Jmdict';
@@ -25,7 +25,7 @@ function readFile(fileDir: string, filePath: string): string[] {
     return content.replace(invisibleChars, '').split('\n').filter(c => c != '');
 }
 
-const readJlpt = (filePath: string): string[] => readFile(k_JLPT_WORD_LIST_PATH, filePath);
+const readJlpt = (filePath: string): string[] => readFile(k_WORD_LIST_PATH, filePath);
 
 async function generateCards() {
     const unihan = await Unihan.create(k_UNIHAN_DB_PATH);

@@ -21,7 +21,7 @@ import { isHanCharacter } from "../types";
 //         multiple kanji elements within an entry, they will be orthographical
 //         variants of the same word, either using variations in okurigana, or
 //         alternative and equivalent kanji.
-type JmdictSense = {
+export type JmdictSense = {
     pos: string[]; // pos
     xref: string[]; // cross-reference
     gloss: JmdictGloss[];
@@ -31,10 +31,12 @@ type JmdictSense = {
 type JmdictKele = {
     keb: string;
     ke_pri: string[];
+    ke_inf: string[];
 }
 type JmdictRele = {
     reb: string;
     re_pri: string[];
+    re_inf: string[];
 }
 type JmdictGloss = {
     lang: JmdictGlossLang;
@@ -60,11 +62,11 @@ const makeDefaultGloss = (): JmdictGloss =>
 
 const k_KEB_INVALID = '';
 const makeDefaultKele = (): JmdictKele =>
-    ({ keb: k_KEB_INVALID, ke_pri: [] });
+    ({ keb: k_KEB_INVALID, ke_pri: [], ke_inf: [] });
 
 const k_REB_INVALID = '';
 const makeDefaultRele = (): JmdictRele =>
-    ({ reb: k_REB_INVALID, re_pri: [] });
+    ({ reb: k_REB_INVALID, re_pri: [], re_inf: [] });
 
 const k_ENT_SEQ_INVALID = -1;
 const makeDefaultEntry = (): JmdictEntry => ({
@@ -88,6 +90,8 @@ type JmdictTagType = {
     k_ele: 'k_ele';
     ke_pri: 'ke_pri';
     re_pri: 're_pri';
+    ke_inf: 'ke_inf';
+    re_inf: 're_inf';
     sense: 'sense';
     entry: 'entry';
     ent_seq: 'ent_seq';
@@ -100,8 +104,27 @@ type JmdictTagType = {
     s_inf: 's_inf';
 };
 
-enum JmdictMiscKeys {
-    usually_kana = "&uk;",
+export enum JmdictAbbrevs {
+    // kanji info entities
+    phonetic = "&ateji;", // "ateji (phonetic) reading">
+    irregular_kana = "&ik;",    //"word containing irregular kana usage">
+    irregular_kanji = "&iK;",    //"word containing irregular kanji usage">
+    irregular_okurigana = "&io;",    //"irregular okurigana usage">
+    outdated_kanji = "&oK;",    //"word containing out-dated kanji or kanji usage">
+    rarely_kanji = "&rK;",    //"rarely used kanji form">
+    search_kanji = "&sK;",    //"search-only kanji form">
+    // misc entities
+    usually_kana = "&uk;", // usually kana
+    humble = "&hum;", // kenjougo
+    honorific = "&hon;", // sonkeigo
+    net_sl = "&net-sl;", // net slang
+    vulgar = "&vulg;", // vulgar
+    slang = "&sl;", // slang
+    manga_slang = "&m-sl;", // manga slang
+    obselete = "&obs;", // obselete
+    archaic = "&arch;", // archaic
+
+
 };
 
 export enum JmdictGlossLang {
@@ -122,9 +145,13 @@ type JME_Kepri = JmdictElement & {
     tagName: 'ke_pri'
     children: [string];
 };
+type JME_Keinf = JmdictElement & {
+    tagName: 'ke_inf';
+    children: [string];
+}
 type JME_Kele = JmdictElement & {
     tagName: 'k_ele',
-    children: (JME_Keb | JME_Kepri)[]
+    children: (JME_Keb | JME_Kepri | JME_Keinf)[]
 };
 type JME_Reb = JmdictElement & {
     tagName: 'reb',
@@ -134,9 +161,13 @@ type JME_Repri = JmdictElement & {
     tagName: 're_pri'
     children: [string];
 };
+type JME_Reinf = JmdictElement & {
+    tagName: 're_inf';
+    children: [string];
+}
 type JME_Rele = JmdictElement & {
     tagName: 'r_ele',
-    children: (JME_Reb | JME_Repri)[]
+    children: (JME_Reb | JME_Repri | JME_Reinf)[]
 };
 type JME_Gloss = JmdictElement & {
     tagName: 'gloss',
@@ -176,7 +207,7 @@ type JME_Entry = JmdictElement & {
 
 export function isUsuallyKana(entry: JmdictEntry): boolean {
     const misc = entry.sense.map(s => s.misc)
-        .filter(misc => misc.includes(JmdictMiscKeys.usually_kana));
+        .filter(misc => misc.includes(JmdictAbbrevs.usually_kana));
     return misc.length > 0;
 }
 
@@ -204,10 +235,18 @@ const getScore = (pris: string[]): number => {
 
 function getPreferredKeleWithScore(entry: JmdictEntry): [string | undefined, number] {
     if (entry.k_ele.length == 0) return [undefined, -1]
+    let kele = entry.k_ele.filter(k => 
+        !k.ke_inf.includes(JmdictAbbrevs.irregular_kanji) && 
+        !k.ke_inf.includes(JmdictAbbrevs.irregular_okurigana) &&
+        !k.ke_inf.includes(JmdictAbbrevs.rarely_kanji) &&
+        !k.ke_inf.includes(JmdictAbbrevs.outdated_kanji) &&
+        !k.ke_inf.includes(JmdictAbbrevs.search_kanji)
+    );
+    if (kele.length == 0) kele = entry.k_ele;
 
     let preferred: string | undefined = undefined;
     let highestScore = 0; // score is # of pri1 + # of pri2 / 5
-    for (const k_ele of entry.k_ele) {
+    for (const k_ele of kele) {
         const score = getScore(k_ele.ke_pri);
         if (score > highestScore) {
             preferred = k_ele.keb;
@@ -216,7 +255,7 @@ function getPreferredKeleWithScore(entry: JmdictEntry): [string | undefined, num
     }
 
     if (preferred == undefined) {
-        return [entry.k_ele[0].keb, 0];
+        return [kele[0].keb, 0];
     }
     else {
         return [preferred, highestScore]
@@ -234,11 +273,15 @@ export function getPreferredKele(entry: JmdictEntry): string {
 
 function getPreferredReleWithScore(entry: JmdictEntry): [string | undefined, number] {
     if (entry.r_ele.length == 0) return [undefined, -1];
+    let rele = entry.r_ele.filter(r => 
+        !r.re_inf.includes(JmdictAbbrevs.irregular_kana)
+    );
+    if (rele.length == 0) rele = entry.r_ele;
 
     let preferred: string | undefined = undefined;
     let highestScore = 0; // score is # of pri1 + # of pri2 / 5
 
-    for (const r_ele of entry.r_ele) {
+    for (const r_ele of rele) {
         const score = getScore(r_ele.re_pri);
         if (score > highestScore) {
             preferred = r_ele.reb;
@@ -247,7 +290,7 @@ function getPreferredReleWithScore(entry: JmdictEntry): [string | undefined, num
     }
 
     if (preferred == undefined) {
-        return [entry.r_ele[0].reb, 0];
+        return [rele[0].reb, 0];
     }
     else {
         return [preferred, highestScore]
@@ -322,6 +365,7 @@ export class Jmdict {
             for (const child of el.children) {
                 if (child.tagName == 'keb') kele.keb = child.children[0];
                 else if (child.tagName == 'ke_pri') kele.ke_pri.push(child.children[0]);
+                else if (child.tagName == 'ke_inf') kele.ke_inf.push(child.children[0]);
             }
             return kele;
         };
@@ -330,6 +374,7 @@ export class Jmdict {
             for (const child of el.children) {
                 if (child.tagName == 'reb') rele.reb = child.children[0];
                 else if (child.tagName == 're_pri') rele.re_pri.push(child.children[0]);
+                else if (child.tagName == 're_inf') rele.re_inf.push(child.children[0]);
             }
             return rele;
         };
@@ -426,6 +471,14 @@ export class Jmdict {
 
     public getNumEntries(): number {
         return this.m_entries.size;
+    }
+
+    public interpretEntity(key: string, interpretParens?: false): string {
+        const match = key.match(/&[a-zA-Z0-9-]+;/);
+        if (!match || match[0] != key) {
+            return key;
+        }
+        return this.m_entityAbbrev[match[0].substring(1, match[0].length - 1)] || key;
     }
 
     private emplaceEntity(key: string, value: string): void {

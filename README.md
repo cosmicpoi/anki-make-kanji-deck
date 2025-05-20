@@ -23,6 +23,13 @@ To clean build folder:
 yarn clean
 ```
 
+## Scripts
+To bundle `furigana` lib:
+
+```
+yarn esbuild source/utils/furigana.ts --bundle --format=iife --global-name=generateFurigana --outfile=furigana.bundle.js
+```
+
 ## Sources
 * HSK 1-6 character lists provided by [huamake.com](https://huamake.com/1to6Lists.htm) and 7-9 by [elkmovie/hsk30](https://github.com/elkmovie/hsk30/blob/main/charlist.txt)
 * JLPT character lists provided by [kanshudo](https://www.kanshudo.com/collections/jlpt_kanji)

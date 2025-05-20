@@ -1,7 +1,7 @@
 export const k_GUESS_STRING = '(guess❓)';
 
 export const k_CHARACTER_LIST_PATH: string = 'lists/characters';
-export const k_JLPT_WORD_LIST_PATH: string = 'lists/jlpt_words_csv'
+export const k_WORD_LIST_PATH: string = 'lists/words'
 
 const k_DATA_DIR = "data";
 const k_DATA = (s: string): string => k_DATA_DIR + "/" + s;
@@ -27,11 +27,11 @@ export const k_HSK_FILE_LIST: string[] = [
 ];
 
 export const k_JLPT_FILE_LIST: string[] = [
-    'JLPT__n5.txt',
-    'JLPT__n4.txt',
-    'JLPT__n3.txt',
-    'JLPT__n2.txt',
-    'JLPT__n1.txt',
+    'JLPT_N5.txt',
+    'JLPT_N4.txt',
+    'JLPT_N3.txt',
+    'JLPT_N2.txt',
+    'JLPT_N1.txt',
 ];
 
 export const k_JOYO_FILE_PATH = "Joyo_all.txt";
