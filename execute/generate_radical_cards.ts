@@ -136,7 +136,7 @@ async function doThing() {
                         fields[i] = card[key].toString();
                     }
                     else {
-                        fields[i] = card[key].join(', ');
+                        fields[i] = card[key].join(',');
                     }
                 }
             }

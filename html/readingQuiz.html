@@ -1,0 +1,28 @@
+<html>
+<head>
+    <style>
+        .correct {
+            background: rgb(33, 196, 33);
+            border-radius: 2px;
+            border: 1px solid rgb(19, 112, 19);
+        }
+        #quiz {
+            transition: background 0.15s;
+        }
+        .fail {
+            background: #e27094;
+        }
+    </style>
+</head>
+<body>
+<input id="quiz" type="text"></input>
+<p id="quiz-feedback"></p>
+<p id="quiz-hint"></p>
+
+<script src="./quiz.js"></script>
+<script>
+setupReadingQuiz('aa,bb,cc', 'quiz', 'quiz-feedback', 'quiz-hint');
+    
+</script>
+</body>
+</html>

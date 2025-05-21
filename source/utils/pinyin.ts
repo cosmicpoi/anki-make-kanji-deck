@@ -49,3 +49,7 @@ export function generateAccentPinyin(input: string): string {
 export function generateAccentPinyinDelim(input: string, delim: string = ' '): string {
     return input.split(delim).map(w => generateAccentPinyin(w)).join(delim);
 }
+
+export function generateAccentPinyinMatch(input: string): string {
+    return input.replace(/[A-Za-z]+?\d/g, (match) => generateAccentPinyin(match));
+}

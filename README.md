@@ -27,7 +27,7 @@ yarn clean
 To bundle `furigana` lib:
 
 ```
-yarn esbuild source/utils/furigana.ts --bundle --format=iife --global-name=generateFurigana --outfile=furigana.bundle.js
+yarn esbuild source/utils/furigana.ts --bundle --format=iife --global-name=furigana --outfile=furigana.bundle.js
 ```
 
 ## Sources

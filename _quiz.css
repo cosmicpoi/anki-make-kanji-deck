@@ -1,0 +1,13 @@
+.correct {
+    background: rgb(163, 248, 163);
+    border-radius: 2px;
+    border: 1px solid rgb(19, 112, 19);
+}
+
+#quiz {
+    transition: background 0.15s;
+}
+
+.fail {
+    background: #e27094;
+}

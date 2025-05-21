@@ -269,8 +269,9 @@ export function generatePinyinRuby(kanji: string, pinyin: string): string {
     return `<ruby>${content}</ruby>`
 }
 
+const furiganaRegexp = new RegExp(/((\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana})+?)\[(.+?)\]/gu);
 export function replaceWithRuby(source: string): string {
-    return source.replace(/((\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana})+?)\[(.+?)\]/gu, (m: string) => {
+    return source.replace(furiganaRegexp, (m: string) => {
         const parts = m.split('[');
         const chars = parts[0];
         const reading = parts[1].slice(0, -1);
@@ -283,4 +284,22 @@ export function replaceRubyForId(id: string): void {
     const el = document.getElementById(id);
     if (!el) return;
     el.innerHTML = replaceWithRuby(el.innerHTML);
+}
+
+export function replaceRubyForIds(...id: string[]): void {
+    [...id].forEach(s => replaceRubyForId(s));
+}
+
+export function removeBracketed(source: string): string {
+    return source.replace(furiganaRegexp, (m) => m.split('[')[0]);
+}
+
+export function removeBracketedForId(id: string): void {
+   const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = removeBracketed(el.innerHTML); 
+}
+
+export function removeBracketedForIds(...id: string[]): void {
+    [...id].forEach(s => removeBracketedForId(s));
 }
