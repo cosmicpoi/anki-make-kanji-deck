@@ -35,6 +35,11 @@ import { buildCnVocabCards, ChineseVocabCard, writeCnVocabCardsToFile } from 'bu
 
 const args = minimist(process.argv.slice(2));
 
+console.log(args);
+const withTags: boolean = !!args['t'];
+
+console.log("With tags:", withTags);
+
 async function buildKanji() {
     // Initialize modules
     const unihan = await Unihan.create(k_UNIHAN_DB_PATH, { validateLinks: true });
@@ -175,18 +180,21 @@ async function buildKanji() {
             simpChineseList,
             cards: charCards,
             modules,
+            withTags,
             tagGetter: charTagGetter,
         });
         writeJpVocabCardsToFile({
             filePath: args['o'] + "_jpvocab.txt",
             cards: jpVocabCards,
             modules,
+            withTags,
             tagGetter: jpVocabTagGetter,
         })
         writeCnVocabCardsToFile({
             filePath: args['o'] + "_cnvocab.txt",
             cards: cnVocabCards,
             modules,
+            withTags,
             tagGetter: cnVocabTagGetter,
         })
     }

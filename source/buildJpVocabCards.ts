@@ -98,21 +98,25 @@ export async function buildJpVocabCards(props: {
             return texts.length > 0 ? texts.join('; ') : '';
         }
 
-        // Check if sino-chinese
+        // Check if sino-japanese
         let chinese = '';
         if (isHanCharacters(word)) {
             const cnCandidates = getSinoJpCandidates(word);
             cnCandidates.sort(cnSorter);
             if (cnCandidates.length > 0) {
                 chinese = cnCandidates[0];
-
+                
                 const pinyin = cedict.getPinyin(chinese)?.[0] || '';
+                const defs = cedict.getDefinitions(chinese);
+                const def = defs.length > 0 ? defs[0] : '';
+                const defStr = def == '' ? '' : ' - ' + def;
+
                 let trad = '';
                 const tradVar = converter_s2t(chinese);
                 if (tradVar != chinese) {
                     trad = '/' + tradVar;
                 }
-                chinese = `${chinese}[${generateAccentPinyinDelim(pinyin, ' ')}]${trad}`;
+                chinese = `${chinese}[${generateAccentPinyinDelim(pinyin, ' ')}]${trad}${defStr}`;
             }
         }
 
@@ -129,9 +133,10 @@ export async function buildJpVocabCards(props: {
         if (isSlang(prefSense)) tags.push(k_tag_LANG_SLANG);
 
         // Return constructed card
+        const rele = getPreferredRele(entry);
         return {
             word: prefReading,
-            hiragana: isKatakana ? '' : getPreferredRele(entry),
+            hiragana: (isKatakana || rele == prefReading) ? '' : rele,
             romaji,
             chinese,
             meaning: getMeaning(prefSense),
@@ -154,6 +159,7 @@ export async function writeJpVocabCardsToFile(props: {
     filePath: string,
     cards: JapaneseVocabCard[],
     tagGetter?: (card: JapaneseVocabCard) => string[],
+    withTags?: boolean,
     modules: {
         unihan: Unihan;
         bccwj: Bccwj;
@@ -191,11 +197,11 @@ export async function writeJpVocabCardsToFile(props: {
         'frequency',
     ];
 
-    const col_count = field_order.length + 2;
+    const col_count = field_order.length + (props.withTags ? 2 : 1); 
     writeStream.write("#separator:tab\n");
     writeStream.write("#html:true\n");
     writeStream.write("#notetype column:1\n");
-    writeStream.write(`#tags column:${col_count}\n`);
+    if (props.withTags) writeStream.write(`#tags column:${col_count}\n`);
 
     cards.forEach(card => {
         let fields: string[] = Array(col_count).fill('');
@@ -224,7 +230,7 @@ export async function writeJpVocabCardsToFile(props: {
                 const key: keyof JapaneseVocabCard = field_order[i - 1];
                 fields[i] = formatCardField(key, card) || '';
             }
-            else if (i == col_count - 1) {
+            else if (props.withTags && i == col_count - 1) {
                 fields[i] = formatFns['tags'](card.tags);
             }
         }

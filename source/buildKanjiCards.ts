@@ -445,6 +445,7 @@ export function writeKanjiCardsToFile(props: {
     japaneseList: string[],
     simpChineseList: string[],
     cards: KanjiCard[],
+    withTags?: boolean,
     tagGetter?: (card: KanjiCard) => string[],
     modules: {
         unihan: Unihan;
@@ -596,11 +597,11 @@ export function writeKanjiCardsToFile(props: {
         'chineseStrokeCount',
     ];
 
-    const col_count = jp_cn_field_order.length + 2;
+    const col_count = jp_cn_field_order.length + (props.withTags ? 2 : 1);
     writeStream.write("#separator:tab\n");
     writeStream.write("#html:true\n");
     writeStream.write("#notetype column:1\n");
-    writeStream.write(`#tags column:${col_count}\n`);
+    if (props.withTags) writeStream.write(`#tags column:${col_count}\n`);
 
     cards.forEach(card => {
         // tuple of key, delimiter
@@ -625,7 +626,7 @@ export function writeKanjiCardsToFile(props: {
                 const key: keyof KanjiCard = field_order[i - 1];
                 fields[i] = formatCardField(key, card) || '';
             }
-            else if (i == col_count - 1) {
+            else if (props.withTags && i == col_count - 1) {
                 fields[i] = formatFns['tags'](card.tags);
             }
         }

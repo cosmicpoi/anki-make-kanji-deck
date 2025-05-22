@@ -295,12 +295,13 @@ var furigana = (() => {
     const content = kanji.split("").map((c, i) => `${c}<rt>${pinyinParts[i]}</rt>`).join("");
     return `<ruby>${content}</ruby>`;
   }
-  var furiganaRegexp = new RegExp(/((\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana})+?)\[(.+?)\]/gu);
+  var furiganaRegexp = new RegExp(/((\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|ー)+?)\[(.*?)\]/gu);
   function replaceWithRuby(source) {
     return source.replace(furiganaRegexp, (m) => {
       const parts = m.split("[");
       const chars = parts[0];
       const reading = parts[1].slice(0, -1);
+      if (reading.replace(/\s/g, "") == "") return `<ruby>${chars}</ruby>`;
       if (isKana(reading.substring(0, 1))) return generateRuby(chars, reading);
       else return generatePinyinRuby(chars, reading);
     });

@@ -66,7 +66,7 @@ export async function buildCnVocabCards(props: {
 
         const traditional = converter_s2t(word);
 
-        // Check if sino-chinese
+        // Check if sino-japanese
         let japanese = '';
         const jpCandidates = getSinoJpCandidates(word);
         jpCandidates.sort(jpSorter);
@@ -75,8 +75,10 @@ export async function buildCnVocabCards(props: {
             const jpEntries = jmdict.getEntriesByWord(jpCandidate);
             if (jpEntries.length != 0) {
                 const reading = getPreferredRele(jpEntries[0]);
+                const glosses = getPreferredSense(jpEntries[0]).gloss.filter(g => g.lang == JmdictGlossLang.eng);
+                const meaningStr = glosses.length != 0 ? ' - ' + glosses[0].text : '';
                 if (!wanakana.isKatakana(reading)) {
-                    japanese = `${jpCandidate}[${reading}]`;
+                    japanese = `${jpCandidate}[${reading}]${meaningStr}`;
                 }
             }
         }
@@ -109,6 +111,7 @@ export async function writeCnVocabCardsToFile(props: {
     filePath: string,
     cards: ChineseVocabCard[],
     tagGetter?: (card: ChineseVocabCard) => string[],
+    withTags?: boolean,
     modules: {
         unihan: Unihan;
         bccwj: Bccwj;
@@ -145,11 +148,11 @@ export async function writeCnVocabCardsToFile(props: {
         'frequency',
     ];
 
-    const col_count = field_order.length + 2;
+    const col_count = field_order.length + (props.withTags ? 2 : 1);
     writeStream.write("#separator:tab\n");
     writeStream.write("#html:true\n");
     writeStream.write("#notetype column:1\n");
-    writeStream.write(`#tags column:${col_count}\n`);
+    if (props.withTags) writeStream.write(`#tags column:${col_count}\n`);
 
     cards.forEach(card => {
         let fields: string[] = Array(col_count).fill('');
@@ -176,7 +179,7 @@ export async function writeCnVocabCardsToFile(props: {
                 const key: keyof ChineseVocabCard = field_order[i - 1];
                 fields[i] = formatCardField(key, card) || '';
             }
-            else if (i == col_count - 1) {
+            else if (props.withTags && i == col_count - 1) {
                 fields[i] = formatFns['tags'](card.tags);
             }
         }

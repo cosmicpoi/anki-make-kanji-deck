@@ -13,12 +13,25 @@
 <body>
     <canvas id="drawing-canvas"></canvas>
     <button id="clear-button">clear</button>
-
+    <p id=sentences></p>
 
     <script src="./drawing.js"></script>
     <script>
         createDrawingCanvas("drawing-canvas", "clear-button");
 
+        function loadSentences(id, query) {
+            let content = '';
+            const url = `https://tatoeba.org/en/api_v0/search?from=jpn&orphans=no&query=${query}&sort=random&to=eng&trans_filter=limit&trans_to=eng&unapproved=no&word_count_min=1&rand_seed=A_Bs`
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const sentences = data[results].slice(0, 3).map(el => el.text);
+                    content = sentences.jion
+                });
+            document.getElementById(id).innerHTML = content;
+        }
+
+        loadSentences('sentences', '送る');
     </script>
 </body>
 
